@@ -1,3 +1,6 @@
 <Solution>
+  <Project Path="../PaperFlow.Common/PaperFlow.Common.csproj" />
+  <Project Path="../PaperFlow.Data.Models/PaperFlow.Data.Models.csproj" />
+  <Project Path="../PaperFlow.Data/PaperFlow.Data.csproj" />
   <Project Path="PaperFlow.Web.csproj" />
 </Solution>

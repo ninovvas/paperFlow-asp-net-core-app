@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PaperFlow.Web.Data;
+using PaperFlow.Data;
 
 namespace PaperFlow.Web
 {
@@ -10,19 +10,49 @@ namespace PaperFlow.Web
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
-            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+            // ============================================
+            // Database Configuration
+            // ============================================
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            var connectionString = builder.Configuration
+                .GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException(
+                    "Connection string 'DefaultConnection' not found.");
+
+            builder.Services.AddDbContext<PowerFlowDbContext>(
+                options =>
+                    options.UseSqlServer(connectionString));
+
+            builder.Services
+                .AddDatabaseDeveloperPageExceptionFilter();
+
+            // ============================================
+            // ASP.NET Core Identity
+            // ============================================
+
+            builder.Services
+                .AddDefaultIdentity<IdentityUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = true;
+                })
+                .AddEntityFrameworkStores<PowerFlowDbContext>();
+
+            // ============================================
+            // MVC Configuration
+            // ============================================
+
             builder.Services.AddControllersWithViews();
+
+            // ============================================
+            // Build Application
+            // ============================================
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // ============================================
+            // Middleware Configuration
+            // ============================================
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
@@ -30,22 +60,37 @@ namespace PaperFlow.Web
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
+
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
+            // ============================================
+            // Static Files
+            // ============================================
+
             app.MapStaticAssets();
+
+            // ============================================
+            // MVC Routing
+            // ============================================
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
+
+            // ============================================
+            // Identity Razor Pages
+            // ============================================
+
             app.MapRazorPages()
-               .WithStaticAssets();
+                .WithStaticAssets();
 
             app.Run();
         }
