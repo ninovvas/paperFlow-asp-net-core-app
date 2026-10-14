@@ -1,98 +1,71 @@
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 using PaperFlow.Data;
+using PaperFlow.Data.Extensions;
 
-namespace PaperFlow.Web
-{
-    public class Program
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddApplicationDbContext(builder.Configuration);
+
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services
+    .AddDefaultIdentity<IdentityUser>(options =>
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        // User settings
+        options.User.RequireUniqueEmail = true;
 
-            // ============================================
-            // Database Configuration
-            // ============================================
+        // Password settings
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireDigit = true;
+        options.Password.RequiredLength = 8;
 
-            var connectionString = builder.Configuration
-                .GetConnectionString("DefaultConnection")
-                ?? throw new InvalidOperationException(
-                    "Connection string 'DefaultConnection' not found.");
+        // Local development only:
+        // No email confirmation required
+        options.SignIn.RequireConfirmedAccount = false;
 
-            builder.Services.AddDbContext<PowerFlowDbContext>(
-                options =>
-                    options.UseSqlServer(connectionString));
+        // Account lockout
+        options.Lockout.DefaultLockoutTimeSpan =
+            TimeSpan.FromMinutes(5);
 
-            builder.Services
-                .AddDatabaseDeveloperPageExceptionFilter();
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
+    })
+    .AddEntityFrameworkStores<PowerFlowDbContext>();
 
-            // ============================================
-            // ASP.NET Core Identity
-            // ============================================
+builder.Services.AddControllersWithViews();
 
-            builder.Services
-                .AddDefaultIdentity<IdentityUser>(options =>
-                {
-                    options.SignIn.RequireConfirmedAccount = true;
-                })
-                .AddEntityFrameworkStores<PowerFlowDbContext>();
+var app = builder.Build();
 
-            // ============================================
-            // MVC Configuration
-            // ============================================
-
-            builder.Services.AddControllersWithViews();
-
-            // ============================================
-            // Build Application
-            // ============================================
-
-            var app = builder.Build();
-
-            // ============================================
-            // Middleware Configuration
-            // ============================================
-
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseMigrationsEndPoint();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            // ============================================
-            // Static Files
-            // ============================================
-
-            app.MapStaticAssets();
-
-            // ============================================
-            // MVC Routing
-            // ============================================
-
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
-                .WithStaticAssets();
-
-            // ============================================
-            // Identity Razor Pages
-            // ============================================
-
-            app.MapRazorPages()
-                .WithStaticAssets();
-
-            app.Run();
-        }
-    }
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
 }
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapStaticAssets();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}")
+    .WithStaticAssets();
+
+app.MapRazorPages()
+    .WithStaticAssets();
+
+app.Run();

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PaperFlow.Data;
 using System;
 
-namespace PaperFlow.Web.Data.Migrations
+namespace PaperFlow.Data.Migrations
 {
     [DbContext(typeof(PowerFlowDbContext))]
     [Migration("00000000000000_CreateIdentitySchema")]
