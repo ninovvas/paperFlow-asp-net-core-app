@@ -1,9 +1,10 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
 using PaperFlow.Data;
 using PaperFlow.Data.Extensions;
+using PaperFlow.Services.Interfaces;
+using PaperFlow.Services.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +38,29 @@ builder.Services
     })
     .AddEntityFrameworkStores<PowerFlowDbContext>();
 
+// ==========================================
+// arXiv API Service
+// ==========================================
+
+builder.Services.AddHttpClient<
+    IResearchPaperProvider,
+    ArxivSearchService>(client =>
+    {
+        client.Timeout = TimeSpan.FromSeconds(30);
+
+        client.DefaultRequestHeaders.UserAgent.ParseAdd(
+            "PaperFlow/1.0 (Academic research application)");
+    });
+
+// ==========================================
+// MVC
+// ==========================================
+
 builder.Services.AddControllersWithViews();
+
+// ==========================================
+// Application - PaperFlow
+// ==========================================
 
 var app = builder.Build();
 
