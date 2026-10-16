@@ -1,35 +1,41 @@
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+
 using PaperFlow.Data;
 using PaperFlow.Data.Extensions;
-using PaperFlow.Services.Interfaces;
-using PaperFlow.Services.Providers;
+
+using PaperFlow.Services.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddApplicationDbContext(builder.Configuration);
+// ==========================================
+// Database
+// ==========================================
+
+builder.Services.AddApplicationDbContext(
+    builder.Configuration);
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+// ==========================================
+// ASP.NET Core Identity
+// ==========================================
 
 builder.Services
     .AddDefaultIdentity<IdentityUser>(options =>
     {
-        // User settings
         options.User.RequireUniqueEmail = true;
 
-        // Password settings
         options.Password.RequireLowercase = false;
         options.Password.RequireUppercase = false;
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequireDigit = true;
         options.Password.RequiredLength = 8;
 
-        // Local development only:
-        // No email confirmation required
+        // Only for local development until
+        // email confirmation is configured.
         options.SignIn.RequireConfirmedAccount = false;
 
-        // Account lockout
         options.Lockout.DefaultLockoutTimeSpan =
             TimeSpan.FromMinutes(5);
 
@@ -39,18 +45,10 @@ builder.Services
     .AddEntityFrameworkStores<PowerFlowDbContext>();
 
 // ==========================================
-// arXiv API Service
+// Research API and Import Services
 // ==========================================
 
-builder.Services.AddHttpClient<
-    IResearchPaperProvider,
-    ArxivSearchService>(client =>
-    {
-        client.Timeout = TimeSpan.FromSeconds(30);
-
-        client.DefaultRequestHeaders.UserAgent.ParseAdd(
-            "PaperFlow/1.0 (Academic research application)");
-    });
+builder.Services.AddPaperFlowServices();
 
 // ==========================================
 // MVC
@@ -58,11 +56,11 @@ builder.Services.AddHttpClient<
 
 builder.Services.AddControllersWithViews();
 
-// ==========================================
-// Application - PaperFlow
-// ==========================================
-
 var app = builder.Build();
+
+// ==========================================
+// Error handling
+// ==========================================
 
 if (app.Environment.IsDevelopment())
 {
@@ -73,6 +71,10 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+// ==========================================
+// Middleware
+// ==========================================
 
 app.UseHttpsRedirection();
 

@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PaperFlow.Common\PaperFlow.Common.csproj" />
+    <ProjectReference Include="..\PaperFlow.Data.Models\PaperFlow.Data.Models.csproj" />
+    <ProjectReference Include="..\PaperFlow.Data\PaperFlow.Data.csproj" />
+  </ItemGroup>
+
 </Project>

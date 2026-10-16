@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Test arXiv Import";
+}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h3>PaperFlow - arXiv Import Test</h3>
+
+            <p class="text-muted">
+                Import a scientific paper using its arXiv ID.
+            </p>
+
+            <form asp-controller="ImportTest"
+                  asp-action="Import"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label for="arxivId"
+                           class="form-label">
+                        arXiv ID
+                    </label>
+
+                    <input type="text"
+                           id="arxivId"
+                           name="arxivId"
+                           value="2607.18488"
+                           class="form-control"
+                           required
+                           maxlength="100" />
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Import Paper
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
