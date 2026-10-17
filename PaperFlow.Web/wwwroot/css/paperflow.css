@@ -1,0 +1,81 @@
+﻿
+/* ============================================
+   PaperFlow - Modernize Layout Customization
+   ASP.NET Core MVC / Bootstrap 5
+   ============================================ */
+
+/* Remove the unused Modernize demo topstrip
+   and keep the sidebar at the top. */
+
+#main-wrapper .left-sidebar {
+    top: 0 !important;
+    height: 100dvh;
+}
+
+/* The body wrapper contains the header and
+   its own independently scrolling content. */
+
+#main-wrapper .body-wrapper {
+    height: 100dvh;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+    /* Header participates in the flex layout.
+   It no longer overlays the content. */
+
+    #main-wrapper .body-wrapper .app-header {
+        position: relative !important;
+        top: 0 !important;
+        width: 100% !important;
+        flex: 0 0 auto;
+        z-index: 50;
+        background: #ffffff;
+        border-bottom: 1px solid #e5eaf0;
+    }
+
+/* Prevent the header from shrinking. */
+
+#main-wrapper .app-header .navbar {
+    min-height: 70px;
+}
+
+/* Only the content area is scrollable. */
+
+#main-wrapper .body-wrapper .paperflow-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 24px !important;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1400px;
+    scroll-behavior: smooth;
+}
+
+/* Sidebar branding */
+
+#main-wrapper .brand-logo {
+    min-height: 70px;
+}
+
+/* Mobile layout */
+
+@media (max-width: 1199.98px) {
+
+    #main-wrapper .left-sidebar {
+        top: 0 !important;
+        height: 100dvh;
+    }
+
+    #main-wrapper .body-wrapper {
+        margin-left: 0;
+    }
+
+        #main-wrapper .body-wrapper .paperflow-content {
+            padding: 16px !important;
+        }
+}

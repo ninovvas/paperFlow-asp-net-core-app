@@ -1,0 +1,130 @@
+﻿@model PaperFlow.Web.ViewModels.Papers.PaperCreateViewModel
+
+@{
+    ViewData["Title"] = "Add Paper Manually";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title fw-semibold mb-4">
+            Add Paper Manually
+        </h4>
+
+        <p class="text-muted">
+            Add a publication that is not available
+            through the research APIs.
+        </p>
+
+        <form asp-controller="Papers"
+              asp-action="Create"
+              method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Title"
+                       class="form-label"></label>
+
+                <input asp-for="Title"
+                       class="form-control" />
+
+                <span asp-validation-for="Title"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Authors"
+                       class="form-label"></label>
+
+                <input asp-for="Authors"
+                       class="form-control"
+                       placeholder="Author One, Author Two" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Categories"
+                       class="form-label"></label>
+
+                <input asp-for="Categories"
+                       class="form-control"
+                       placeholder="Robotics, AI" />
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PublicationDate"
+                           class="form-label"></label>
+
+                    <input asp-for="PublicationDate"
+                           type="date"
+                           class="form-control" />
+
+                    <span asp-validation-for="PublicationDate"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Doi"
+                           class="form-label"></label>
+
+                    <input asp-for="Doi"
+                           class="form-control" />
+
+                    <span asp-validation-for="Doi"
+                          class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Abstract"
+                       class="form-label"></label>
+
+                <textarea asp-for="Abstract"
+                          rows="5"
+                          class="form-control"></textarea>
+
+                <span asp-validation-for="Abstract"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PublicationUrl"
+                       class="form-label"></label>
+
+                <input asp-for="PublicationUrl"
+                       class="form-control" />
+
+                <span asp-validation-for="PublicationUrl"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PdfUrl"
+                       class="form-label"></label>
+
+                <input asp-for="PdfUrl"
+                       class="form-control" />
+
+                <span asp-validation-for="PdfUrl"
+                      class="text-danger"></span>
+            </div>
+
+            <button type="submit"
+                    class="btn btn-primary">
+                <i class="ti ti-device-floppy me-1"></i>
+                Save Paper
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary ms-2">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

@@ -17,8 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PaperFlow.Common\PaperFlow.Common.csproj" />
     <ProjectReference Include="..\PaperFlow.Data\PaperFlow.Data.csproj" />
     <ProjectReference Include="..\PaperFlow.Services\PaperFlow.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\modernize\" />
   </ItemGroup>
 
 </Project>

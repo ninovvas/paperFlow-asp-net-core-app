@@ -1,0 +1,81 @@
+﻿@model IEnumerable<PaperFlow.Data.Models.Paper>
+
+@{
+    ViewData["Title"] = "My Papers";
+}
+
+<div class="card">
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="card-title fw-semibold mb-0">
+                My Papers
+            </h4>
+
+            <a asp-action="Create"
+               class="btn btn-primary">
+                <i class="ti ti-plus me-1"></i>
+                Add Paper
+            </a>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">
+                You haven't saved any papers yet.
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Published</th>
+                            <th>Status</th>
+                            <th>Rating</th>
+                            <th>PDF</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var paper in Model)
+                        {
+                            <tr>
+                                <td>@paper.Title</td>
+                                <td>@paper.PublicationDate?.ToString("yyyy-MM-dd")</td>
+                                <td>@paper.Status</td>
+                                <td>
+                                    @(paper.Rating?.ToString() ?? "Not rated")
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(paper.PdfUrl))
+                                    {
+                                        <a href="@paper.PdfUrl"
+                                           target="_blank"
+                                           rel="noopener noreferrer">
+                                            Open PDF
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+    </div>
+</div>
+
