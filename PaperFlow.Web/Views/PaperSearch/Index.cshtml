@@ -1,0 +1,345 @@
+﻿@model PaperFlow.Web.ViewModels.Papers.PaperSearchViewModel
+
+@{
+    ViewData["Title"] = "Search Research Papers";
+}
+
+<div class="card">
+    <div class="card-body">
+
+        <h4 class="fw-semibold mb-2">
+            Search Research Papers
+        </h4>
+
+        <p class="text-muted mb-4">
+            Search scientific publications across research sources.
+        </p>
+
+        @if (TempData["ErrorMessage"] is string error)
+        {
+            <div class="alert alert-danger">@error</div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-warning">
+                @Model.ErrorMessage
+            </div>
+        }
+
+        <div asp-validation-summary="All"
+             class="text-danger mb-3"></div>
+
+        <div class="btn-group mb-4">
+            <button type="button"
+                    id="simpleBtn"
+                    class="btn btn-outline-primary">
+                Simple Search
+            </button>
+
+            <button type="button"
+                    id="advancedBtn"
+                    class="btn btn-primary">
+                Advanced Search
+            </button>
+        </div>
+
+        <form asp-controller="PaperSearch"
+              asp-action="Index"
+              method="get"
+              id="searchForm">
+
+            <input type="hidden"
+                   name="execute"
+                   value="true" />
+
+            <input type="hidden"
+                   asp-for="Advanced"
+                   id="advancedFlag" />
+
+            <div class="mb-3">
+                <label asp-for="Query"
+                       class="form-label"></label>
+
+                <input asp-for="Query"
+                       class="form-control"
+                       placeholder="Enter keywords" />
+
+                <span asp-validation-for="Query"
+                      class="text-danger"></span>
+            </div>
+
+            <!-- Multi-source selection -->
+            <partial name="_SourceSelector" model="Model" />
+
+            <div id="advancedFilters">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label asp-for="SearchField"
+                               class="form-label"></label>
+
+                        <select asp-for="SearchField"
+                                class="form-select">
+                            <option value="all">All Fields</option>
+                            <option value="ti">Title</option>
+                            <option value="abs">Abstract</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Category"
+                               class="form-label"></label>
+
+                        <select asp-for="Category"
+                                class="form-select">
+                            <option value="">All Categories</option>
+                            <option value="cs.RO">Robotics</option>
+                            <option value="cs.AI">Artificial Intelligence</option>
+                            <option value="cs.LG">Machine Learning</option>
+                            <option value="cs.CV">Computer Vision</option>
+                            <option value="cs.IR">Information Retrieval</option>
+                            <option value="eess.SY">Systems and Control</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label asp-for="Author"
+                               class="form-label"></label>
+
+                        <input asp-for="Author"
+                               class="form-control"
+                               placeholder="Author name" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="SubmittedFrom"
+                               class="form-label"></label>
+
+                        <input asp-for="SubmittedFrom"
+                               type="date"
+                               class="form-control" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="SubmittedTo"
+                               class="form-label"></label>
+
+                        <input asp-for="SubmittedTo"
+                               type="date"
+                               class="form-control" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="SortBy"
+                               class="form-label"></label>
+
+                        <select asp-for="SortBy"
+                                class="form-select">
+                            <option value="relevance">Relevance</option>
+                            <option value="submittedDate">Submission Date</option>
+                            <option value="lastUpdatedDate">Last Updated</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="SortOrder"
+                               class="form-label"></label>
+
+                        <select asp-for="SortOrder"
+                                class="form-select">
+                            <option value="descending">Newest First</option>
+                            <option value="ascending">Oldest First</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="MaxResults"
+                               class="form-label"></label>
+
+                        <select asp-for="MaxResults"
+                                class="form-select">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input asp-for="OnlyWithPdf"
+                                   class="form-check-input" />
+
+                            <label asp-for="OnlyWithPdf"
+                                   class="form-check-label"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button class="btn btn-primary" type="submit">
+                    <i class="ti ti-search me-1"></i>
+                    Search Papers
+                </button>
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.HasSearched)
+{
+    @if (Model.FailedSources.Any())
+    {
+        <div class="alert alert-warning">
+            Unavailable sources:
+            @string.Join(", ", Model.FailedSources)
+        </div>
+    }
+
+    <h5 class="fw-semibold mt-4 mb-3">
+        Search Results (@Model.Results.Count)
+    </h5>
+
+    @foreach (var paper in Model.Results)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+
+                <h5 class="fw-semibold">
+                    @paper.Title
+                </h5>
+
+                <div class="mb-2">
+                    <span class="badge bg-primary">
+                        @paper.SourceName
+                    </span>
+
+                    <span class="text-muted ms-2">
+                        @(paper.PublicationDate?.ToString("yyyy-MM-dd")
+                            ?? "Unknown date")
+                    </span>
+                </div>
+
+                <p class="small">
+                    <strong>Authors:</strong>
+                    @string.Join(", ", paper.Authors)
+                </p>
+
+                <p class="text-muted">
+                    @paper.Abstract
+                </p>
+
+                @if (paper.Categories.Any())
+                {
+                    <p class="small">
+                        <strong>Categories:</strong>
+                        @string.Join(", ", paper.Categories)
+                    </p>
+                }
+
+                <div class="d-flex gap-2 flex-wrap">
+
+                    @if (!string.IsNullOrWhiteSpace(paper.PdfUrl))
+                    {
+                        <a href="@paper.PdfUrl"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn btn-outline-primary btn-sm">
+                            Open PDF
+                        </a>
+                    }
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <form asp-controller="PaperSearch"
+                              asp-action="Save"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="sourceId"
+                                   value="arxiv" />
+
+                            <input type="hidden"
+                                   name="externalId"
+                                   value="@paper.ExternalId" />
+
+                            <button type="submit"
+                                    class="btn btn-primary btn-sm">
+                                Save to My Library
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-area="Identity"
+                           asp-page="/Account/Login"
+                           class="btn btn-primary btn-sm">
+                            Login to Save
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!Model.Results.Any() &&
+         !Model.FailedSources.Any() &&
+         string.IsNullOrWhiteSpace(Model.ErrorMessage) &&
+         ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-info">
+            No papers found. Try different search filters.
+        </div>
+    }
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const flag = document.getElementById("advancedFlag");
+            const filters = document.getElementById("advancedFilters");
+
+            const simple = document.getElementById("simpleBtn");
+            const advanced = document.getElementById("advancedBtn");
+
+            function setMode(isAdvanced) {
+                flag.value = isAdvanced ? "true" : "false";
+                filters.style.display =
+                    isAdvanced ? "block" : "none";
+
+                filters.querySelectorAll("input, select")
+                    .forEach(element => {
+                        element.disabled = !isAdvanced;
+                    });
+
+                simple.className = isAdvanced
+                    ? "btn btn-outline-primary"
+                    : "btn btn-primary";
+
+                advanced.className = isAdvanced
+                    ? "btn btn-primary"
+                    : "btn btn-outline-primary";
+            }
+
+            simple.addEventListener("click",
+                () => setMode(false));
+
+            advanced.addEventListener("click",
+                () => setMode(true));
+
+            setMode(flag.value.toLowerCase() === "true");
+        });
+    </script>
+}
+

@@ -1,13 +1,13 @@
-﻿using PaperFlow.Services.Interfaces;
-using PaperFlow.Services.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
-
-namespace PaperFlow.Services.Providers
+﻿namespace PaperFlow.Services.Providers
 {
+    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Models;
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Xml;
+    using System.Xml.Linq;
+
     public class ArxivSearchService : IResearchPaperProvider
     {
         private const string ApiUrl =
@@ -22,75 +22,13 @@ namespace PaperFlow.Services.Providers
         private readonly HttpClient httpClient;
 
         public string ProviderName => "arXiv";
+        public string ProviderId => "arxiv";
 
         public ArxivSearchService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
         }
 
-        public async Task<IReadOnlyList<PaperSearchResult>> SearchAsync(
-            string query,
-            int maxResults = 10,
-            CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                throw new ArgumentException(
-                    "Search query cannot be empty.",
-                    nameof(query));
-            }
-
-            if (maxResults < 1 || maxResults > 100)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(maxResults),
-                    "Max results must be between 1 and 100.");
-            }
-
-            // Search as a phrase across arXiv fields.
-            string normalizedQuery = query.Trim().Replace("\"", "");
-
-            string searchExpression =
-                $"all:\"{normalizedQuery}\"";
-
-            string requestUrl =
-                $"{ApiUrl}?search_query=" +
-                Uri.EscapeDataString(searchExpression) +
-                $"&start=0&max_results={maxResults}" +
-                "&sortBy=relevance&sortOrder=descending";
-
-            using var response = await httpClient.GetAsync(
-                requestUrl,
-                HttpCompletionOption.ResponseHeadersRead,
-                cancellationToken);
-
-            response.EnsureSuccessStatusCode();
-
-            await using var stream =
-                await response.Content.ReadAsStreamAsync(
-                    cancellationToken);
-
-            var xmlSettings = new XmlReaderSettings
-            {
-                Async = true,
-                DtdProcessing = DtdProcessing.Prohibit,
-                XmlResolver = null
-            };
-
-            using var reader = XmlReader.Create(
-                stream,
-                xmlSettings);
-
-            XDocument document = await XDocument.LoadAsync(
-                reader,
-                LoadOptions.None,
-                cancellationToken);
-
-            return document
-                .Descendants(Atom + "entry")
-                .Select(ParsePaper)
-                .ToList();
-        }
 
         private static PaperSearchResult ParsePaper(
             XElement entry)
@@ -185,6 +123,73 @@ namespace PaperFlow.Services.Providers
 
             return System.Text.RegularExpressions.Regex
                 .Replace(value.Trim(), @"\s+", " ");
+        }
+
+        public Task<IReadOnlyList<PaperSearchResult>> SearchAsync(string query, int maxResults = 10, CancellationToken cancellationToken = default)
+        {
+            var criteria = new PaperSearchCriteria
+            {
+                Keywords = query,
+                SearchField = "all",
+                SortBy = "relevance",
+                SortOrder = "descending",
+                MaxResults = maxResults
+            };
+
+            return SearchAsync(criteria, cancellationToken);
+        }
+
+        public async Task<IReadOnlyList<PaperSearchResult>> SearchAsync(PaperSearchCriteria criteria, CancellationToken cancellationToken = default)
+        {
+            string url = ArxivQueryBuilder.BuildRequestUrl(criteria);
+
+            using var response = await httpClient.GetAsync(
+                url,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken);
+
+            response.EnsureSuccessStatusCode();
+
+            await using var stream =
+                await response.Content.ReadAsStreamAsync(
+                    cancellationToken);
+
+            var settings = new System.Xml.XmlReaderSettings
+            {
+                Async = true,
+                DtdProcessing = System.Xml.DtdProcessing.Prohibit,
+                XmlResolver = null
+            };
+
+            using var reader = System.Xml.XmlReader.Create(
+                stream, settings);
+
+            var document = await System.Xml.Linq.XDocument.LoadAsync(
+                reader,
+                System.Xml.Linq.LoadOptions.None,
+                cancellationToken);
+
+            var entries = document
+                .Descendants(
+                    System.Xml.Linq.XNamespace.Get(
+                        "http://www.w3.org/2005/Atom") + "entry");
+
+            var results = entries
+                .Select(ParsePaper)
+                .Where(p =>
+                    !string.IsNullOrWhiteSpace(p.ExternalId) &&
+                    !string.IsNullOrWhiteSpace(p.Title))
+                .ToList();
+
+            if (criteria.OnlyWithPdf)
+            {
+                results = results
+                    .Where(p =>
+                        !string.IsNullOrWhiteSpace(p.PdfUrl))
+                    .ToList();
+            }
+
+            return results;
         }
     }
 }

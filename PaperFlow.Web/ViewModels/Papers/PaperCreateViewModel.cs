@@ -7,6 +7,11 @@ namespace PaperFlow.Web.ViewModels.Papers
     using PaperFlow.Common;
     public class PaperCreateViewModel
     {
+
+        public List<string> SelectedSources { get; set; } = new() { "arxiv" };
+
+        public List<string> AvailableSources { get; set; } = new();
+
         [Required]
         [StringLength(
             DataConstants.Paper.TitleMaxLength,
