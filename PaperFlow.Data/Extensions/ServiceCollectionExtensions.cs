@@ -1,9 +1,8 @@
 ﻿namespace PaperFlow.Data.Extensions
 {
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using System;
-    using Microsoft.EntityFrameworkCore;
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddApplicationDbContext(

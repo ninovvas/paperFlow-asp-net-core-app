@@ -1,8 +1,93 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="mb-4">
+    <h3 class="fw-semibold mb-1">
+        PaperFlow Dashboard
+    </h3>
+
+    <p class="text-muted">
+        Welcome to your Research Paper Management System.
+    </p>
 </div>
+
+<div class="row g-4">
+
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+            <div class="card-body">
+
+                <i class="ti ti-search fs-6 text-primary"></i>
+
+                <h5 class="fw-semibold mt-3">
+                    Search Research Papers
+                </h5>
+
+                <p class="text-muted">
+                    Find scientific papers using Simple
+                    or Advanced Search.
+                </p>
+
+                <a asp-controller="PaperSearch"
+                   asp-action="Index"
+                   class="btn btn-primary">
+                    Search Papers
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+            <div class="card-body">
+
+                <i class="ti ti-books fs-6 text-primary"></i>
+
+                <h5 class="fw-semibold mt-3">
+                    My Library
+                </h5>
+
+                <p class="text-muted">
+                    Manage your saved research papers
+                    and reading activities.
+                </p>
+
+                <a asp-controller="Papers"
+                   asp-action="Index"
+                   class="btn btn-primary">
+                    My Papers
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100">
+            <div class="card-body">
+
+                <i class="ti ti-file-plus fs-6 text-primary"></i>
+
+                <h5 class="fw-semibold mt-3">
+                    Add Paper Manually
+                </h5>
+
+                <p class="text-muted">
+                    Create a paper record manually
+                    without using an external API.
+                </p>
+
+                <a asp-controller="Papers"
+                   asp-action="Create"
+                   class="btn btn-primary">
+                    Add Paper
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+

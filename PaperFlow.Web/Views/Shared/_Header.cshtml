@@ -26,9 +26,14 @@
                     <li class="nav-item">
                         <form asp-area="Identity"
                               asp-page="/Account/Logout"
+                              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
                               method="post">
+
+                            @Html.AntiForgeryToken()
+
                             <button type="submit"
                                     class="btn btn-outline-primary">
+                                <i class="ti ti-logout me-1"></i>
                                 Logout
                             </button>
                         </form>
@@ -37,17 +42,17 @@
                 else
                 {
                     <li class="nav-item me-2">
-                        <a class="btn btn-outline-primary"
-                           asp-area="Identity"
-                           asp-page="/Account/Login">
+                        <a asp-area="Identity"
+                           asp-page="/Account/Login"
+                           class="btn btn-outline-primary">
                             Login
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="btn btn-primary"
-                           asp-area="Identity"
-                           asp-page="/Account/Register">
+                        <a asp-area="Identity"
+                           asp-page="/Account/Register"
+                           class="btn btn-primary">
                             Register
                         </a>
                     </li>
@@ -57,4 +62,3 @@
         </div>
     </nav>
 </header>
-

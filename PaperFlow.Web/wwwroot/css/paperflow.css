@@ -79,3 +79,71 @@
             padding: 16px !important;
         }
 }
+
+
+/* ============================================
+   PaperFlow - Modernize Authentication
+   ============================================ */
+
+.paperflow-auth-body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient( 135deg, #edf2ff 0%, #f7f9fc 52%, #e5edff 100% );
+}
+
+.paperflow-auth-wrapper {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+}
+
+.paperflow-auth-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 460px;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 12px 45px rgba(40, 60, 100, 0.10);
+}
+
+.paperflow-auth-brand {
+    font-size: 30px;
+    font-weight: 700;
+    color: #5d87ff;
+    text-decoration: none;
+}
+
+    .paperflow-auth-brand:hover {
+        color: #4573f5;
+    }
+
+.paperflow-auth-card .form-control {
+    min-height: 44px;
+    border-radius: 8px;
+}
+
+    .paperflow-auth-card .form-control:focus {
+        border-color: #5d87ff;
+        box-shadow: 0 0 0 3px rgba(93, 135, 255, 0.12);
+    }
+
+.paperflow-auth-card .btn-primary {
+    min-height: 44px;
+    border-radius: 8px;
+}
+
+.paperflow-auth-footer {
+    font-size: 12px;
+    color: #778397;
+    margin-top: 24px;
+}
+
+@media (max-width: 576px) {
+    .paperflow-auth-card {
+        padding: 28px 22px;
+    }
+}
+

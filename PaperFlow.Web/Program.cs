@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 
 using PaperFlow.Data;
 using PaperFlow.Data.Extensions;
-
 using PaperFlow.Services.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // ==========================================
 // Database
 // ==========================================
+
+// Register PowerFlowDbContext from PaperFlow.Data.
+// Do not register the DbContext a second time.
 
 builder.Services.AddApplicationDbContext(
     builder.Configuration);
@@ -24,18 +26,21 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services
     .AddDefaultIdentity<IdentityUser>(options =>
     {
+        // User settings
         options.User.RequireUniqueEmail = true;
 
+        // Password settings
         options.Password.RequireLowercase = false;
         options.Password.RequireUppercase = false;
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequireDigit = true;
         options.Password.RequiredLength = 8;
 
-        // Only for local development until
-        // email confirmation is configured.
+        // Development only, until email confirmation
+        // has been configured.
         options.SignIn.RequireConfirmedAccount = false;
 
+        // Account lockout settings
         options.Lockout.DefaultLockoutTimeSpan =
             TimeSpan.FromMinutes(5);
 
@@ -45,16 +50,22 @@ builder.Services
     .AddEntityFrameworkStores<PowerFlowDbContext>();
 
 // ==========================================
-// Research API and Import Services
+// PaperFlow Research Services
 // ==========================================
 
 builder.Services.AddPaperFlowServices();
 
 // ==========================================
-// MVC
+// MVC + Razor Pages
 // ==========================================
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddRazorPages();
+
+// ==========================================
+// Build application
+// ==========================================
 
 var app = builder.Build();
 
@@ -78,10 +89,16 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// ==========================================
+// Routes
+// ==========================================
 
 app.MapStaticAssets();
 

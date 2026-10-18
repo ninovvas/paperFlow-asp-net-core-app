@@ -1,0 +1,59 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1" />
+
+    <title>@ViewData["Title"] - PaperFlow</title>
+
+    <link rel="stylesheet"
+          href="~/modernize/assets/css/styles.min.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/paperflow.css"
+          asp-append-version="true" />
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body class="paperflow-auth-body">
+
+    <div class="paperflow-auth-wrapper">
+
+        <div class="paperflow-auth-card">
+
+            <div class="text-center mb-4">
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index"
+                   class="paperflow-auth-brand">
+                    <i class="ti ti-book-2 me-1"></i>
+                    PaperFlow
+                </a>
+
+                <p class="text-muted mt-2 mb-0">
+                    Research Paper Management System
+                </p>
+            </div>
+
+            @RenderBody()
+
+        </div>
+
+        <div class="paperflow-auth-footer">
+            © @DateTime.UtcNow.Year PaperFlow
+        </div>
+    </div>
+
+    <script src="~/modernize/assets/libs/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/modernize/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
