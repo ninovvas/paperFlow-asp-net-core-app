@@ -1,0 +1,309 @@
+﻿@model PaperFlow.Services.Models.PaperDetailsDto
+
+@{
+    ViewData["Title"] = "Paper Details";
+
+    string publicationDate = Model.PublicationDate?
+        .ToString("yyyy-MM-dd") ?? "Not available";
+
+    string dueDate = Model.DueDate?
+        .ToString("yyyy-MM-dd") ?? "Not set";
+
+    string rating = Model.Rating.HasValue
+        ? $"{Model.Rating.Value}/5"
+        : "Not rated";
+}
+
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Papers"
+                   asp-action="Index">
+                    My Papers
+                </a>
+            </li>
+            <li class="breadcrumb-item active">
+                Paper Details
+            </li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between
+        align-items-start gap-3 flex-wrap">
+
+        <div>
+            <h3 class="fw-semibold mb-2">
+                @Model.Title
+            </h3>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <span class="badge bg-primary-subtle text-primary">
+                    @(Model.ResearchSourceName ?? "Manual")
+                </span>
+
+                <span class="badge bg-light text-dark border">
+                    @Model.ReadingStatus
+                </span>
+
+                @foreach (string category in Model.Categories)
+                {
+                    <span class="badge bg-light text-dark border">
+                        @category
+                    </span>
+                }
+            </div>
+        </div>
+
+        <a asp-controller="Papers"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            <i class="ti ti-arrow-left me-1"></i>
+            Back to Library
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <!-- Main information -->
+    <div class="col-lg-8">
+
+        <!-- Abstract -->
+        <div class="card">
+            <div class="card-body">
+
+                <h5 class="fw-semibold mb-3">
+                    <i class="ti ti-file-description me-2"></i>
+                    Abstract
+                </h5>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Abstract))
+                {
+                    <p class="mb-0"
+                       style="white-space: pre-line">
+                        @Model.Abstract
+                    </p>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">
+                        No abstract available.
+                    </p>
+                }
+            </div>
+        </div>
+
+        <!-- Authors -->
+        <div class="card">
+            <div class="card-body">
+
+                <h5 class="fw-semibold mb-3">
+                    <i class="ti ti-users me-2"></i>
+                    Authors
+                </h5>
+
+                @if (Model.Authors.Any())
+                {
+                    <ol class="mb-0">
+                        @foreach (var author in Model.Authors)
+                        {
+                            <li class="mb-2">
+                                <span class="fw-semibold">
+                                    @author.FullName
+                                </span>
+
+                                @if (!string.IsNullOrWhiteSpace(author.Orcid))
+                                {
+                                    <span class="text-muted small ms-2">
+                                        ORCID: @author.Orcid
+                                    </span>
+                                }
+                            </li>
+                        }
+                    </ol>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">
+                        No authors recorded.
+                    </p>
+                }
+            </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="card">
+            <div class="card-body">
+
+                <h5 class="fw-semibold mb-3">
+                    <i class="ti ti-notes me-2"></i>
+                    Personal Notes
+                </h5>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                {
+                    <p class="mb-0"
+                       style="white-space: pre-line">
+                        @Model.Notes
+                    </p>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">
+                        No personal notes yet.
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar information -->
+    <div class="col-lg-4">
+
+        <!-- Publication metadata -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="fw-semibold mb-4">
+                    Publication Information
+                </h5>
+
+                <dl class="row mb-0">
+                    <dt class="col-5">Published</dt>
+                    <dd class="col-7">@publicationDate</dd>
+
+                    <dt class="col-5">Source</dt>
+                    <dd class="col-7">
+                        @(Model.ResearchSourceName ?? "Manual")
+                    </dd>
+
+                    <dt class="col-5">External ID</dt>
+                    <dd class="col-7 text-break">
+                        @(Model.ExternalId ?? "N/A")
+                    </dd>
+
+                    <dt class="col-5">DOI</dt>
+                    <dd class="col-7 text-break">
+                        @(Model.Doi ?? "N/A")
+                    </dd>
+
+                    <dt class="col-5">Added</dt>
+                    <dd class="col-7">
+                        @Model.CreatedOn.ToString("yyyy-MM-dd")
+                    </dd>
+
+                    <dt class="col-5">Modified</dt>
+                    <dd class="col-7">
+                        @(Model.ModifiedOn?.ToString("yyyy-MM-dd")
+                            ?? "Never")
+                    </dd>
+                </dl>
+
+                <div class="d-grid gap-2 mt-3">
+
+                    @if (!string.IsNullOrWhiteSpace(Model.PublicationUrl)
+                         && Uri.TryCreate(Model.PublicationUrl,
+                             UriKind.Absolute, out var publicationUri)
+                         && (publicationUri.Scheme == Uri.UriSchemeHttps
+                             || publicationUri.Scheme == Uri.UriSchemeHttp))
+                    {
+                        <a href="@Model.PublicationUrl"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn btn-outline-primary">
+                            <i class="ti ti-external-link me-1"></i>
+                            Open Publication
+                        </a>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(Model.PdfUrl)
+                         && Uri.TryCreate(Model.PdfUrl,
+                             UriKind.Absolute, out var pdfUri)
+                         && (pdfUri.Scheme == Uri.UriSchemeHttps
+                             || pdfUri.Scheme == Uri.UriSchemeHttp))
+                    {
+                        <a href="@Model.PdfUrl"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn btn-primary">
+                            <i class="ti ti-file-type-pdf me-1"></i>
+                            Open PDF
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Reading information -->
+        <div class="card">
+            <div class="card-body">
+
+                <h5 class="fw-semibold mb-4">
+                    Reading Information
+                </h5>
+
+                <div class="mb-3">
+                    <span class="text-muted">Status</span>
+                    <div class="fw-semibold">
+                        @Model.ReadingStatus
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <span class="text-muted">Rating</span>
+                    <div class="fw-semibold">@rating</div>
+                </div>
+
+                <div class="mb-3">
+                    <span class="text-muted">Deadline</span>
+                    <div class="fw-semibold">@dueDate</div>
+                </div>
+
+                <div class="mb-3">
+                    <span class="text-muted">Started reading</span>
+                    <div>
+                        @(Model.StartedReadingOn?.ToString("yyyy-MM-dd")
+                            ?? "Not started")
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <span class="text-muted">Completed</span>
+                    <div>
+                        @(Model.CompletedOn?.ToString("yyyy-MM-dd")
+                            ?? "Not completed")
+                    </div>
+                </div>
+
+                <div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">
+                            Reading Progress
+                        </span>
+                        <span class="fw-semibold">
+                            @(Model.ReadingProgressPercent.HasValue
+                                ? $"{Model.ReadingProgressPercent.Value}%"
+                                : "N/A")
+                        </span>
+                    </div>
+
+                    <div class="progress" style="height: 10px">
+                        <div class="progress-bar"
+                             role="progressbar"
+                             style="width: @(Model.ReadingProgressPercent ?? 0)%"
+                             aria-valuenow="@(Model.ReadingProgressPercent ?? 0)"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+
+                    <p class="text-muted small mt-2 mb-0">
+                        Page @Model.CurrentPage
+                        of @(Model.TotalPages?.ToString() ?? "unknown")
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

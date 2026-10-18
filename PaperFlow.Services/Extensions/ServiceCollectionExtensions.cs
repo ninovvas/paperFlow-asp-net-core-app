@@ -38,6 +38,8 @@
             // Database import
             services.AddScoped<IPaperImportService,PaperImportService>();
 
+            services.AddScoped<IPaperDetailsService,PaperDetailsService>();
+
             return services;
         }
 
