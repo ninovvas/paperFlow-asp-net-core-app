@@ -1,0 +1,223 @@
+﻿@model PaperFlow.Web.ViewModels.Papers.PaperReadingEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Reading Information";
+
+    int progress = Model.TotalPages is > 0
+        ? Math.Clamp(
+            (int)Math.Round(
+                100.0 * Model.CurrentPage /
+                Model.TotalPages.Value),
+            0, 100)
+        : 0;
+}
+
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Papers" asp-action="Index">
+                    My Papers
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-controller="PaperDetails"
+                   asp-action="Details"
+                   asp-route-id="@Model.PaperId">
+                    Paper Details
+                </a>
+            </li>
+            <li class="breadcrumb-item active">
+                Edit Reading
+            </li>
+        </ol>
+    </nav>
+
+    <h3 class="fw-semibold">Edit Reading Information</h3>
+
+    <p class="text-muted">@Model.Title</p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+
+        <form asp-controller="PaperReading"
+              asp-action="Edit"
+              asp-route-id="@Model.PaperId"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input asp-for="PaperId" type="hidden" />
+
+            <div asp-validation-summary="All"
+                 class="text-danger mb-3"></div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+                    <label asp-for="Status"
+                           class="form-label"></label>
+
+                    <select asp-for="Status"
+                            class="form-select">
+                        <option value="NotStarted">Not Started</option>
+                        <option value="WantToRead">Want to Read</option>
+                        <option value="Reading">Currently Reading</option>
+                        <option value="Completed">Completed</option>
+                        <option value="OnHold">On Hold</option>
+                    </select>
+
+                    <span asp-validation-for="Status"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="DueDate"
+                           class="form-label"></label>
+
+                    <input asp-for="DueDate"
+                           type="date"
+                           class="form-control" />
+
+                    <span asp-validation-for="DueDate"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="CurrentPage"
+                           class="form-label"></label>
+
+                    <input asp-for="CurrentPage"
+                           type="number"
+                           min="0"
+                           class="form-control"
+                           id="currentPage" />
+
+                    <span asp-validation-for="CurrentPage"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="TotalPages"
+                           class="form-label"></label>
+
+                    <input asp-for="TotalPages"
+                           type="number"
+                           min="1"
+                           class="form-control"
+                           id="totalPages" />
+
+                    <span asp-validation-for="TotalPages"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Reading Progress</span>
+                        <strong id="progressText">@progress%</strong>
+                    </div>
+
+                    <div class="progress" style="height: 12px">
+                        <div class="progress-bar"
+                             id="progressBar"
+                             role="progressbar"
+                             style="width: @(progress)%"
+                             aria-valuenow="@progress"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Rating"
+                           class="form-label"></label>
+
+                    <select asp-for="Rating"
+                            class="form-select">
+                        <option value="">Not Rated</option>
+                        <option value="1">1 Star</option>
+                        <option value="2">2 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="5">5 Stars</option>
+                    </select>
+
+                    <span asp-validation-for="Rating"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="Notes"
+                           class="form-label"></label>
+
+                    <textarea asp-for="Notes"
+                              rows="6"
+                              class="form-control"
+                              placeholder="Key findings, research ideas, observations..."></textarea>
+
+                    <span asp-validation-for="Notes"
+                          class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit"
+                        class="btn btn-primary">
+                    <i class="ti ti-device-floppy me-1"></i>
+                    Save Changes
+                </button>
+
+                <a asp-controller="PaperDetails"
+                   asp-action="Details"
+                   asp-route-id="@Model.PaperId"
+                   class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const current =
+                document.getElementById("currentPage");
+
+            const total =
+                document.getElementById("totalPages");
+
+            const bar =
+                document.getElementById("progressBar");
+
+            const label =
+                document.getElementById("progressText");
+
+            function updateProgress() {
+                const currentValue = Number(current.value);
+                const totalValue = Number(total.value);
+
+                const percent = totalValue > 0
+                    ? Math.min(100, Math.max(0,
+                        Math.round(currentValue / totalValue * 100)))
+                    : 0;
+
+                bar.style.width = percent + "%";
+                bar.setAttribute("aria-valuenow", percent);
+                label.textContent = totalValue > 0
+                    ? percent + "%"
+                    : "N/A";
+            }
+
+            current.addEventListener("input", updateProgress);
+            total.addEventListener("input", updateProgress);
+
+            updateProgress();
+        });
+    </script>
+}
+

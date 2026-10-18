@@ -40,6 +40,8 @@
 
             services.AddScoped<IPaperDetailsService,PaperDetailsService>();
 
+            services.AddScoped<IPaperReadingService, PaperReadingService>();
+
             return services;
         }
 
