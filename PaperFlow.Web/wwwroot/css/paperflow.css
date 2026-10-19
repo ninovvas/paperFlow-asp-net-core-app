@@ -147,3 +147,73 @@
     }
 }
 
+
+/* ============================================
+   PaperFlow - Research Library
+   ============================================ */
+
+.paperflow-papers-table {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+    .paperflow-papers-table thead th {
+        font-weight: 600;
+        font-size: 0.82rem;
+        color: #5a6474;
+        white-space: nowrap;
+        padding: 14px 12px;
+        border-bottom: 1px solid #e7edf3;
+    }
+
+    .paperflow-papers-table tbody td {
+        padding: 16px 12px;
+        vertical-align: middle;
+        border-bottom: 1px solid #edf1f6;
+    }
+
+    .paperflow-papers-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+.paperflow-title-column {
+    min-width: 300px;
+    max-width: 580px;
+    overflow-wrap: anywhere;
+}
+
+.paperflow-date,
+.paperflow-nowrap {
+    white-space: nowrap;
+}
+
+.paperflow-actions {
+    white-space: nowrap;
+    min-width: 125px;
+}
+
+    .paperflow-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        padding: 0;
+        border-radius: 7px;
+    }
+
+        .paperflow-actions .btn i {
+            font-size: 17px;
+        }
+
+.paperflow-papers-table tbody tr:hover {
+    background-color: #f8faff;
+}
+
+@media (max-width: 991px) {
+    .paperflow-title-column {
+        min-width: 240px;
+    }
+}
+
+

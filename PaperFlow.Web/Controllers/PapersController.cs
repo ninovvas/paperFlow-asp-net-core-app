@@ -10,7 +10,7 @@
     using PaperFlow.Web.ViewModels.Papers;
 
     [Authorize]
-    public class PapersController : Controller
+    public partial class PapersController : Controller
     {
         private readonly PowerFlowDbContext context;
 

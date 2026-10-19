@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "Delete All Papers";
+    int paperCount = (int)(ViewBag.PaperCount ?? 0);
+}
+
+<div class="mb-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-controller="Papers" asp-action="Index">
+                    My Papers
+                </a>
+            </li>
+            <li class="breadcrumb-item active">
+                Delete All
+            </li>
+        </ol>
+    </nav>
+
+    <h3 class="fw-semibold">Delete All My Papers</h3>
+    <p class="text-muted">
+        Permanently delete your personal paper library.
+    </p>
+</div>
+
+<div class="card border-danger">
+    <div class="card-body">
+
+        <div class="alert alert-danger">
+            <h5 class="fw-semibold">
+                <i class="ti ti-alert-triangle me-1"></i>
+                Warning: Irreversible Action
+            </h5>
+
+            <p class="mb-0">
+                You are about to permanently delete
+                <strong>@paperCount</strong>
+                paper(s), including reading progress,
+                ratings and personal notes.
+            </p>
+        </div>
+
+        <p>
+            Only papers belonging to your account
+            will be deleted. Other users' libraries
+            will remain unchanged.
+        </p>
+
+        <form asp-controller="Papers"
+              asp-action="DeleteAll"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="All"
+                 class="text-danger mb-3"></div>
+
+            <div class="mb-4">
+                <label for="confirmation" class="form-label">
+                    Type <strong>DELETE ALL</strong> to confirm.
+                </label>
+
+                <input id="confirmation"
+                       name="confirmation"
+                       class="form-control"
+                       autocomplete="off"
+                       placeholder="DELETE ALL"
+                       required />
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit"
+                        class="btn btn-danger"
+                        disabled="@(paperCount == 0)">
+                    <i class="ti ti-trash me-1"></i>
+                    Permanently Delete All Papers
+                </button>
+
+                <a asp-controller="Papers"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+

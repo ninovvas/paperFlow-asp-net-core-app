@@ -35,13 +35,15 @@
                 })
             .AddHttpMessageHandler<ArxivRateLimitHandler>();
 
-            // Database import
             services.AddScoped<IPaperImportService,PaperImportService>();
 
             services.AddScoped<IPaperDetailsService,PaperDetailsService>();
 
             services.AddScoped<IPaperReadingService, PaperReadingService>();
 
+            services.AddScoped<IPaperEditService, PaperEditService>();
+
+            services.AddScoped<IPaperDeleteService, PaperDeleteService>();
             return services;
         }
 
