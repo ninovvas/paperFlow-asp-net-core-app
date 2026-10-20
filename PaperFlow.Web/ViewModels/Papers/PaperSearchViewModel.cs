@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Web.ViewModels.Papers
+namespace PaperFlow.Web.ViewModels.Papers
 {
     using System.ComponentModel.DataAnnotations;
     using PaperFlow.Services.Models;
@@ -49,6 +49,10 @@
 
         public List<string> AvailableSources { get; set; }
             = new();
+
+        public string? SearchId { get; set; }
+
+        public HashSet<string> SavedExternalIds { get; set; } = new(StringComparer.Ordinal);
 
         public bool HasSearched { get; set; }
 

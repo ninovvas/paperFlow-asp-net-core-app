@@ -70,6 +70,12 @@ builder.Services.AddRazorPages();
 var app = builder.Build();
 
 // ==========================================
+// Search result caching
+// ==========================================
+
+builder.Services.AddMemoryCache();
+
+// ==========================================
 // Error handling
 // ==========================================
 
