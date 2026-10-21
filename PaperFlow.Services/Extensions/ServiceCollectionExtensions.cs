@@ -44,6 +44,9 @@
             services.AddScoped<IPaperEditService, PaperEditService>();
 
             services.AddScoped<IPaperDeleteService, PaperDeleteService>();
+
+            services.AddScoped<IPaperSavedStatusService, PaperSavedStatusService>();
+
             return services;
         }
 

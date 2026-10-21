@@ -15,17 +15,20 @@ namespace PaperFlow.Web.Controllers
         private static readonly TimeSpan SearchLifetime = TimeSpan.FromMinutes(30);
         private readonly IPaperSearchService searchService;
         private readonly IPaperImportService importService;
+        private readonly IPaperSavedStatusService savedStatusService;
         private readonly IMemoryCache cache;
         private readonly ILogger<PaperSearchController> logger;
 
         public PaperSearchController(
             IPaperSearchService searchService,
             IPaperImportService importService,
+            IPaperSavedStatusService savedStatusService,
             IMemoryCache cache,
             ILogger<PaperSearchController> logger)
         {
             this.searchService = searchService;
             this.importService = importService;
+            this.savedStatusService = savedStatusService;
             this.cache = cache;
             this.logger = logger;
         }
@@ -46,6 +49,7 @@ namespace PaperFlow.Web.Controllers
                 if (TryGetCachedSearch(searchId, out var cached))
                 {
                     cached.AvailableSources = searchService.AvailableProviderIds.ToList();
+                    await RefreshSavedStatusAsync(cached, cancellationToken);
                     return View(cached);
                 }
 
@@ -80,6 +84,8 @@ namespace PaperFlow.Web.Controllers
 
                 model.Results = result.Papers;
                 model.FailedSources = result.FailedSources;
+
+                await RefreshSavedStatusAsync(model, cancellationToken);
 
                 // A cache entry is tied to the authenticated user's Identity ID.
                 // Anonymous users can search, but cannot save papers.
@@ -145,7 +151,8 @@ namespace PaperFlow.Web.Controllers
             if (string.IsNullOrWhiteSpace(searchId) ||
                 !TryGetCachedSearch(searchId, out var cached))
             {
-                TempData["ErrorMessage"] = "Search results have expired. Please search again.";
+                TempData["ErrorMessage"] =
+                    "Search results have expired. Please search again.";
                 return BackToSearch();
             }
 
@@ -213,10 +220,188 @@ namespace PaperFlow.Web.Controllers
             catch (InvalidOperationException ex)
             {
                 logger.LogWarning(ex, "Import conflict");
-                TempData["ErrorMessage"] = "Paper could not be saved. Please try again.";
+                TempData["ErrorMessage"] =
+                    "Paper could not be saved. Please try again.";
             }
 
             return BackToSearch();
+        }
+
+        // POST: /PaperSearch/SaveSelected
+        // Import a bounded selection only from the authenticated user's cached results.
+        [HttpPost("SaveSelected")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveSelected(
+            [FromForm] string? searchId,
+            [FromForm] List<string>? selectedPapers,
+            CancellationToken cancellationToken)
+        {
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Challenge();
+
+            IActionResult BackToSearch() =>
+                !string.IsNullOrWhiteSpace(searchId)
+                    ? RedirectToAction(nameof(Index), new { searchId })
+                    : RedirectToAction(nameof(Index));
+
+            if (string.IsNullOrWhiteSpace(searchId) ||
+                !TryGetCachedSearch(searchId, out var cached))
+            {
+                TempData["ErrorMessage"] =
+                    "Search results have expired. Please search again.";
+                return BackToSearch();
+            }
+
+            // Submitted keys have the format: arxiv:<externalId>.
+            // Use only trusted source + ID pairs from this search session.
+            var distinctKeys = (selectedPapers ?? new List<string>())
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+
+            if (distinctKeys.Count == 0)
+            {
+                TempData["InfoMessage"] = "Select at least one paper to save.";
+                return BackToSearch();
+            }
+
+            const int maxBulkSelection = 50;
+            if (distinctKeys.Count > maxBulkSelection)
+            {
+                TempData["ErrorMessage"] =
+                    $"Select no more than {maxBulkSelection} papers at once.";
+                return BackToSearch();
+            }
+
+            var allowed = cached.Results
+                .Where(p => string.Equals(p.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase)
+                            && !string.IsNullOrWhiteSpace(p.ExternalId))
+                .GroupBy(p => "arxiv:" + p.ExternalId, StringComparer.Ordinal)
+                .ToDictionary(g => g.Key, g => g.First().ExternalId,
+                    StringComparer.Ordinal);
+
+            // Reject the entire request if any key was injected or expired.
+            if (distinctKeys.Any(key => !allowed.ContainsKey(key)))
+            {
+                TempData["ErrorMessage"] = "Invalid paper selection. Please try again.";
+                return BackToSearch();
+            }
+
+            int imported = 0;
+            int existing = 0;
+            int failed = 0;
+            int skipped = 0;
+            var failedTitles = new List<string>();
+
+            foreach (string key in distinctKeys)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                string externalId = allowed[key];
+
+                if (cached.SavedExternalIds.Contains(externalId))
+                {
+                    skipped++;
+                    continue;
+                }
+
+                try
+                {
+                    var result = await importService.ImportFromArxivAsync(
+                        externalId, userId, cancellationToken);
+
+                    if (result.AlreadyExists)
+                    {
+                        existing++;
+                        cached.SavedExternalIds.Add(externalId);
+                    }
+                    else if (result.Success)
+                    {
+                        imported++;
+                        cached.SavedExternalIds.Add(externalId);
+                    }
+                    else
+                    {
+                        failed++;
+                        failedTitles.Add(externalId);
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    logger.LogWarning(ex, "Invalid arXiv paper {ExternalId}", externalId);
+                    failed++;
+                    failedTitles.Add(externalId);
+                }
+                catch (HttpRequestException ex)
+                {
+                    logger.LogWarning(ex, "Bulk import failed for {ExternalId}", externalId);
+                    failed++;
+                    failedTitles.Add(externalId);
+                    // Stop when rate limited: avoid hammering arXiv with more requests.
+                    if (ex.StatusCode == HttpStatusCode.TooManyRequests)
+                    {
+                        TempData["InfoMessage"] =
+                            "arXiv is temporarily limiting requests. Remaining papers were not processed.";
+                        break;
+                    }
+                }
+                catch (XmlException ex)
+                {
+                    logger.LogWarning(ex, "Invalid XML for {ExternalId}", externalId);
+                    failed++;
+                    failedTitles.Add(externalId);
+                }
+                catch (OperationCanceledException)
+                    when (!cancellationToken.IsCancellationRequested)
+                {
+                    failed++;
+                    failedTitles.Add(externalId);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    logger.LogWarning(ex, "Import conflict for {ExternalId}", externalId);
+                    failed++;
+                    failedTitles.Add(externalId);
+                }
+            }
+
+            TempData["BulkImportSummary"] =
+                $"Bulk import: {imported} imported, {existing} already in library, " +
+                $"{skipped} previously saved in this search, {failed} failed.";
+
+            if (failedTitles.Count > 0)
+                TempData["BulkImportFailures"] =
+                    "Failed arXiv IDs: " + string.Join(", ", failedTitles);
+
+            return BackToSearch();
+        }
+
+        // The database, not the in-memory import flags, is the source of truth.
+        // A newly created search and an existing cached search use the same check.
+        private async Task RefreshSavedStatusAsync(
+            PaperSearchViewModel model,
+            CancellationToken cancellationToken)
+        {
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                model.SavedExternalIds.Clear();
+                return;
+            }
+
+            var arxivIds = model.Results
+                .Where(p => string.Equals(p.SourceName, "arxiv",
+                    StringComparison.OrdinalIgnoreCase))
+                .Select(p => p.ExternalId)
+                .Where(id => !string.IsNullOrWhiteSpace(id))
+                .Distinct(StringComparer.Ordinal)
+                .ToArray();
+
+            // Replacing instead of unioning the set also correctly handles deletion
+            // of papers from My Library while the search cache is still alive.
+            model.SavedExternalIds = await savedStatusService.GetSavedArxivIdsAsync(
+                userId, arxivIds, cancellationToken);
         }
 
         private bool TryGetCachedSearch(
