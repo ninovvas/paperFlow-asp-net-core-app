@@ -4,8 +4,6 @@
     using PaperFlow.Services.Models;
     using System;
     using System.Collections.Generic;
-    using System.Text;
-    using System.Xml;
     using System.Xml.Linq;
 
     public class ArxivSearchService : IResearchPaperProvider
@@ -43,7 +41,7 @@
                 .Last();
 
             // Remove arXiv version suffix for
-            // duplicate detection, e.g. 2401.12345v2.
+            // duplicate detection
 
             externalId = System.Text.RegularExpressions.Regex
                 .Replace(externalId, @"v\d+$", "");
@@ -141,7 +139,20 @@
 
         public async Task<IReadOnlyList<PaperSearchResult>> SearchAsync(PaperSearchCriteria criteria, CancellationToken cancellationToken = default)
         {
+            // Respect the offset even if the existing query builder does not
+            // yet expose arXiv's "start" query parameter.
+            if (criteria.Start < 0)
+                throw new ArgumentOutOfRangeException(nameof(criteria.Start));
+
             string url = ArxivQueryBuilder.BuildRequestUrl(criteria);
+            string startParameter = "start=" +
+                criteria.Start.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            url = System.Text.RegularExpressions.Regex.IsMatch(
+                    url, @"([?&])start=\d+", System.Text.RegularExpressions.RegexOptions.IgnoreCase)
+                ? System.Text.RegularExpressions.Regex.Replace(
+                    url, @"([?&])start=\d+", "$1" + startParameter,
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase)
+                : url + (url.Contains('?') ? "&" : "?") + startParameter;
 
             using var response = await httpClient.GetAsync(
                 url,

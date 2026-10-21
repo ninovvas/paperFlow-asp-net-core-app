@@ -1,3 +1,4 @@
+
 namespace PaperFlow.Web.ViewModels.Papers
 {
     using System.ComponentModel.DataAnnotations;
@@ -50,9 +51,17 @@ namespace PaperFlow.Web.ViewModels.Papers
         public List<string> AvailableSources { get; set; }
             = new();
 
-        public string? SearchId { get; set; }
+        // Cached search identifier
+        public string SearchId { get; set; } = string.Empty;
 
-        public HashSet<string> SavedExternalIds { get; set; } = new(StringComparer.Ordinal);
+        // SQL Server saved detection
+        public HashSet<string> SavedExternalIds { get; set; }
+            = new(StringComparer.OrdinalIgnoreCase);
+
+        // Pagination
+        public int NextStart { get; set; }
+
+        public bool HasMoreResults { get; set; }
 
         public bool HasSearched { get; set; }
 
@@ -111,4 +120,3 @@ namespace PaperFlow.Web.ViewModels.Papers
         }
     }
 }
-

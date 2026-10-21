@@ -84,7 +84,13 @@ namespace PaperFlow.Web.Controllers
 
                 model.Results = result.Papers;
                 model.FailedSources = result.FailedSources;
+                // If a source failed, allow retrying the first missing page.
+                model.NextStart = result.FailedSources.Count == 0
+                    ? model.ToCriteria().MaxResults : 0;
+                model.HasMoreResults = result.FailedSources.Count > 0 ||
+                    result.Papers.Count >= model.ToCriteria().MaxResults;
 
+                // check the database for previously imported papers.
                 await RefreshSavedStatusAsync(model, cancellationToken);
 
                 // A cache entry is tied to the authenticated user's Identity ID.
@@ -127,6 +133,107 @@ namespace PaperFlow.Web.Controllers
             }
 
             return View(model);
+        }
+
+        // POST: /PaperSearch/LoadMore
+        // Offset and filters come exclusively from the authenticated user's cache.
+        [HttpPost("LoadMore")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoadMore(
+            [FromForm] string? searchId,
+            CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(searchId) ||
+                !TryGetCachedSearch(searchId, out var model))
+            {
+                TempData["ErrorMessage"] =
+                    "Search results expired. Please run the search again.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            IActionResult Back() => RedirectToAction(nameof(Index), new { searchId });
+            if (!model.HasMoreResults)
+                return Back();
+
+            int pageSize = Math.Clamp(model.ToCriteria().MaxResults, 1, 50);
+            var criteria = model.ToCriteria();
+            criteria.Start = model.NextStart;
+            criteria.MaxResults = pageSize;
+
+            try
+            {
+                var result = await searchService.SearchAsync(
+                    criteria, model.SelectedSources, cancellationToken);
+
+                // Deduplicate within and across pages, using DOI when available.
+                var combined = model.Results.Concat(result.Papers)
+                    .GroupBy(PaperKey, StringComparer.OrdinalIgnoreCase)
+                    .Select(g => g.First())
+                    .ToList();
+
+                int added = combined.Count - model.Results.Count;
+                model.Results = combined;
+                model.FailedSources = result.FailedSources;
+
+                // One request covers the same offset for each selected provider.
+                // Advance by the requested page size, NOT the de-duplicated count.
+                // A partial failure must be retryable, not silently skipped.
+                if (result.FailedSources.Count > 0)
+                {
+                    TempData["InfoMessage"] =
+                        "One or more sources are unavailable. Retry Load More.";
+                }
+                else
+                {
+                    model.NextStart = checked(criteria.Start + pageSize);
+                    model.HasMoreResults = result.Papers.Count >= pageSize;
+                    if (added == 0 && result.Papers.Count == 0)
+                        model.HasMoreResults = false;
+                }
+
+                await RefreshSavedStatusAsync(model, cancellationToken);
+                TempData["InfoMessage"] ??=
+                    added > 0 ? $"Loaded {added} additional papers." :
+                        "No new papers were found on this page.";
+            }
+            catch (HttpRequestException ex)
+            {
+                logger.LogWarning(ex, "Load More failed");
+                TempData["ErrorMessage"] =
+                    ex.StatusCode == HttpStatusCode.TooManyRequests
+                        ? "The research API is rate limiting requests. Try again later."
+                        : "Unable to load additional papers.";
+            }
+            catch (XmlException ex)
+            {
+                logger.LogWarning(ex, "Invalid XML while loading papers");
+                TempData["ErrorMessage"] = "Invalid response from research source.";
+            }
+            catch (OperationCanceledException)
+                when (!cancellationToken.IsCancellationRequested)
+            {
+                TempData["ErrorMessage"] = "Loading additional papers timed out.";
+            }
+            catch (ArgumentException ex)
+            {
+                logger.LogWarning(ex, "Load More failed validation");
+                TempData["ErrorMessage"] = "Invalid search criteria.";
+            }
+
+            return Back();
+        }
+
+        private static string PaperKey(PaperFlow.Services.Models.PaperSearchResult paper)
+        {
+            if (!string.IsNullOrWhiteSpace(paper.Doi))
+            {
+                string doi = paper.Doi.Trim()
+                    .Replace("https://doi.org/", "", StringComparison.OrdinalIgnoreCase)
+                    .ToLowerInvariant();
+                return "doi:" + doi;
+            }
+            return $"{paper.SourceName}:{paper.ExternalId}";
         }
 
         // POST: /PaperSearch/Save
@@ -377,7 +484,7 @@ namespace PaperFlow.Web.Controllers
             return BackToSearch();
         }
 
-        // The database, not the in-memory import flags, is the source of truth.
+        // The database, not the in memory import flags, is the source of truth.
         // A newly created search and an existing cached search use the same check.
         private async Task RefreshSavedStatusAsync(
             PaperSearchViewModel model,

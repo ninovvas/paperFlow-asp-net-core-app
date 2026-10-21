@@ -381,6 +381,24 @@
         </div>
     }
 
+    @if (User.Identity?.IsAuthenticated == true &&
+         !string.IsNullOrWhiteSpace(Model.SearchId) &&
+         Model.HasMoreResults)
+    {
+        <form asp-controller="PaperSearch" asp-action="LoadMore"
+              method="post" id="loadMoreForm" class="text-center my-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="searchId" value="@Model.SearchId" />
+            <button class="btn btn-outline-primary px-4" type="submit">
+                <i class="ti ti-plus me-1"></i>
+                Load @Model.MaxResults More Papers
+            </button>
+            <div class="text-muted small mt-2">
+                @Model.Results.Count results loaded
+            </div>
+        </form>
+    }
+
     @if (!Model.Results.Any() &&
          !Model.FailedSources.Any() &&
          string.IsNullOrWhiteSpace(Model.ErrorMessage) &&
@@ -392,45 +410,106 @@
     }
 }
 
+
+
+<!-- Step 5H: loading overlay for search and imports -->
+<div id="paperflowLoadingOverlay" class="paperflow-loading-overlay" role="status"
+     aria-live="polite" aria-label="Loading papers" hidden>
+    <div class="paperflow-loading-dialog" aria-hidden="true">
+        <div class="spinner-border text-primary" style="width:3rem;height:3rem" role="presentation"></div>
+        <div id="paperflowLoadingText" class="fw-semibold mt-3">Loading papers...</div>
+        <div class="small text-muted mt-1">Please wait while the request is processed.</div>
+    </div>
+</div>
+<style>
+    .paperflow-loading-overlay:not([hidden]) {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(21, 33, 53, .45);
+    }
+
+    .paperflow-loading-dialog {
+        min-width: 260px;
+        max-width: 90vw;
+        text-align: center;
+        background: var(--bs-body-bg, #fff);
+        color: var(--bs-body-color, #222);
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, .18);
+    }
+</style>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const flag = document.getElementById("advancedFlag");
+            // Show progress only when the browser is really submitting a valid form.
+            // Each form keeps its existing ASP.NET Core antiforgery token.
+                    const loadingOverlay = document.getElementById("paperflowLoadingOverlay");
+            const loadingText = document.getElementById("paperflowLoadingText");
+            const showLoading = (message) => {
+                        loadingText.textContent = message;
+                loadingOverlay.hidden = false;
+                    };
+                document.querySelectorAll('form').forEach(form => {
+                    if (form.id !== 'searchForm' &&
+                            form.id !== 'bulkImportForm' &&
+                    form.id !== 'loadMoreForm' &&
+                    !form.querySelector('input[name="externalId"]')) return;
+                     form.addEventListener('submit', (event) => {
+                    if (event.defaultPrevented || !form.checkValidity()) return;
+                            if (form.id === 'bulkImportForm' &&
+                        !form.querySelector('.bulk-paper-checkbox:checked')) return;
+                    showLoading(form.id === 'searchForm'
+                        ? 'Searching research sources...'
+                                : form.id === 'loadMoreForm'
+                            ? 'Loading more papers...'
+                            : 'Saving selected papers...');
+                        });
+                });
+                window.addEventListener('pageshow', () => {
+                loadingOverlay.hidden = true;
+                    });
+                    const flag = document.getElementById("advancedFlag");
             const filters = document.getElementById("advancedFilters");
 
-            const simple = document.getElementById("simpleBtn");
+                    const simple = document.getElementById("simpleBtn");
             const advanced = document.getElementById("advancedBtn");
 
-            function setMode(isAdvanced) {
-                flag.value = isAdvanced ? "true" : "false";
-                filters.style.display =
-                    isAdvanced ? "block" : "none";
+                function setMode(isAdvanced) {
+                        flag.value = isAdvanced ? "true" : "false";
+                        filters.style.display =
+                            isAdvanced ? "block" : "none";
 
-                filters.querySelectorAll("input, select")
-                    .forEach(element => {
-                        element.disabled = !isAdvanced;
-                    });
+                        filters.querySelectorAll("input, select")
+                            .forEach(element => {
+                                element.disabled = !isAdvanced;
+                            });
 
-                simple.className = isAdvanced
-                    ? "btn btn-outline-primary"
-                    : "btn btn-primary";
+                        simple.className = isAdvanced
+                            ? "btn btn-outline-primary"
+                            : "btn btn-primary";
 
-                advanced.className = isAdvanced
-                    ? "btn btn-primary"
-                    : "btn btn-outline-primary";
-            }
+                        advanced.className = isAdvanced
+                            ? "btn btn-primary"
+                            : "btn btn-outline-primary";
+                    }
 
-            simple.addEventListener("click",
-                () => setMode(false));
+                    simple.addEventListener("click",
+                        () => setMode(false));
 
-            advanced.addEventListener("click",
-                () => setMode(true));
+                    advanced.addEventListener("click",
+                        () => setMode(true));
 
-            setMode(flag.value.toLowerCase() === "true");
+                    setMode(flag.value.toLowerCase() === "true");
 
-                const all = document.getElementById("selectAllPapers");
+                    const all = document.getElementById("selectAllPapers");
                     const clear = document.getElementById("clearSelection");
                     const save = document.getElementById("saveSelectedButton");
                     const count = document.getElementById("selectionCount");
