@@ -19,19 +19,112 @@
             this.context = context;
         }
 
+        // GET /Papers: server-side search, filtering, sorting and pagination.
         [HttpGet]
         public async Task<IActionResult> Index(
-            CancellationToken cancellationToken)
+            [FromQuery] PaperLibraryQuery query,
+            CancellationToken cancellationToken = default)
         {
+            query ??= new PaperLibraryQuery();
+            query.Normalize();
+
             string userId = GetUserId();
 
-            var papers = await context.Papers
+            // Statistics always describe the complete user's library.
+            IQueryable<Paper> ownedPapers = context.Papers
                 .AsNoTracking()
-                .Where(p => p.UserId == userId)
-                .OrderByDescending(p => p.CreatedOn)
+                .Where(p => p.UserId == userId);
+
+            int totalPapers = await ownedPapers.CountAsync(cancellationToken);
+            int readingCount = await ownedPapers.CountAsync(
+                p => p.Status == PaperFlow.Common.Enums.ReadingStatus.Reading,
+                cancellationToken);
+            int completedCount = await ownedPapers.CountAsync(
+                p => p.Status == PaperFlow.Common.Enums.ReadingStatus.Completed,
+                cancellationToken);
+
+            IQueryable<Paper> filtered = ownedPapers;
+
+            if (!string.IsNullOrWhiteSpace(query.Search))
+            {
+                string term = query.Search;
+                filtered = filtered.Where(p =>
+                    p.Title.Contains(term) ||
+                    (p.Doi != null && p.Doi.Contains(term)) ||
+                    p.PaperAuthors.Any(pa =>
+                        pa.Author.FullName.Contains(term)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.Status))
+            {
+                if (Enum.TryParse<PaperFlow.Common.Enums.ReadingStatus>(
+                    query.Status, ignoreCase: true, out var status) &&
+                    Enum.IsDefined(status))
+                {
+                    filtered = filtered.Where(p => p.Status == status);
+                    query.Status = status.ToString();
+                }
+                else
+                {
+                    query.Status = null;
+                }
+            }
+
+            if (query.SourceId.HasValue)
+            {
+                filtered = filtered.Where(
+                    p => p.ResearchSourceId == query.SourceId.Value);
+            }
+
+            filtered = query.Sort switch
+            {
+                "added_asc" => filtered.OrderBy(p => p.CreatedOn).ThenBy(p => p.Id),
+                "title_asc" => filtered.OrderBy(p => p.Title).ThenBy(p => p.Id),
+                "title_desc" => filtered.OrderByDescending(p => p.Title).ThenBy(p => p.Id),
+                "published_asc" => filtered.OrderBy(p => p.PublicationDate).ThenBy(p => p.Id),
+                "published_desc" => filtered.OrderByDescending(p => p.PublicationDate).ThenBy(p => p.Id),
+                "status_asc" => filtered.OrderBy(p => p.Status).ThenBy(p => p.Id),
+                "status_desc" => filtered.OrderByDescending(p => p.Status).ThenBy(p => p.Id),
+                "rating_asc" => filtered.OrderBy(p => p.Rating).ThenBy(p => p.Id),
+                "rating_desc" => filtered.OrderByDescending(p => p.Rating).ThenBy(p => p.Id),
+                _ => filtered.OrderByDescending(p => p.CreatedOn).ThenByDescending(p => p.Id)
+            };
+
+            int filteredCount = await filtered.CountAsync(cancellationToken);
+            int totalPages = Math.Max(1, (int)Math.Ceiling(
+                filteredCount / (double)query.PageSize));
+            query.Page = Math.Min(query.Page, totalPages);
+
+            var papers = await filtered
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
                 .ToListAsync(cancellationToken);
 
-            return View(papers);
+            // Only sources that exist in this user's own library.
+            var sources = await ownedPapers
+                .Where(p => p.ResearchSourceId != null && p.ResearchSource != null)
+                .Select(p => new PaperLibrarySourceOption
+                {
+                    Id = p.ResearchSourceId!.Value,
+                    Name = p.ResearchSource!.Name
+                })
+                .Distinct()
+                .OrderBy(s => s.Name)
+                .ToListAsync(cancellationToken);
+
+            var model = new PaperLibraryViewModel
+            {
+                Papers = papers,
+                Query = query,
+                TotalPapers = totalPapers,
+                ReadingCount = readingCount,
+                CompletedCount = completedCount,
+                FilteredCount = filteredCount,
+                TotalPages = totalPages,
+                Sources = sources
+            };
+
+            return View(model);
         }
 
         [HttpGet]
