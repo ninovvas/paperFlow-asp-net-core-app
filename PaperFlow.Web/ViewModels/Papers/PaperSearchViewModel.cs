@@ -1,4 +1,3 @@
-
 namespace PaperFlow.Web.ViewModels.Papers
 {
     using System.ComponentModel.DataAnnotations;
@@ -26,11 +25,13 @@ namespace PaperFlow.Web.ViewModels.Papers
         [Display(Name = "Submitted From")]
         [DataType(DataType.Date)]
         public DateOnly? SubmittedFrom { get; set; }
-            = new DateOnly(2024, 1, 1);
+        = DateOnly.FromDateTime(DateTime.Today).AddDays(-30);
 
         [Display(Name = "Submitted To")]
         [DataType(DataType.Date)]
         public DateOnly? SubmittedTo { get; set; }
+            = DateOnly.FromDateTime(DateTime.Today);
+
 
         [Display(Name = "Sort By")]
         public string SortBy { get; set; } = "submittedDate";
@@ -51,16 +52,15 @@ namespace PaperFlow.Web.ViewModels.Papers
         public List<string> AvailableSources { get; set; }
             = new();
 
-        // Cached search identifier
+        // Identifies the cached search for the authenticated user.
         public string SearchId { get; set; } = string.Empty;
 
-        // SQL Server saved detection
+        // arXiv IDs already stored in the current user's SQL Server library.
         public HashSet<string> SavedExternalIds { get; set; }
             = new(StringComparer.OrdinalIgnoreCase);
 
-        // Pagination
+        // Paging state is maintained in the authenticated user's search cache.
         public int NextStart { get; set; }
-
         public bool HasMoreResults { get; set; }
 
         public bool HasSearched { get; set; }
@@ -94,6 +94,7 @@ namespace PaperFlow.Web.ViewModels.Papers
                     new[] { nameof(SubmittedTo) });
             }
 
+
             if (SelectedSources.Count == 0)
             {
                 yield return new ValidationResult(
@@ -110,8 +111,8 @@ namespace PaperFlow.Web.ViewModels.Papers
                 SearchField = Advanced ? SearchField : "all",
                 Category = Advanced ? Category : null,
                 Author = Advanced ? Author : null,
-                SubmittedFrom = Advanced ? SubmittedFrom : null,
-                SubmittedTo = Advanced ? SubmittedTo : null,
+                SubmittedFrom = Advanced ? SubmittedFrom : DateOnly.FromDateTime(DateTime.UtcNow.Date).AddDays(-30),
+                SubmittedTo = Advanced ? SubmittedTo : DateOnly.FromDateTime(DateTime.UtcNow.Date),
                 SortBy = Advanced ? SortBy : "relevance",
                 SortOrder = Advanced ? SortOrder : "descending",
                 MaxResults = Advanced ? MaxResults : 10,
@@ -120,3 +121,4 @@ namespace PaperFlow.Web.ViewModels.Papers
         }
     }
 }
+

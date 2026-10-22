@@ -118,3 +118,17 @@ html[data-pf-theme="dark"] .pf-author-chip { background: #293a5e; color: var(--p
   html { scroll-behavior: auto; }
   .btn, .left-sidebar .sidebar-link { transition: none; }
 }
+
+
+/* Dark Mode - Form Labels */
+
+html[data-pf-theme="dark"] .body-wrapper .card .form-label,
+html[data-pf-theme="dark"] .body-wrapper .card label:not(.btn),
+html[data-pf-theme="dark"] .body-wrapper .card legend {
+    color: #d8e3f6 !important;
+}
+
+html[data-pf-theme="dark"] .body-wrapper .card .form-text {
+    color: #afbdd5 !important;
+}
+

@@ -1,9 +1,12 @@
-﻿@model PaperFlow.Web.ViewModels.Papers.PaperEditViewModel
+@model PaperFlow.Web.ViewModels.Papers.PaperEditViewModel
 
 @{
     ViewData["Title"] = "Edit Paper";
 }
 
+<link rel="stylesheet" href="~/css/paperflow-details-edit.css" asp-append-version="true" />
+
+<div class="pf-paper-edit-page">
 <div class="mb-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -130,6 +133,7 @@
             </div>
         </form>
     </div>
+</div>
 </div>
 
 @section Scripts {

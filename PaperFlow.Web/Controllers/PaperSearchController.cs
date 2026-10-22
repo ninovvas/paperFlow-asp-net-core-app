@@ -84,11 +84,15 @@ namespace PaperFlow.Web.Controllers
 
                 model.Results = result.Papers;
                 model.FailedSources = result.FailedSources;
-                // If a source failed, allow retrying the first missing page.
-                model.NextStart = result.FailedSources.Count == 0
-                    ? model.ToCriteria().MaxResults : 0;
-                model.HasMoreResults = result.FailedSources.Count > 0 ||
+                // A failed provider is NOT an empty successful page.
+                // Do not expose Load More after a failure (avoids repeated 429s).
+                model.NextStart = model.ToCriteria().MaxResults;
+                model.HasMoreResults = result.FailedSources.Count == 0 &&
                     result.Papers.Count >= model.ToCriteria().MaxResults;
+                if (result.FailedSources.Count > 0 && result.Papers.Count == 0)
+                    model.ErrorMessage =
+                        "arXiv is temporarily unavailable or rate-limited. " +
+                        "Your library is safe. Please try again later.";
 
                 // check the database for previously imported papers.
                 await RefreshSavedStatusAsync(model, cancellationToken);
@@ -181,8 +185,10 @@ namespace PaperFlow.Web.Controllers
                 // A partial failure must be retryable, not silently skipped.
                 if (result.FailedSources.Count > 0)
                 {
-                    TempData["InfoMessage"] =
-                        "One or more sources are unavailable. Retry Load More.";
+                    model.HasMoreResults = false;
+                    TempData["ErrorMessage"] =
+                        "arXiv is temporarily unavailable or rate-limited. " +
+                        "Previously loaded papers are preserved. Try again later.";
                 }
                 else
                 {
@@ -484,7 +490,7 @@ namespace PaperFlow.Web.Controllers
             return BackToSearch();
         }
 
-        // The database, not the in memory import flags, is the source of truth.
+        // The database, not the in-memory import flags, is the source of truth.
         // A newly created search and an existing cached search use the same check.
         private async Task RefreshSavedStatusAsync(
             PaperSearchViewModel model,

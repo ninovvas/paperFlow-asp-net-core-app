@@ -46,7 +46,7 @@
                 </div>
             }
 
-            <div asp-validation-summary="All"
+            <div asp-validation-summary="ModelOnly"
                  class="text-danger mb-3"></div>
 
             <div class="btn-group pf-search-mode mb-4" role="group" aria-label="Search mode">
@@ -132,6 +132,16 @@
                                    placeholder="Author name" />
                         </div>
 
+                        
+                        @{
+                            var today = DateOnly.FromDateTime(DateTime.UtcNow.Date);
+                            var earliest = today.AddDays(-30);
+
+                            var minSearchDate = earliest.ToString("yyyy-MM-dd");
+                            var maxSearchDate = today.ToString("yyyy-MM-dd");
+                        }
+
+                        
                         <div class="col-md-6">
                             <label asp-for="SubmittedFrom"
                                    class="form-label"></label>
@@ -139,6 +149,9 @@
                             <input asp-for="SubmittedFrom"
                                    type="date"
                                    class="form-control" />
+
+                            <span asp-validation-for="SubmittedFrom"
+                                  class="text-danger"></span>
                         </div>
 
                         <div class="col-md-6">
@@ -148,7 +161,13 @@
                             <input asp-for="SubmittedTo"
                                    type="date"
                                    class="form-control" />
+
+                            <span asp-validation-for="SubmittedTo"
+                                  class="text-danger"></span>
                         </div>
+
+
+
 
                         <div class="col-md-4">
                             <label asp-for="SortBy"
@@ -216,16 +235,27 @@
     {
         @if (Model.FailedSources.Any())
         {
-            <div class="alert alert-warning">
-                Unavailable sources:
-                @string.Join(", ", Model.FailedSources)
+            <div class="alert alert-warning" role="alert">
+                <strong><i class="ti ti-alert-triangle me-1"></i> Research provider temporarily unavailable.</strong>
+                <div>Unavailable sources: @string.Join(", ", Model.FailedSources)</div>
+                <div class="small mt-2">The provider may be rate-limiting requests. Please try again later. Your saved papers are unaffected.</div>
             </div>
         }
 
         <div class="pf-results-heading d-flex flex-wrap align-items-center justify-content-between gap-3 mt-4 mb-3">
             <div>
                 <div class="pf-search-eyebrow">DISCOVERED PUBLICATIONS</div>
-                <h4 class="fw-bold mb-0">Search Results <span class="pf-result-counter">@Model.Results.Count</span></h4>
+                <h4 class="fw-bold mb-0">
+                    Search Results
+                    @if (Model.Results.Any() || !Model.FailedSources.Any())
+                    {
+                        <span class="pf-result-counter">@Model.Results.Count</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning-subtle text-warning-emphasis">Unavailable</span>
+                    }
+                </h4>
             </div>
             <span class="pf-results-caption">Results loaded from the selected sources</span>
         </div>
@@ -390,7 +420,8 @@
 
         @if (User.Identity?.IsAuthenticated == true &&
              !string.IsNullOrWhiteSpace(Model.SearchId) &&
-             Model.HasMoreResults)
+             Model.HasMoreResults &&
+             !Model.FailedSources.Any())
         {
             <form asp-controller="PaperSearch" asp-action="LoadMore"
                   method="post" id="loadMoreForm" class="text-center my-4 pf-load-more">
@@ -421,7 +452,7 @@
 
 </div>
 
-<!-- Step 5H: loading overlay for search and imports -->
+<!-- loading overlay for search and imports -->
 <div id="paperflowLoadingOverlay" class="paperflow-loading-overlay" role="status"
      aria-live="polite" aria-label="Loading papers" hidden>
     <div class="paperflow-loading-dialog" aria-hidden="true">
@@ -458,6 +489,8 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            // Show progress only when the browser is really submitting a valid form.
+            // Each form keeps its existing ASP.NET Core antiforgery token.
             const loadingOverlay = document.getElementById("paperflowLoadingOverlay");
             const loadingText = document.getElementById("paperflowLoadingText");
             const showLoading = (message) => {

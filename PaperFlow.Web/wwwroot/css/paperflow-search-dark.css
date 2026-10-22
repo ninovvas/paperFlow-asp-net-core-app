@@ -1,0 +1,154 @@
+﻿/* Dark theme corrections for Search, no Razor or JS changes.
+   Include AFTER paperflow-search.css and paperflow-theme.css. */
+html[data-pf-theme="dark"] .pf-search-page {
+    --pf-search-foreground: #e9effc;
+    --pf-search-muted: #b3c0d8;
+    --pf-search-border: #394a67;
+    color: var(--pf-search-foreground);
+}
+    /* The original Search stylesheet contains light-only hard-coded surfaces. */
+    html[data-pf-theme="dark"] .pf-search-page .pf-search-hero {
+        background: linear-gradient(115deg,#263858 0%,#21324d 60%,#1c3d49 100%);
+        border-color: #425775;
+    }
+
+        html[data-pf-theme="dark"] .pf-search-page .pf-search-hero h3,
+        html[data-pf-theme="dark"] .pf-search-page .pf-results-heading h4,
+        html[data-pf-theme="dark"] .pf-search-page .pf-paper-title,
+        html[data-pf-theme="dark"] .pf-search-page h1,
+        html[data-pf-theme="dark"] .pf-search-page h2,
+        html[data-pf-theme="dark"] .pf-search-page h4,
+        html[data-pf-theme="dark"] .pf-search-page h5 {
+            color: #f0f4ff;
+        }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-search-eyebrow {
+        color: #a9baf8;
+    }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-search-hero p,
+    html[data-pf-theme="dark"] .pf-search-page .pf-results-caption,
+    html[data-pf-theme="dark"] .pf-search-page .pf-paper-meta,
+    html[data-pf-theme="dark"] .pf-search-page .pf-paper-date,
+    html[data-pf-theme="dark"] .pf-search-page .pf-paper-authors {
+        color: var(--pf-search-muted);
+    }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-search-panel,
+    html[data-pf-theme="dark"] .pf-search-page .pf-result-card {
+        background: #1e2b43;
+        border-color: var(--pf-search-border);
+    }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-advanced-filters,
+    html[data-pf-theme="dark"] .pf-search-page .pf-advanced-filters.card,
+    html[data-pf-theme="dark"] .pf-search-page .pf-selection-toolbar {
+        background: #263550;
+        border-color: #405372;
+        color: var(--pf-search-foreground);
+    }
+
+        html[data-pf-theme="dark"] .pf-search-page .pf-search-panel .form-label,
+        html[data-pf-theme="dark"] .pf-search-page .pf-advanced-filters label,
+        html[data-pf-theme="dark"] .pf-search-page .form-check-label,
+        html[data-pf-theme="dark"] .pf-search-page legend,
+        html[data-pf-theme="dark"] .pf-search-page .text-dark {
+            color: #d7e1f5 !important;
+        }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-search-panel .form-control,
+    html[data-pf-theme="dark"] .pf-search-page .pf-search-panel .form-select {
+        background-color: #172238;
+        border-color: #4a5b78;
+        color: #f2f5fd;
+        color-scheme: dark;
+    }
+
+        html[data-pf-theme="dark"] .pf-search-page .pf-search-panel .form-control::placeholder {
+            color: #a6b4cc;
+            opacity: 1;
+        }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-search-panel .form-select {
+        /* Bootstrap default select icon is often dark: use a contrasting light chevron. */
+        --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23d7e1f5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    }
+
+    html[data-pf-theme="dark"] .pf-search-page input[type="date"] {
+        color-scheme: dark;
+    }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-search-panel .form-check-input {
+        background-color: #172238;
+        border-color: #7284a6;
+    }
+
+        html[data-pf-theme="dark"] .pf-search-page .pf-search-panel .form-check-input:checked {
+            background-color: #647cff;
+            border-color: #647cff;
+        }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-abstract {
+        background: #263550;
+        border-color: #405372;
+        color: #c6d3e8;
+    }
+
+        html[data-pf-theme="dark"] .pf-search-page .pf-abstract summary {
+            color: #b2c1ff;
+        }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-source-badge,
+    html[data-pf-theme="dark"] .pf-search-page .pf-result-counter {
+        background: #304572;
+        border-color: #4a6290;
+        color: #dbe3ff;
+    }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-category-chip {
+        background: #304159;
+        border-color: #4a5973;
+        color: #d8e1f3;
+    }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-saved-badge {
+        background: #163e34;
+        border-color: #276c54;
+        color: #a8f0ca;
+    }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-result-actions {
+        border-top-color: #405372;
+    }
+
+    html[data-pf-theme="dark"] .pf-search-page .pf-result-card:hover {
+        border-color: #7186c2;
+        box-shadow: 0 12px 30px rgba(0,0,0,.22);
+    }
+/* Modernize sidebar's section headers (RESEARCH / MY LIBRARY). */
+html[data-pf-theme="dark"] .left-sidebar .nav-small-cap,
+html[data-pf-theme="dark"] .left-sidebar .hide-menu.text-muted {
+    color: #aab8d1 !important;
+}
+/* Keep search buttons legible when overriding Bootstrap theme. */
+html[data-pf-theme="dark"] .pf-search-page .btn-outline-primary {
+    color: #aebcff;
+    border-color: #8398fb;
+}
+
+    html[data-pf-theme="dark"] .pf-search-page .btn-outline-primary:hover {
+        color: #fff;
+        background: #5069d8;
+    }
+
+@media(max-width:767px) {
+    .pf-search-page .pf-search-form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+    }
+
+        .pf-search-page .pf-search-form-actions .btn {
+            max-width: 100%;
+        }
+}

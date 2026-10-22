@@ -1,4 +1,6 @@
-﻿@model PaperFlow.Services.Models.PaperDetailsDto
+@model PaperFlow.Services.Models.PaperDetailsDto
+
+<link rel="stylesheet" href="~/css/paperflow-details-edit.css" asp-append-version="true" />
 
 @{
     ViewData["Title"] = "Paper Details";
@@ -19,7 +21,7 @@
         && (pdfUri.Scheme == Uri.UriSchemeHttps || pdfUri.Scheme == Uri.UriSchemeHttp);
 }
 
-<link rel="stylesheet" href="~/css/paperflow-details-edit.css" asp-append-version="true" />
+
 
 <div class="pf-detail-page">
     <nav aria-label="breadcrumb" class="mb-3">

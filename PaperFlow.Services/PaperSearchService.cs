@@ -91,7 +91,14 @@
                         "Search provider {Provider} failed.",
                         provider.ProviderName);
 
-                    result.FailedSources.Add(provider.ProviderName);
+                    string reason = ex is HttpRequestException httpEx &&
+                        httpEx.StatusCode == System.Net.HttpStatusCode.TooManyRequests
+                        ? " (rate limit reached)"
+                        : ex is HttpRequestException serverEx &&
+                          serverEx.StatusCode == System.Net.HttpStatusCode.ServiceUnavailable
+                            ? " (temporarily unavailable)"
+                            : " (request failed)";
+                    result.FailedSources.Add(provider.ProviderName + reason);
                 }
             }
 

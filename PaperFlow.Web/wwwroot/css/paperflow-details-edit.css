@@ -30,12 +30,12 @@
 .pf-progress-fill {border-radius:99px;background:linear-gradient(90deg,#6684fa,#45b1e8);}
 .pf-detail-page .btn {border-radius:10px;font-weight:650;}
 /* Applies visual polish to the EXISTING Edit form without changing its names, values, validation, or POST route. */
-body:has(form[action*="/Papers/Edit"]) main .card {border-radius:17px;border:1px solid #e8edf6;box-shadow:0 7px 22px rgba(27,49,89,.04);}
-body:has(form[action*="/Papers/Edit"]) main .form-control,
-body:has(form[action*="/Papers/Edit"]) main .form-select {border-radius:10px;min-height:42px;border-color:#dfe5ef;}
-body:has(form[action*="/Papers/Edit"]) main .form-control:focus,
-body:has(form[action*="/Papers/Edit"]) main .form-select:focus {border-color:#8294ec;box-shadow:0 0 0 .2rem rgba(82,104,234,.12);}
-body:has(form[action*="/Papers/Edit"]) main .btn {border-radius:10px;font-weight:650;}
+ .pf-paper-edit-page .card {border-radius:17px;border:1px solid #e8edf6;box-shadow:0 7px 22px rgba(27,49,89,.04);}
+ .pf-paper-edit-page .form-control,
+ .pf-paper-edit-page .form-select {border-radius:10px;min-height:42px;border-color:#dfe5ef;}
+ .pf-paper-edit-page .form-control:focus,
+ .pf-paper-edit-page .form-select:focus {border-color:#8294ec;box-shadow:0 0 0 .2rem rgba(82,104,234,.12);}
+ .pf-paper-edit-page .btn {border-radius:10px;font-weight:650;}
 @media(max-width:575px) { .pf-detail-hero {padding:20px;} .pf-detail-actions>.btn {flex:1 1 auto;} .pf-metadata-list>div {grid-template-columns:1fr;gap:3px;} }
 @media(prefers-reduced-motion:no-preference) { .pf-surface {transition:box-shadow .2s ease;} .pf-surface:hover {box-shadow:0 10px 27px rgba(27,49,89,.075)!important;} }
 
@@ -74,7 +74,137 @@ body:has(form[action*="/Papers/Edit"]) main .btn {border-radius:10px;font-weight
     text-decoration: none;
 }
 
-    .pf-author-orcid:hover {
-        color: #3048d8;
-    }
+.pf-author-orcid:hover {
+    color: #3048d8;
+}
 
+/* ============================================
+   PaperFlow Details & Edit - consolidated Dark Mode
+   The actual hero class in Details.cshtml is .pf-detail-hero.
+   ============================================ */
+html[data-pf-theme="dark"] .pf-detail-page {
+    --pf-ink: #edf3ff;
+    --pf-muted: #b4c3dd;
+    --pf-primary: #95a5ff;
+    --pf-line: #3d506f;
+    color: var(--pf-ink);
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-detail-hero {
+    background: linear-gradient(125deg, #253858 0%, #1c2941 100%) !important;
+    background-color: #22334f !important;
+    border-color: #405676 !important;
+    color: #edf3ff !important;
+    box-shadow: 0 8px 28px rgba(0,0,0,.16);
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-detail-title {
+    color: #f2f6ff !important;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-detail-eyebrow {
+    color: #acbdff !important;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-pill-source {
+    background: #34477b;
+    color: #d7e0ff;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-pill-category,
+html[data-pf-theme="dark"] .pf-detail-page .pf-pill.is-notstarted {
+    background: #32415c;
+    color: #e0e9fa;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-pill.is-reading {
+    background: #21466d;
+    color: #a9ddff;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-pill.is-completed {
+    background: #164d44;
+    color: #a1f3cf;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-pill.is-onhold {
+    background: #574421;
+    color: #ffe0a1;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-surface {
+    background: #1e2b43 !important;
+    border-color: #3d506f !important;
+    color: #e9eefc !important;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-section-title,
+html[data-pf-theme="dark"] .pf-detail-page .pf-surface h1,
+html[data-pf-theme="dark"] .pf-detail-page .pf-surface h2,
+html[data-pf-theme="dark"] .pf-detail-page .pf-surface h3,
+html[data-pf-theme="dark"] .pf-detail-page .pf-surface h4,
+html[data-pf-theme="dark"] .pf-detail-page .pf-surface h5,
+html[data-pf-theme="dark"] .pf-detail-page .pf-surface h6,
+html[data-pf-theme="dark"] .pf-detail-page .pf-surface dd {
+    color: #f0f4ff !important;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-surface p,
+html[data-pf-theme="dark"] .pf-detail-page .pf-surface dt,
+html[data-pf-theme="dark"] .pf-detail-page .pf-surface .text-muted,
+html[data-pf-theme="dark"] .pf-detail-page .pf-empty {
+    color: #b9c9e1 !important;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-metadata-list > div {
+    border-color: #3d506f;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-section-icon {
+    background: #35466b;
+    color: #b0c0ff;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-author-chip {
+    background: #293a58;
+    color: #e4ebfa;
+    border-color: #405477;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-author-orcid {
+    color: #a9baff;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-progress-track {
+    background: #34435f;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-detail-actions .btn-outline-primary,
+html[data-pf-theme="dark"] .pf-detail-page .pf-detail-actions .btn-outline-secondary {
+    color: #bdcaff;
+    background: #233450;
+    border-color: #8195ef;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-detail-actions .btn-outline-danger {
+    color: #ffafa6;
+    background: #372a39;
+    border-color: #ff857a;
+}
+html[data-pf-theme="dark"] .pf-detail-page .pf-detail-actions .btn-primary {
+    background: #687bf2;
+    border-color: #687bf2;
+    color: #fff;
+}
+/* Edit form is explicitly scoped; no fragile :has() selector is required. */
+html[data-pf-theme="dark"] .pf-paper-edit-page .card {
+    background: #1e2b43 !important;
+    color: #edf3ff;
+    border-color: #3d506f !important;
+}
+html[data-pf-theme="dark"] .pf-paper-edit-page h1,
+html[data-pf-theme="dark"] .pf-paper-edit-page h2,
+html[data-pf-theme="dark"] .pf-paper-edit-page h3,
+html[data-pf-theme="dark"] .pf-paper-edit-page .form-label,
+html[data-pf-theme="dark"] .pf-paper-edit-page label {
+    color: #e7efff !important;
+}
+html[data-pf-theme="dark"] .pf-paper-edit-page .form-control,
+html[data-pf-theme="dark"] .pf-paper-edit-page .form-select {
+    color: #f0f4ff !important;
+    background: #172238 !important;
+    border-color: #455977 !important;
+}
+html[data-pf-theme="dark"] .pf-paper-edit-page .form-control::placeholder {
+    color: #aabbd5;
+}
+html[data-pf-theme="dark"] .pf-paper-edit-page .form-text,
+html[data-pf-theme="dark"] .pf-paper-edit-page .text-muted {
+    color: #b5c5dc !important;
+}
+html[data-pf-theme="dark"] .pf-paper-edit-page .btn-outline-secondary {
+    color: #c3d0eb;
+    border-color: #7083a9;
+}
