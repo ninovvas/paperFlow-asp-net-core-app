@@ -1,5 +1,6 @@
 ﻿@using PaperFlow.Common.Enums
 @model PaperFlow.Web.ViewModels.Papers.PaperLibraryViewModel
+<link rel="stylesheet" href="~/css/paperflow-library.css" asp-append-version="true" />
 @{
     ViewData["Title"] = "My Papers";
     var q = Model.Query;
@@ -8,8 +9,8 @@
     int last = Math.Min(q.Page * q.PageSize, Model.FilteredCount);
 }
 
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-    <div><h3 class="fw-semibold mb-1">My Papers</h3><p class="text-muted mb-0">Manage your research library.</p></div>
+<div class="pf-library-header d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div><div class="pf-library-eyebrow"><i class="ti ti-books me-1"></i> RESEARCH WORKSPACE</div><h3 class="fw-semibold mb-1">My Papers</h3><p class="text-muted mb-0">Discover, organize and track your research.</p></div>
     <div class="d-flex gap-2">
         <a asp-controller="Papers" asp-action="Create" class="btn btn-primary"><i class="ti ti-plus me-1"></i>Add Paper</a>
         @if (Model.TotalPapers > 0)
@@ -27,17 +28,17 @@
     }
 }
 
-<div class="row g-3 mb-4">
-    <div class="col-md-4"><div class="card mb-0"><div class="card-body"><div class="text-muted mb-1">Total Papers</div><h3 class="mb-0">@Model.TotalPapers</h3></div></div></div>
-    <div class="col-md-4"><div class="card mb-0"><div class="card-body"><div class="text-muted mb-1">Currently Reading</div><h3 class="mb-0">@Model.ReadingCount</h3></div></div></div>
-    <div class="col-md-4"><div class="card mb-0"><div class="card-body"><div class="text-muted mb-1">Completed</div><h3 class="mb-0">@Model.CompletedCount</h3></div></div></div>
+<div class="row g-3 mb-4 pf-library-stats">
+    <div class="col-md-4"><div class="card mb-0 pf-stat-card pf-stat-total"><div class="card-body d-flex align-items-center justify-content-between"><div><div class="pf-stat-label">Total Papers</div><h3 class="pf-stat-value mb-0">@Model.TotalPapers</h3></div><div class="pf-stat-icon"><i class="ti ti-books"></i></div></div></div></div>
+    <div class="col-md-4"><div class="card mb-0 pf-stat-card pf-stat-reading"><div class="card-body d-flex align-items-center justify-content-between"><div><div class="pf-stat-label">Currently Reading</div><h3 class="pf-stat-value mb-0">@Model.ReadingCount</h3></div><div class="pf-stat-icon"><i class="ti ti-book-2"></i></div></div></div></div>
+    <div class="col-md-4"><div class="card mb-0 pf-stat-card pf-stat-completed"><div class="card-body d-flex align-items-center justify-content-between"><div><div class="pf-stat-label">Completed</div><h3 class="pf-stat-value mb-0">@Model.CompletedCount</h3></div><div class="pf-stat-icon"><i class="ti ti-circle-check"></i></div></div></div></div>
 </div>
 
-<div class="card">
+<div class="card pf-library-card">
     <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-semibold mb-0">Research Library</h5><span class="text-muted small">@Model.FilteredCount matching / @Model.TotalPapers total</span></div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><div><h5 class="fw-semibold mb-1">Research Library</h5><div class="text-muted small">Your saved publications, in one place</div></div><span class="pf-results-count">@Model.FilteredCount matching / @Model.TotalPapers total</span></div>
 
-        <form asp-controller="Papers" asp-action="Index" method="get" id="libraryFilters" class="row g-2 align-items-end mb-4">
+        <form asp-controller="Papers" asp-action="Index" method="get" id="libraryFilters" class="row g-3 align-items-end mb-4 pf-library-filters">
             <div class="col-lg-4 col-md-6"><label for="librarySearch" class="form-label">Search by title, DOI or author</label><input id="librarySearch" name="Search" value="@q.Search" maxlength="200" class="form-control" placeholder="Search my library..." /></div>
             <div class="col-lg-2 col-md-3">
                 <label for="libraryStatus" class="form-label">Reading status</label><select id="libraryStatus" name="Status" class="form-select">
@@ -108,7 +109,7 @@
 else
 {
     <div class="table-responsive">
-        <table class="table table-hover align-middle paperflow-papers-table">
+        <table class="table table-hover align-middle paperflow-papers-table pf-library-table">
             <thead>
                 <tr>
                     <th><a asp-action="Index" asp-route-Search="@q.Search" asp-route-Status="@q.Status" asp-route-SourceId="@q.SourceId" asp-route-Sort="@(q.Sort == "title_asc" ? "title_desc" : "title_asc")">Paper <i class="ti ti-arrows-sort"></i></a></th>
@@ -129,7 +130,7 @@ else
                             @{
                                 string text = paper.Status.ToString(); string badgeClass = text switch { "Completed" => "bg-success-subtle text-success", "Reading" => "bg-primary-subtle text-primary", "OnHold" => "bg-warning-subtle text-warning", _ => "bg-light text-dark border" };
                             }
-                            <span class="badge @badgeClass">@text</span>
+                            <span class="badge @badgeClass pf-status-badge">@text</span>
                         </td>
                         <td class="paperflow-nowrap">
                             @if (paper.Rating.HasValue)
@@ -167,7 +168,7 @@ else
             </tbody>
         </table>
     </div>
-    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-4 pf-library-pagination">
         <div class="text-muted small">Showing @first–@last of @Model.FilteredCount papers</div>
         <nav aria-label="Library pages">
             <ul class="pagination mb-0">
@@ -195,48 +196,6 @@ else
     </div>
 </div>
 
-<style>
-    .paperflow-date, .paperflow-nowrap {
-        white-space: nowrap
-    }
-
-    .paperflow-title-column {
-        min-width: 280px;
-        max-width: 540px
-    }
-
-    .paperflow-title-clamp {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
-        line-height: 1.45
-    }
-
-    .paperflow-actions {
-        white-space: nowrap;
-        min-width: 128px
-    }
-
-        .paperflow-actions .btn {
-            width: 35px;
-            height: 35px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0
-        }
-
-    .paperflow-papers-table th {
-        white-space: nowrap
-    }
-
-        .paperflow-papers-table th a {
-            text-decoration: none;
-            color: inherit
-        }
-</style>
-
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -248,6 +207,10 @@ else
                     document.getElementById("deletePaperForm").action = "@Url.Content("~/Papers/Delete/")" + encodeURIComponent(button.dataset.paperId);
                 });
             }
+            window.addEventListener("pageshow", function() {
+                const btn = document.querySelector('#libraryFilters button[type="submit"]');
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-filter me-1"></i>Apply'; }
+            });
             const filterForm = document.getElementById("libraryFilters");
             if (filterForm) {
                 filterForm.addEventListener("submit", function() {

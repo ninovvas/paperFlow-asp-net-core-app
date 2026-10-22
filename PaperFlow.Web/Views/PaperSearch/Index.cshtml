@@ -4,413 +4,422 @@
     ViewData["Title"] = "Search Research Papers";
 }
 
-<div class="card">
-    <div class="card-body">
+<link rel="stylesheet" href="~/css/paperflow-search.css" asp-append-version="true" />
 
-        <h4 class="fw-semibold mb-2">
-            Search Research Papers
-        </h4>
+<div class="pf-search-page">
+    <div class="pf-search-hero mb-4">
+        <div class="pf-search-eyebrow"><i class="ti ti-flask-2 me-1"></i> RESEARCH DISCOVERY</div>
+        <h3 class="fw-bold mb-2">Search Research Papers</h3>
+        <p class="mb-0">Explore scientific publications, save interesting results, and build your research library.</p>
+    </div>
 
-        <p class="text-muted mb-4">
-            Search scientific publications across research sources.
-        </p>
+    <div class="card pf-search-panel mb-4">
+        <div class="card-body p-4">
 
-        @if (TempData["SuccessMessage"] is string success)
-        {
-            <div class="alert alert-success" role="status">@success</div>
-        }
-        @if (TempData["InfoMessage"] is string info)
-        {
-            <div class="alert alert-info" role="status">@info</div>
-        }
-        @if (TempData["ErrorMessage"] is string error)
-        {
-            <div class="alert alert-danger">@error</div>
-        }
 
-        @if (TempData["BulkImportSummary"] is string summary)
-        {
-            <div class="alert alert-info" role="status">@summary</div>
-        }
-        @if (TempData["BulkImportFailures"] is string failures)
-        {
-            <div class="alert alert-warning" role="status">@failures</div>
-        }
+            @if (TempData["SuccessMessage"] is string success)
+            {
+                <div class="alert alert-success" role="status">@success</div>
+            }
+            @if (TempData["InfoMessage"] is string info)
+            {
+                <div class="alert alert-info" role="status">@info</div>
+            }
+            @if (TempData["ErrorMessage"] is string error)
+            {
+                <div class="alert alert-danger">@error</div>
+            }
 
-        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-        {
-            <div class="alert alert-warning">
-                @Model.ErrorMessage
-            </div>
-        }
+            @if (TempData["BulkImportSummary"] is string summary)
+            {
+                <div class="alert alert-info" role="status">@summary</div>
+            }
+            @if (TempData["BulkImportFailures"] is string failures)
+            {
+                <div class="alert alert-warning" role="status">@failures</div>
+            }
 
-        <div asp-validation-summary="All"
-             class="text-danger mb-3"></div>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-warning">
+                    @Model.ErrorMessage
+                </div>
+            }
 
-        <div class="btn-group mb-4">
-            <button type="button"
-                    id="simpleBtn"
-                    class="btn btn-outline-primary">
-                Simple Search
-            </button>
+            <div asp-validation-summary="All"
+                 class="text-danger mb-3"></div>
 
-            <button type="button"
-                    id="advancedBtn"
-                    class="btn btn-primary">
-                Advanced Search
-            </button>
-        </div>
+            <div class="btn-group pf-search-mode mb-4" role="group" aria-label="Search mode">
+                <button type="button"
+                        id="simpleBtn"
+                        class="btn btn-outline-primary">
+                    Simple Search
+                </button>
 
-        <form asp-controller="PaperSearch"
-              asp-action="Index"
-              method="get"
-              id="searchForm">
-
-            <input type="hidden"
-                   name="execute"
-                   value="true" />
-
-            <input type="hidden"
-                   asp-for="Advanced"
-                   id="advancedFlag" />
-
-            <div class="mb-3">
-                <label asp-for="Query"
-                       class="form-label"></label>
-
-                <input asp-for="Query"
-                       class="form-control"
-                       placeholder="Enter keywords" />
-
-                <span asp-validation-for="Query"
-                      class="text-danger"></span>
+                <button type="button"
+                        id="advancedBtn"
+                        class="btn btn-primary">
+                    Advanced Search
+                </button>
             </div>
 
-            <!-- Multi-source selection -->
-            <partial name="_SourceSelector" model="Model" />
+            <form asp-controller="PaperSearch"
+                  asp-action="Index"
+                  method="get"
+                  id="searchForm">
 
-            <div id="advancedFilters">
+                <input type="hidden"
+                       name="execute"
+                       value="true" />
 
-                <div class="row g-3">
+                <input type="hidden"
+                       asp-for="Advanced"
+                       id="advancedFlag" />
 
-                    <div class="col-md-6">
-                        <label asp-for="SearchField"
-                               class="form-label"></label>
+                <div class="mb-3 pf-search-query">
+                    <label asp-for="Query"
+                           class="form-label"></label>
 
-                        <select asp-for="SearchField"
-                                class="form-select">
-                            <option value="all">All Fields</option>
-                            <option value="ti">Title</option>
-                            <option value="abs">Abstract</option>
-                        </select>
-                    </div>
+                    <input asp-for="Query"
+                           class="form-control"
+                           placeholder="Enter keywords" />
 
-                    <div class="col-md-6">
-                        <label asp-for="Category"
-                               class="form-label"></label>
+                    <span asp-validation-for="Query"
+                          class="text-danger"></span>
+                </div>
 
-                        <select asp-for="Category"
-                                class="form-select">
-                            <option value="">All Categories</option>
-                            <option value="cs.RO">Robotics</option>
-                            <option value="cs.AI">Artificial Intelligence</option>
-                            <option value="cs.LG">Machine Learning</option>
-                            <option value="cs.CV">Computer Vision</option>
-                            <option value="cs.IR">Information Retrieval</option>
-                            <option value="eess.SY">Systems and Control</option>
-                        </select>
-                    </div>
+                <!-- Multi-source selection -->
+                <partial name="_SourceSelector" model="Model" />
 
-                    <div class="col-md-12">
-                        <label asp-for="Author"
-                               class="form-label"></label>
+                <div id="advancedFilters" class="pf-advanced-filters">
 
-                        <input asp-for="Author"
-                               class="form-control"
-                               placeholder="Author name" />
-                    </div>
+                    <div class="row g-3">
 
-                    <div class="col-md-6">
-                        <label asp-for="SubmittedFrom"
-                               class="form-label"></label>
+                        <div class="col-md-6">
+                            <label asp-for="SearchField"
+                                   class="form-label"></label>
 
-                        <input asp-for="SubmittedFrom"
-                               type="date"
-                               class="form-control" />
-                    </div>
+                            <select asp-for="SearchField"
+                                    class="form-select">
+                                <option value="all">All Fields</option>
+                                <option value="ti">Title</option>
+                                <option value="abs">Abstract</option>
+                            </select>
+                        </div>
 
-                    <div class="col-md-6">
-                        <label asp-for="SubmittedTo"
-                               class="form-label"></label>
+                        <div class="col-md-6">
+                            <label asp-for="Category"
+                                   class="form-label"></label>
 
-                        <input asp-for="SubmittedTo"
-                               type="date"
-                               class="form-control" />
-                    </div>
+                            <select asp-for="Category"
+                                    class="form-select">
+                                <option value="">All Categories</option>
+                                <option value="cs.RO">Robotics</option>
+                                <option value="cs.AI">Artificial Intelligence</option>
+                                <option value="cs.LG">Machine Learning</option>
+                                <option value="cs.CV">Computer Vision</option>
+                                <option value="cs.IR">Information Retrieval</option>
+                                <option value="eess.SY">Systems and Control</option>
+                            </select>
+                        </div>
 
-                    <div class="col-md-4">
-                        <label asp-for="SortBy"
-                               class="form-label"></label>
+                        <div class="col-md-12">
+                            <label asp-for="Author"
+                                   class="form-label"></label>
 
-                        <select asp-for="SortBy"
-                                class="form-select">
-                            <option value="relevance">Relevance</option>
-                            <option value="submittedDate">Submission Date</option>
-                            <option value="lastUpdatedDate">Last Updated</option>
-                        </select>
-                    </div>
+                            <input asp-for="Author"
+                                   class="form-control"
+                                   placeholder="Author name" />
+                        </div>
 
-                    <div class="col-md-4">
-                        <label asp-for="SortOrder"
-                               class="form-label"></label>
+                        <div class="col-md-6">
+                            <label asp-for="SubmittedFrom"
+                                   class="form-label"></label>
 
-                        <select asp-for="SortOrder"
-                                class="form-select">
-                            <option value="descending">Newest First</option>
-                            <option value="ascending">Oldest First</option>
-                        </select>
-                    </div>
+                            <input asp-for="SubmittedFrom"
+                                   type="date"
+                                   class="form-control" />
+                        </div>
 
-                    <div class="col-md-4">
-                        <label asp-for="MaxResults"
-                               class="form-label"></label>
+                        <div class="col-md-6">
+                            <label asp-for="SubmittedTo"
+                                   class="form-label"></label>
 
-                        <select asp-for="MaxResults"
-                                class="form-select">
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                        </select>
-                    </div>
+                            <input asp-for="SubmittedTo"
+                                   type="date"
+                                   class="form-control" />
+                        </div>
 
-                    <div class="col-12">
-                        <div class="form-check">
-                            <input asp-for="OnlyWithPdf"
-                                   class="form-check-input" />
+                        <div class="col-md-4">
+                            <label asp-for="SortBy"
+                                   class="form-label"></label>
 
-                            <label asp-for="OnlyWithPdf"
-                                   class="form-check-label"></label>
+                            <select asp-for="SortBy"
+                                    class="form-select">
+                                <option value="relevance">Relevance</option>
+                                <option value="submittedDate">Submission Date</option>
+                                <option value="lastUpdatedDate">Last Updated</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="SortOrder"
+                                   class="form-label"></label>
+
+                            <select asp-for="SortOrder"
+                                    class="form-select">
+                                <option value="descending">Newest First</option>
+                                <option value="ascending">Oldest First</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="MaxResults"
+                                   class="form-label"></label>
+
+                            <select asp-for="MaxResults"
+                                    class="form-select">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input asp-for="OnlyWithPdf"
+                                       class="form-check-input" />
+
+                                <label asp-for="OnlyWithPdf"
+                                       class="form-check-label"></label>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="mt-4 d-flex gap-2">
-                <button class="btn btn-primary" type="submit">
-                    <i class="ti ti-search me-1"></i>
-                    Search Papers
-                </button>
+                <div class="mt-4 d-flex flex-wrap gap-2 pf-search-form-actions">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="ti ti-search me-1"></i>
+                        Search Papers
+                    </button>
 
-                <a asp-action="Index"
-                   class="btn btn-outline-secondary">
-                    Reset
-                </a>
-            </div>
-        </form>
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Reset
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-@if (Model.HasSearched)
-{
-    @if (Model.FailedSources.Any())
+    @if (Model.HasSearched)
     {
-        <div class="alert alert-warning">
-            Unavailable sources:
-            @string.Join(", ", Model.FailedSources)
+        @if (Model.FailedSources.Any())
+        {
+            <div class="alert alert-warning">
+                Unavailable sources:
+                @string.Join(", ", Model.FailedSources)
+            </div>
+        }
+
+        <div class="pf-results-heading d-flex flex-wrap align-items-center justify-content-between gap-3 mt-4 mb-3">
+            <div>
+                <div class="pf-search-eyebrow">DISCOVERED PUBLICATIONS</div>
+                <h4 class="fw-bold mb-0">Search Results <span class="pf-result-counter">@Model.Results.Count</span></h4>
+            </div>
+            <span class="pf-results-caption">Results loaded from the selected sources</span>
         </div>
-    }
 
-    <h5 class="fw-semibold mt-4 mb-3">
-        Search Results (@Model.Results.Count)
-    </h5>
-
-    @if (User.Identity?.IsAuthenticated == true &&
-         !string.IsNullOrWhiteSpace(Model.SearchId) &&
-         Model.Results.Any(p =>
-             string.Equals(p.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase) &&
-             !Model.SavedExternalIds.Contains(p.ExternalId)))
-    {
-        <form asp-controller="PaperSearch"
-              asp-action="SaveSelected"
-              method="post"
-              id="bulkImportForm"
-              class="card mb-3">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="searchId" value="@Model.SearchId" />
-            <div class="card-body d-flex flex-wrap gap-3 align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="form-check mb-0">
-                        <input type="checkbox" class="form-check-input"
-                               id="selectAllPapers" />
-                        <label for="selectAllPapers" class="form-check-label">
-                            Select All Available
-                        </label>
+        @if (User.Identity?.IsAuthenticated == true &&
+             !string.IsNullOrWhiteSpace(Model.SearchId) &&
+             Model.Results.Any(p =>
+                 string.Equals(p.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase) &&
+                 !Model.SavedExternalIds.Contains(p.ExternalId)))
+        {
+            <form asp-controller="PaperSearch"
+                  asp-action="SaveSelected"
+                  method="post"
+                  id="bulkImportForm"
+                  class="card pf-selection-toolbar mb-3">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="searchId" value="@Model.SearchId" />
+                <div class="card-body d-flex flex-wrap gap-3 align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="form-check mb-0">
+                            <input type="checkbox" class="form-check-input"
+                                   id="selectAllPapers" />
+                            <label for="selectAllPapers" class="form-check-label">
+                                Select All Available
+                            </label>
+                        </div>
+                        <span class="text-muted small" id="selectionCount" aria-live="polite">
+                            0 selected
+                        </span>
                     </div>
-                    <span class="text-muted small" id="selectionCount" aria-live="polite">
-                        0 selected
-                    </span>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="clearSelection"
+                                class="btn btn-outline-secondary btn-sm">
+                            Clear Selection
+                        </button>
+                        <button type="submit" id="saveSelectedButton"
+                                class="btn btn-primary btn-sm" disabled>
+                            <i class="ti ti-device-floppy me-1"></i>
+                            Save Selected
+                        </button>
+                    </div>
                 </div>
-                <div class="d-flex gap-2">
-                    <button type="button" id="clearSelection"
-                            class="btn btn-outline-secondary btn-sm">
-                        Clear Selection
-                    </button>
-                    <button type="submit" id="saveSelectedButton"
-                            class="btn btn-primary btn-sm" disabled>
-                        <i class="ti ti-device-floppy me-1"></i>
-                        Save Selected
-                    </button>
+                <div class="px-3 pb-3 text-muted small">
+                    Only arXiv papers not yet saved in this search can be selected.
+                    Select All applies to the displayed results only.
                 </div>
-            </div>
-            <div class="px-3 pb-3 text-muted small">
-                Only arXiv papers not yet saved in this search can be selected.
-                Select All applies to the displayed results only.
-            </div>
-        </form>
-    }
+            </form>
+        }
 
-    @foreach (var paper in Model.Results)
-    {
-        <div class="card mb-3">
-            <div class="card-body">
+        @foreach (var paper in Model.Results)
+        {
+            <article class="card pf-result-card mb-3">
+                <div class="card-body p-4">
 
-                @{
-                    bool bulkEligible = User.Identity?.IsAuthenticated == true
-                        && !string.IsNullOrWhiteSpace(Model.SearchId)
-                        && string.Equals(paper.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase)
-                        && !string.IsNullOrWhiteSpace(paper.ExternalId)
-                        && !Model.SavedExternalIds.Contains(paper.ExternalId);
-                }
-                <div class="d-flex align-items-start gap-3">
-                    @if (bulkEligible)
-                    {
-                        <input type="checkbox"
-                               class="form-check-input bulk-paper-checkbox mt-1"
-                               form="bulkImportForm"
-                               name="selectedPapers"
-                               value="@($"arxiv:{paper.ExternalId}")"
-                               aria-label="Select @paper.Title" />
+                    @{
+                        bool bulkEligible = User.Identity?.IsAuthenticated == true
+                            && !string.IsNullOrWhiteSpace(Model.SearchId)
+                            && string.Equals(paper.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase)
+                            && !string.IsNullOrWhiteSpace(paper.ExternalId)
+                            && !Model.SavedExternalIds.Contains(paper.ExternalId);
                     }
-                    <h5 class="fw-semibold flex-grow-1 mb-2">
-                        @paper.Title
-                    </h5>
-                </div>
-
-                <div class="mb-2">
-                    <span class="badge bg-primary">
-                        @paper.SourceName
-                    </span>
-
-                    <span class="text-muted ms-2">
-                        @(paper.PublicationDate?.ToString("yyyy-MM-dd")
-                            ?? "Unknown date")
-                    </span>
-                </div>
-
-                <p class="small">
-                    <strong>Authors:</strong>
-                    @string.Join(", ", paper.Authors)
-                </p>
-
-                <p class="text-muted">
-                    @paper.Abstract
-                </p>
-
-                @if (paper.Categories.Any())
-                {
-                    <p class="small">
-                        <strong>Categories:</strong>
-                        @string.Join(", ", paper.Categories)
-                    </p>
-                }
-
-                <div class="d-flex gap-2 flex-wrap align-items-center">
-
-                    @if (!string.IsNullOrWhiteSpace(paper.PdfUrl))
-                    {
-                        <a href="@paper.PdfUrl"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           class="btn btn-outline-primary btn-sm">
-                            Open PDF
-                        </a>
-                    }
-
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
-                        bool savedHere = Model.SavedExternalIds.Contains(paper.ExternalId);
-                        bool importSupported = string.Equals(
-                            paper.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase);
-
-                        @if (savedHere)
+                    <div class="d-flex align-items-start gap-3 pf-result-title-row">
+                        @if (bulkEligible)
                         {
-                            <span class="badge bg-success-subtle text-success">
-                                <i class="ti ti-check me-1"></i> Saved in My Library
-                            </span>
+                            <input type="checkbox"
+                                   class="form-check-input bulk-paper-checkbox mt-1"
+                                   form="bulkImportForm"
+                                   name="selectedPapers"
+                                   value="@($"arxiv:{paper.ExternalId}")"
+                                   aria-label="Select @paper.Title" />
                         }
-                        else if (importSupported && !string.IsNullOrWhiteSpace(Model.SearchId))
-                        {
-                            <form asp-controller="PaperSearch"
-                                  asp-action="Save"
-                                  method="post">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="searchId" value="@Model.SearchId" />
-                                <input type="hidden" name="sourceId" value="arxiv" />
-                                <input type="hidden" name="externalId" value="@paper.ExternalId" />
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="ti ti-device-floppy me-1"></i>
-                                    Save to My Library
-                                </button>
-                            </form>
-                        }
-                        else if (!importSupported)
-                        {
-                            <span class="text-muted small">Import not supported for this source yet</span>
-                        }
-                    }
-                    else
+                        <h5 class="fw-semibold flex-grow-1 mb-2 pf-paper-title">
+                            @paper.Title
+                        </h5>
+                    </div>
+
+                    <div class="mb-3 pf-paper-meta d-flex flex-wrap align-items-center gap-2">
+                        <span class="badge pf-source-badge">
+                            @paper.SourceName
+                        </span>
+
+                        <span class="pf-paper-date"><i class="ti ti-calendar-event me-1"></i>@(paper.PublicationDate?.ToString("yyyy-MM-dd") ?? "Unknown date")</span>
+                    </div>
+
+                    <div class="pf-paper-authors mb-2">
+                        <i class="ti ti-users me-1"></i>
+                        <span class="fw-semibold">Authors:</span>
+                        @string.Join(", ", paper.Authors)
+                    </div>
+
+                    <details class="pf-abstract mb-3">
+                        <summary>Read abstract</summary>
+                        <p class="mt-2 mb-0">@paper.Abstract</p>
+                    </details>
+
+                    @if (paper.Categories.Any())
                     {
-                        <a asp-area="Identity"
-                           asp-page="/Account/Login"
-                           class="btn btn-primary btn-sm">
-                            Login to Save
-                        </a>
+                        <div class="pf-paper-categories mb-3">
+                            @foreach (var category in paper.Categories)
+                            {
+                                <span class="pf-category-chip">@category</span>
+                            }
+                        </div>
                     }
+
+                    <div class="pf-result-actions d-flex gap-2 flex-wrap align-items-center pt-3">
+
+                        @if (!string.IsNullOrWhiteSpace(paper.PdfUrl))
+                        {
+                            <a href="@paper.PdfUrl"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="btn btn-outline-primary btn-sm">
+                                Open PDF
+                            </a>
+                        }
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            bool savedHere = Model.SavedExternalIds.Contains(paper.ExternalId);
+                            bool importSupported = string.Equals(
+                                paper.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase);
+
+                            @if (savedHere)
+                            {
+                                <span class="badge pf-saved-badge">
+                                    <i class="ti ti-check me-1"></i> Saved in My Library
+                                </span>
+                            }
+                            else if (importSupported && !string.IsNullOrWhiteSpace(Model.SearchId))
+                            {
+                                <form asp-controller="PaperSearch"
+                                      asp-action="Save"
+                                      method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="searchId" value="@Model.SearchId" />
+                                    <input type="hidden" name="sourceId" value="arxiv" />
+                                    <input type="hidden" name="externalId" value="@paper.ExternalId" />
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="ti ti-device-floppy me-1"></i>
+                                        Save to My Library
+                                    </button>
+                                </form>
+                            }
+                            else if (!importSupported)
+                            {
+                                <span class="text-muted small">Import not supported for this source yet</span>
+                            }
+                        }
+                        else
+                        {
+                            <a asp-area="Identity"
+                               asp-page="/Account/Login"
+                               class="btn btn-primary btn-sm">
+                                Login to Save
+                            </a>
+                        }
+                    </div>
                 </div>
+            </article>
+        }
+
+        @if (User.Identity?.IsAuthenticated == true &&
+             !string.IsNullOrWhiteSpace(Model.SearchId) &&
+             Model.HasMoreResults)
+        {
+            <form asp-controller="PaperSearch" asp-action="LoadMore"
+                  method="post" id="loadMoreForm" class="text-center my-4 pf-load-more">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="searchId" value="@Model.SearchId" />
+                <button class="btn btn-outline-primary px-4" type="submit">
+                    <i class="ti ti-plus me-1"></i>
+                    Load @Model.MaxResults More Papers
+                </button>
+                <div class="text-muted small mt-2">
+                    @Model.Results.Count results loaded
+                </div>
+            </form>
+        }
+
+        @if (!Model.Results.Any() &&
+             !Model.FailedSources.Any() &&
+             string.IsNullOrWhiteSpace(Model.ErrorMessage) &&
+             ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-info">
+                No papers found. Try different search filters.
             </div>
-        </div>
+        }
     }
 
-    @if (User.Identity?.IsAuthenticated == true &&
-         !string.IsNullOrWhiteSpace(Model.SearchId) &&
-         Model.HasMoreResults)
-    {
-        <form asp-controller="PaperSearch" asp-action="LoadMore"
-              method="post" id="loadMoreForm" class="text-center my-4">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="searchId" value="@Model.SearchId" />
-            <button class="btn btn-outline-primary px-4" type="submit">
-                <i class="ti ti-plus me-1"></i>
-                Load @Model.MaxResults More Papers
-            </button>
-            <div class="text-muted small mt-2">
-                @Model.Results.Count results loaded
-            </div>
-        </form>
-    }
-
-    @if (!Model.Results.Any() &&
-         !Model.FailedSources.Any() &&
-         string.IsNullOrWhiteSpace(Model.ErrorMessage) &&
-         ViewData.ModelState.IsValid)
-    {
-        <div class="alert alert-info">
-            No papers found. Try different search filters.
-        </div>
-    }
-}
 
 
+</div>
 
 <!-- Step 5H: loading overlay for search and imports -->
 <div id="paperflowLoadingOverlay" class="paperflow-loading-overlay" role="status"
@@ -449,103 +458,101 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Show progress only when the browser is really submitting a valid form.
-            // Each form keeps its existing ASP.NET Core antiforgery token.
-                    const loadingOverlay = document.getElementById("paperflowLoadingOverlay");
+            const loadingOverlay = document.getElementById("paperflowLoadingOverlay");
             const loadingText = document.getElementById("paperflowLoadingText");
             const showLoading = (message) => {
-                        loadingText.textContent = message;
+                loadingText.textContent = message;
                 loadingOverlay.hidden = false;
-                    };
-                document.querySelectorAll('form').forEach(form => {
-                    if (form.id !== 'searchForm' &&
-                            form.id !== 'bulkImportForm' &&
+            };
+            document.querySelectorAll('form').forEach(form => {
+                if (form.id !== 'searchForm' &&
+                    form.id !== 'bulkImportForm' &&
                     form.id !== 'loadMoreForm' &&
                     !form.querySelector('input[name="externalId"]')) return;
-                     form.addEventListener('submit', (event) => {
+                form.addEventListener('submit', (event) => {
                     if (event.defaultPrevented || !form.checkValidity()) return;
-                            if (form.id === 'bulkImportForm' &&
+                    if (form.id === 'bulkImportForm' &&
                         !form.querySelector('.bulk-paper-checkbox:checked')) return;
                     showLoading(form.id === 'searchForm'
                         ? 'Searching research sources...'
-                                : form.id === 'loadMoreForm'
+                        : form.id === 'loadMoreForm'
                             ? 'Loading more papers...'
                             : 'Saving selected papers...');
-                        });
                 });
-                window.addEventListener('pageshow', () => {
+            });
+            window.addEventListener('pageshow', () => {
                 loadingOverlay.hidden = true;
-                    });
-                    const flag = document.getElementById("advancedFlag");
+            });
+            const flag = document.getElementById("advancedFlag");
             const filters = document.getElementById("advancedFilters");
 
-                    const simple = document.getElementById("simpleBtn");
+            const simple = document.getElementById("simpleBtn");
             const advanced = document.getElementById("advancedBtn");
 
-                function setMode(isAdvanced) {
-                        flag.value = isAdvanced ? "true" : "false";
-                        filters.style.display =
-                            isAdvanced ? "block" : "none";
+            function setMode(isAdvanced) {
+                flag.value = isAdvanced ? "true" : "false";
+                filters.style.display =
+                    isAdvanced ? "block" : "none";
 
-                        filters.querySelectorAll("input, select")
-                            .forEach(element => {
-                                element.disabled = !isAdvanced;
-                            });
+                filters.querySelectorAll("input, select")
+                    .forEach(element => {
+                        element.disabled = !isAdvanced;
+                    });
 
-                        simple.className = isAdvanced
-                            ? "btn btn-outline-primary"
-                            : "btn btn-primary";
+                simple.className = isAdvanced
+                    ? "btn btn-outline-primary"
+                    : "btn btn-primary";
 
-                        advanced.className = isAdvanced
-                            ? "btn btn-primary"
-                            : "btn btn-outline-primary";
-                    }
+                advanced.className = isAdvanced
+                    ? "btn btn-primary"
+                    : "btn btn-outline-primary";
+            }
 
-                    simple.addEventListener("click",
-                        () => setMode(false));
+            simple.addEventListener("click",
+                () => setMode(false));
 
-                    advanced.addEventListener("click",
-                        () => setMode(true));
+            advanced.addEventListener("click",
+                () => setMode(true));
 
-                    setMode(flag.value.toLowerCase() === "true");
+            setMode(flag.value.toLowerCase() === "true");
 
-                    const all = document.getElementById("selectAllPapers");
-                    const clear = document.getElementById("clearSelection");
-                    const save = document.getElementById("saveSelectedButton");
-                    const count = document.getElementById("selectionCount");
-                    const bulkForm = document.getElementById("bulkImportForm");
-                    const boxes = Array.from(
-                        document.querySelectorAll(".bulk-paper-checkbox"));
+            const all = document.getElementById("selectAllPapers");
+            const clear = document.getElementById("clearSelection");
+            const save = document.getElementById("saveSelectedButton");
+            const count = document.getElementById("selectionCount");
+            const bulkForm = document.getElementById("bulkImportForm");
+            const boxes = Array.from(
+                document.querySelectorAll(".bulk-paper-checkbox"));
 
-                    if (all && clear && save && count && bulkForm) {
-                        const update = () => {
-                            const selected = boxes.filter(box => box.checked).length;
-                            count.textContent = selected + " selected";
-                            save.disabled = selected === 0;
-                            all.checked = boxes.length > 0 && selected === boxes.length;
-                            all.indeterminate = selected > 0 && selected < boxes.length;
-                        };
+            if (all && clear && save && count && bulkForm) {
+                const update = () => {
+                    const selected = boxes.filter(box => box.checked).length;
+                    count.textContent = selected + " selected";
+                    save.disabled = selected === 0;
+                    all.checked = boxes.length > 0 && selected === boxes.length;
+                    all.indeterminate = selected > 0 && selected < boxes.length;
+                };
 
-                        all.addEventListener("change", () => {
-                            boxes.forEach(box => box.checked = all.checked);
-                            update();
-                        });
-                        clear.addEventListener("click", () => {
-                            boxes.forEach(box => box.checked = false);
-                            update();
-                        });
-                        boxes.forEach(box => box.addEventListener("change", update));
-                        bulkForm.addEventListener("submit", event => {
-                            if (!boxes.some(box => box.checked)) {
-                                event.preventDefault();
-                                return;
-                            }
-                            save.disabled = true;
-                            save.textContent = "Importing...";
-                        });
-                        update();
-                    }
+                all.addEventListener("change", () => {
+                    boxes.forEach(box => box.checked = all.checked);
+                    update();
                 });
+                clear.addEventListener("click", () => {
+                    boxes.forEach(box => box.checked = false);
+                    update();
+                });
+                boxes.forEach(box => box.addEventListener("change", update));
+                bulkForm.addEventListener("submit", event => {
+                    if (!boxes.some(box => box.checked)) {
+                        event.preventDefault();
+                        return;
+                    }
+                    save.disabled = true;
+                    save.textContent = "Importing...";
+                });
+                update();
+            }
+        });
     </script>
 }
 

@@ -1,0 +1,54 @@
+/* PaperFlow 5J - Research Library UI. Scoped to .pf-* classes. */
+:root {
+  --pf-ink: #1b2a45;
+  --pf-muted: #73819c;
+  --pf-blue: #506cf0;
+  --pf-indigo: #755af5;
+  --pf-border: #e6ebf4;
+  --pf-shadow: 0 10px 32px rgba(35, 48, 90, .055);
+}
+.pf-library-header { padding: 5px 1px 0; }
+.pf-library-eyebrow { font-size: .72rem; font-weight: 750; letter-spacing: .12em; color: var(--pf-blue); margin-bottom: .45rem; }
+.pf-library-header h3 { color: var(--pf-ink); letter-spacing: -.035em; font-size: clamp(1.55rem,2.2vw,2rem); }
+.pf-library-header .btn { border-radius: 10px; font-weight: 600; }
+.pf-library-stats .pf-stat-card { border: 1px solid var(--pf-border); box-shadow: var(--pf-shadow); border-radius: 16px; overflow: hidden; height: 100%; }
+.pf-library-stats .card-body { min-height: 118px; padding: 22px 24px; }
+.pf-stat-label { color: var(--pf-muted); font-weight: 600; margin-bottom: 8px; font-size: .88rem; }
+.pf-stat-value { font-weight: 750; font-size: 2rem; letter-spacing: -.045em; color: var(--pf-ink); }
+.pf-stat-icon { width: 54px; height: 54px; border-radius: 15px; display: inline-flex; align-items: center; justify-content: center; font-size: 25px; flex: 0 0 54px; }
+.pf-stat-total .pf-stat-icon { background: #eef1ff; color: #5167e9; }
+.pf-stat-reading .pf-stat-icon { background: #ecf7ff; color: #1688cc; }
+.pf-stat-completed .pf-stat-icon { background: #e7f8f0; color: #15966b; }
+.pf-stat-reading .pf-stat-value { color: #1688cc; }
+.pf-stat-completed .pf-stat-value { color: #15966b; }
+.pf-library-card { border: 1px solid var(--pf-border); border-radius: 17px; box-shadow: var(--pf-shadow); overflow: hidden; }
+.pf-library-card > .card-body { padding: 26px 28px; }
+.pf-library-card h5 { color: var(--pf-ink); }
+.pf-results-count { display: inline-flex; align-items: center; background: #f0f3ff; color: #5064c8; font-size: .78rem; font-weight: 700; border-radius: 99px; padding: 7px 12px; }
+.pf-library-filters { padding: 17px; border: 1px solid var(--pf-border); border-radius: 14px; background: #f8faff; }
+.pf-library-filters .form-label { font-size: .79rem; font-weight: 650; color: #475675; margin-bottom: .48rem; }
+.pf-library-filters .form-control, .pf-library-filters .form-select { min-height: 43px; border-color: #dfe6f3; border-radius: 9px; background-color: #fff; }
+.pf-library-filters .form-control:focus, .pf-library-filters .form-select:focus { border-color: var(--pf-blue); box-shadow: 0 0 0 .18rem rgba(80,108,240,.11); }
+.pf-library-filters .btn { min-height: 43px; border-radius: 9px; }
+.pf-library-table { margin-bottom: 0; }
+.pf-library-table thead th { background: #f9faff; color: #62708a; font-size: .77rem; text-transform: uppercase; letter-spacing: .045em; font-weight: 750; padding: 16px 13px; border-bottom: 1px solid var(--pf-border); white-space: nowrap; }
+.pf-library-table thead th a { color: inherit; text-decoration: none; }
+.pf-library-table thead th a:hover { color: var(--pf-blue); }
+.pf-library-table tbody td { border-color: #edf1f8; padding: 17px 13px; }
+.pf-library-table tbody tr:last-child td { border-bottom: none; }
+.pf-library-table tbody tr:hover { background: #f8faff; }
+.pf-library-table a.paperflow-title-clamp { color: #3e57bc; }
+.pf-library-table a.paperflow-title-clamp:hover { color: #3048ac; text-decoration: underline !important; }
+.pf-status-badge { font-size: .76rem; font-weight: 700; border-radius: 8px; padding: 7px 10px; }
+.paperflow-date,.paperflow-nowrap { white-space: nowrap; }
+.paperflow-title-column { min-width: 290px; max-width: 535px; }
+.paperflow-title-clamp { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; line-height: 1.5; }
+.paperflow-actions { white-space: nowrap; min-width: 128px; }
+.paperflow-actions .btn { width: 35px; height: 35px; display: inline-flex; align-items: center; justify-content: center; padding: 0; border-radius: 9px; }
+.paperflow-actions .btn:focus-visible { outline: 3px solid #91a1ff; outline-offset: 2px; }
+.pf-library-pagination .pagination { gap: 5px; }
+.pf-library-pagination .page-link { border-radius: 9px !important; border-color: var(--pf-border); min-width: 36px; text-align: center; font-weight: 600; }
+.pf-library-pagination .page-item.active .page-link { background: var(--pf-blue); border-color: var(--pf-blue); }
+@media(max-width: 991px) { .pf-library-card>.card-body { padding: 20px; } .paperflow-title-column { min-width: 240px; } }
+@media(max-width: 575px) { .pf-library-stats .card-body { min-height: 96px; padding: 16px 20px; } .pf-library-header .btn { font-size: .82rem; } .pf-library-card>.card-body { padding: 16px; } .pf-library-filters { padding: 13px; } }
+@media(prefers-reduced-motion: no-preference) { .pf-stat-card,.paperflow-actions .btn { transition: transform .16s ease,box-shadow .16s ease; } .pf-stat-card:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(35,48,90,.085); } }

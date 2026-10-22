@@ -1,0 +1,80 @@
+/* PaperFlow 5J.2: Details and existing Edit form refinements */
+.pf-detail-page { --pf-ink:#24324b; --pf-muted:#73839e; --pf-primary:#5268ea; --pf-line:#e8edf6; color:var(--pf-ink); }
+.pf-detail-hero { border:1px solid #dfe8fd; border-radius:20px; padding:clamp(20px,3vw,34px); background:linear-gradient(125deg,#fff 5%,#f0f4ff 100%); box-shadow:0 8px 28px rgba(39,65,125,.055); }
+.pf-detail-eyebrow { color:#667fd5; font-weight:750; font-size:11px; letter-spacing:.12em; margin-bottom:12px; }
+.pf-detail-title { font-size:clamp(1.45rem,2.3vw,2.25rem); letter-spacing:-.025em; line-height:1.27; font-weight:750; overflow-wrap:anywhere; max-width:1000px; }
+.pf-detail-tags,.pf-detail-actions { display:flex;flex-wrap:wrap;align-items:center;gap:9px; }
+.pf-pill { display:inline-flex;align-items:center;gap:5px; padding:7px 11px; border-radius:999px; font-size:.76rem;line-height:1.1;font-weight:700;white-space:nowrap; }
+.pf-pill-source { background:#e8edff;color:#455dcb; }
+.pf-pill-category {background:#f0f3f8;color:#63728c;}
+.pf-pill.is-completed {background:#ddf7ec;color:#117d57;}
+.pf-pill.is-reading {background:#e0eeff;color:#236cc4;}
+.pf-pill.is-onhold {background:#fff1d4;color:#a56b11;}
+.pf-pill.is-notstarted {background:#edf0f5;color:#5c6a7e;}
+.pf-surface {border:1px solid var(--pf-line)!important;border-radius:18px!important;box-shadow:0 6px 22px rgba(27,49,89,.045)!important;overflow:hidden;}
+.pf-section-title { display:flex;align-items:center;gap:11px;font-size:1.02rem;font-weight:750;margin:0 0 24px; }
+.pf-section-icon { width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:#edf1ff;color:#566ee1;flex:0 0 auto; }
+.pf-section-icon i {font-size:20px;}
+.pf-long-text {line-height:1.85;white-space:pre-line;overflow-wrap:anywhere;}
+.pf-empty {color:#8a96a8;font-size:.92rem;}
+.pf-author-list {display:grid;gap:10px;}
+.pf-author-item {display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #edf1f7;border-radius:12px;}
+.pf-author-avatar {display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;flex:0 0 38px;border-radius:50%;background:#eaf0ff;color:#4f67cf;}
+.pf-metadata-list {margin:0;}
+.pf-metadata-list>div {display:grid;grid-template-columns:minmax(85px,42%) minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid #eef1f7;align-items:start;}
+.pf-metadata-list>div:last-child {border-bottom:0;}
+.pf-metadata-list dt {color:#8290a4;font-weight:550;font-size:.86rem;}
+.pf-metadata-list dd {margin:0;font-weight:650;overflow-wrap:anywhere;font-size:.88rem;}
+.pf-progress-value {color:#5268df;font-size:1.2rem;}
+.pf-progress-track {height:11px;border-radius:99px;background:#edf1fa;}
+.pf-progress-fill {border-radius:99px;background:linear-gradient(90deg,#6684fa,#45b1e8);}
+.pf-detail-page .btn {border-radius:10px;font-weight:650;}
+/* Applies visual polish to the EXISTING Edit form without changing its names, values, validation, or POST route. */
+body:has(form[action*="/Papers/Edit"]) main .card {border-radius:17px;border:1px solid #e8edf6;box-shadow:0 7px 22px rgba(27,49,89,.04);}
+body:has(form[action*="/Papers/Edit"]) main .form-control,
+body:has(form[action*="/Papers/Edit"]) main .form-select {border-radius:10px;min-height:42px;border-color:#dfe5ef;}
+body:has(form[action*="/Papers/Edit"]) main .form-control:focus,
+body:has(form[action*="/Papers/Edit"]) main .form-select:focus {border-color:#8294ec;box-shadow:0 0 0 .2rem rgba(82,104,234,.12);}
+body:has(form[action*="/Papers/Edit"]) main .btn {border-radius:10px;font-weight:650;}
+@media(max-width:575px) { .pf-detail-hero {padding:20px;} .pf-detail-actions>.btn {flex:1 1 auto;} .pf-metadata-list>div {grid-template-columns:1fr;gap:3px;} }
+@media(prefers-reduced-motion:no-preference) { .pf-surface {transition:box-shadow .2s ease;} .pf-surface:hover {box-shadow:0 10px 27px rgba(27,49,89,.075)!important;} }
+
+.pf-author-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.pf-author-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 100%;
+    padding: 7px 13px;
+    background: #f0f4ff;
+    color: #425b91;
+    border: 1px solid #dce5ff;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    transition: background-color 0.2s ease;
+}
+
+    .pf-author-chip:hover {
+        background: #e4ebff;
+    }
+
+.pf-author-orcid {
+    display: inline-flex;
+    align-items: center;
+    color: #526dfe;
+    text-decoration: none;
+}
+
+    .pf-author-orcid:hover {
+        color: #3048d8;
+    }
+

@@ -1,0 +1,120 @@
+/* PaperFlow 5J.4 - additive global theme. Load AFTER Modernize and page CSS. */
+:root {
+  --pf-primary: #5268f6;
+  --pf-primary-hover: #4055dc;
+  --pf-accent: #20a8aa;
+  --pf-page: #f4f7fc;
+  --pf-surface: #ffffff;
+  --pf-text: #26344c;
+  --pf-muted: #71819b;
+  --pf-border: #e3eaf4;
+  --pf-shadow: 0 8px 30px rgba(31, 53, 91, .055);
+  --pf-radius: 16px;
+  --pf-ring: rgba(82, 104, 246, .22);
+  color-scheme: light;
+}
+
+html { scroll-behavior: smooth; }
+body { background-color: var(--pf-page); color: var(--pf-text); }
+a { text-underline-offset: .16em; }
+a:not(.btn):focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible { outline: 2px solid var(--pf-primary); outline-offset: 3px; }
+
+/* Common content elements; existing component structure remains untouched. */
+.card, .pf-surface {
+  background-color: var(--pf-surface);
+  border-color: var(--pf-border);
+  box-shadow: var(--pf-shadow);
+  border-radius: var(--pf-radius);
+}
+.card-header, .card-footer { border-color: var(--pf-border); }
+.text-muted, .form-text { color: var(--pf-muted) !important; }
+.btn { border-radius: 10px; font-weight: 600; transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease; }
+.btn:not(:disabled):active { transform: translateY(1px); }
+.btn-primary { background-color: var(--pf-primary); border-color: var(--pf-primary); }
+.btn-primary:hover, .btn-primary:focus-visible { background-color: var(--pf-primary-hover); border-color: var(--pf-primary-hover); }
+.btn-outline-primary { border-color: var(--pf-primary); color: var(--pf-primary); }
+.btn-outline-primary:hover { background-color: var(--pf-primary); border-color: var(--pf-primary); color: white; }
+.form-control, .form-select { border-color: var(--pf-border); border-radius: 10px; }
+.form-control:focus, .form-select:focus { border-color: var(--pf-primary); box-shadow: 0 0 0 .22rem var(--pf-ring); }
+.table { --bs-table-bg: transparent; }
+.table thead th { color: var(--pf-muted); font-size: .84rem; letter-spacing: .02em; }
+.table td { border-color: var(--pf-border); }
+.paperflow-date, .pf-date { white-space: nowrap; }
+.breadcrumb { --bs-breadcrumb-divider-color: var(--pf-muted); }
+.breadcrumb-item.active { color: var(--pf-muted); }
+.pf-theme-switch {
+  display: inline-flex; justify-content: center; align-items: center; gap: .45rem;
+  padding: .48rem .72rem; border-radius: 999px;
+  background: var(--pf-surface); color: var(--pf-text);
+  border: 1px solid var(--pf-border); cursor: pointer;
+}
+.pf-theme-switch:hover { border-color: var(--pf-primary); }
+.pf-theme-switch .ti { font-size: 1.1rem; }
+.pf-theme-switch:focus-visible { outline: 2px solid var(--pf-primary); outline-offset: 3px; }
+
+/* Supports common Modernize sidebar/header selectors, but does not change their positioning. */
+.left-sidebar, .app-header, .topbar, .navbar { border-color: var(--pf-border) !important; }
+.left-sidebar .sidebar-link, .left-sidebar .hide-menu { transition: color .16s ease, background-color .16s ease; }
+.left-sidebar .sidebar-link:hover { color: var(--pf-primary); }
+
+/* Optional dark mode; enabled only by the button (data-pf-theme="dark"). */
+html[data-pf-theme="dark"] {
+  --pf-primary: #95a5ff;
+  --pf-primary-hover: #b1bdff;
+  --pf-accent: #5bd5d1;
+  --pf-page: #121a2a;
+  --pf-surface: #1d2940;
+  --pf-text: #e9eefc;
+  --pf-muted: #afbdd5;
+  --pf-border: #35445e;
+  --pf-shadow: 0 8px 30px rgba(0,0,0,.18);
+  --pf-ring: rgba(149,165,255,.27);
+  color-scheme: dark;
+  --bs-body-bg: var(--pf-page);
+  --bs-body-color: var(--pf-text);
+  --bs-border-color: var(--pf-border);
+  --bs-card-bg: var(--pf-surface);
+  --bs-card-color: var(--pf-text);
+  --bs-secondary-color: var(--pf-muted);
+}
+html[data-pf-theme="dark"] body,
+html[data-pf-theme="dark"] .main-wrapper,
+html[data-pf-theme="dark"] .body-wrapper,
+html[data-pf-theme="dark"] .container-fluid { color: var(--pf-text); }
+html[data-pf-theme="dark"] .card,
+html[data-pf-theme="dark"] .pf-surface,
+html[data-pf-theme="dark"] .modal-content,
+html[data-pf-theme="dark"] .dropdown-menu,
+html[data-pf-theme="dark"] .left-sidebar,
+html[data-pf-theme="dark"] .app-header,
+html[data-pf-theme="dark"] .topbar,
+html[data-pf-theme="dark"] .navbar {
+  background-color: var(--pf-surface) !important;
+  color: var(--pf-text);
+  border-color: var(--pf-border);
+}
+html[data-pf-theme="dark"] .form-control,
+html[data-pf-theme="dark"] .form-select,
+html[data-pf-theme="dark"] .input-group-text {
+  background-color: #172137; color: var(--pf-text); border-color: var(--pf-border);
+}
+html[data-pf-theme="dark"] .form-control::placeholder { color: var(--pf-muted); }
+html[data-pf-theme="dark"] .table { color: var(--pf-text); --bs-table-color: var(--pf-text); --bs-table-border-color: var(--pf-border); }
+html[data-pf-theme="dark"] .table-hover > tbody > tr:hover > * { --bs-table-accent-bg: #263553; color: var(--pf-text); }
+html[data-pf-theme="dark"] .bg-white,
+html[data-pf-theme="dark"] .bg-light { background-color: var(--pf-surface) !important; }
+html[data-pf-theme="dark"] .text-dark { color: var(--pf-text) !important; }
+html[data-pf-theme="dark"] .btn-primary { background-color: #687bf2; border-color: #687bf2; color: #fff; }
+html[data-pf-theme="dark"] .btn-outline-primary { color: #a7b4ff; border-color: #8395fa; }
+html[data-pf-theme="dark"] .btn-outline-primary:hover { color: #11182c; background-color: #a7b4ff; }
+html[data-pf-theme="dark"] .left-sidebar .sidebar-link { color: var(--pf-text); }
+html[data-pf-theme="dark"] .left-sidebar .sidebar-link:hover { background-color: #273753; }
+html[data-pf-theme="dark"] .pf-author-chip { background: #293a5e; color: var(--pf-text); border-color: var(--pf-border); }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn, .left-sidebar .sidebar-link { transition: none; }
+}

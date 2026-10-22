@@ -2,617 +2,234 @@
 
 @{
     ViewData["Title"] = "Paper Details";
-
-    string publicationDate = Model.PublicationDate?
-        .ToString("yyyy-MM-dd") ?? "Not available";
-
-    string dueDate = Model.DueDate?
-        .ToString("yyyy-MM-dd") ?? "Not set";
-
-    string rating = Model.Rating.HasValue
-        ? $"{Model.Rating.Value}/5"
-        : "Not rated";
-
-    int progress = Model.ReadingProgressPercent ?? 0;
-
-    bool hasPublicationUrl =
-        Uri.TryCreate(
-            Model.PublicationUrl,
-            UriKind.Absolute,
-            out var publicationUri)
-        && (publicationUri.Scheme == Uri.UriSchemeHttps ||
-            publicationUri.Scheme == Uri.UriSchemeHttp);
-
-    bool hasPdfUrl =
-        Uri.TryCreate(
-            Model.PdfUrl,
-            UriKind.Absolute,
-            out var pdfUri)
-        && (pdfUri.Scheme == Uri.UriSchemeHttps ||
-            pdfUri.Scheme == Uri.UriSchemeHttp);
+    var published = Model.PublicationDate?.ToString("yyyy-MM-dd") ?? "Not available";
+    var deadline = Model.DueDate?.ToString("yyyy-MM-dd") ?? "Not set";
+    var progress = Math.Clamp(Model.ReadingProgressPercent ?? 0, 0, 100);
+    var status = Model.ReadingStatus ?? "NotStarted";
+    var statusTone = status switch
+    {
+        "Completed" => "is-completed",
+        "Reading" => "is-reading",
+        "OnHold" => "is-onhold",
+        _ => "is-notstarted"
+    };
+    bool hasPublication = Uri.TryCreate(Model.PublicationUrl, UriKind.Absolute, out var pubUri)
+        && (pubUri.Scheme == Uri.UriSchemeHttps || pubUri.Scheme == Uri.UriSchemeHttp);
+    bool hasPdf = Uri.TryCreate(Model.PdfUrl, UriKind.Absolute, out var pdfUri)
+        && (pdfUri.Scheme == Uri.UriSchemeHttps || pdfUri.Scheme == Uri.UriSchemeHttp);
 }
 
-<!-- =========================================
-     Breadcrumb and page heading
-     ========================================= -->
+<link rel="stylesheet" href="~/css/paperflow-details-edit.css" asp-append-version="true" />
 
-<div class="mb-4">
-
-    <nav aria-label="breadcrumb">
+<div class="pf-detail-page">
+    <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
-
-            <li class="breadcrumb-item">
-                <a asp-controller="Papers"
-                   asp-action="Index">
-                    My Papers
-                </a>
-            </li>
-
-            <li class="breadcrumb-item active"
-                aria-current="page">
-                Paper Details
-            </li>
-
+            <li class="breadcrumb-item"><a asp-controller="Papers" asp-action="Index">My Papers</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Paper Details</li>
         </ol>
     </nav>
 
-    <div class="d-flex justify-content-between
-        align-items-start flex-wrap gap-3">
+    @if (TempData["SuccessMessage"] is string success)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="ti ti-circle-check me-2"></i>@success
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] is string error)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="ti ti-alert-circle me-2"></i>@error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-        <div class="flex-grow-1">
+    <header class="pf-detail-hero mb-4">
+        <div class="pf-detail-eyebrow"><i class="ti ti-books me-1"></i> RESEARCH LIBRARY · PAPER #@Model.Id</div>
+        <h2 class="pf-detail-title">@Model.Title</h2>
+        <div class="pf-detail-tags">
+            <span class="pf-pill pf-pill-source"><i class="ti ti-database me-1"></i>@(Model.ResearchSourceName ?? "Manual")</span>
+            <span class="pf-pill @statusTone">@status</span>
+            @foreach (var category in Model.Categories ?? Enumerable.Empty<string>())
+            {
+                <span class="pf-pill pf-pill-category">@category</span>
+            }
+        </div>
+        <div class="pf-detail-actions mt-4">
+            <a asp-controller="Papers" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="ti ti-edit me-1"></i>Edit Paper</a>
+            <a asp-controller="PaperReading" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary"><i class="ti ti-book-2 me-1"></i>Update Reading</a>
+            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deletePaperModal"><i class="ti ti-trash me-1"></i>Delete</button>
+            <a asp-controller="Papers" asp-action="Index" class="btn btn-outline-secondary"><i class="ti ti-arrow-left me-1"></i>Library</a>
+        </div>
+    </header>
 
-            <h3 class="fw-semibold mb-3">
-                @Model.Title
-            </h3>
-
-            <div class="d-flex flex-wrap gap-2">
-
-                <span class="badge bg-primary-subtle text-primary">
-                    @(Model.ResearchSourceName ?? "Manual")
-                </span>
-
-                @{
-                    string statusClass = Model.ReadingStatus switch
+    <div class="row g-4">
+        <div class="col-12 col-xl-8">
+            <section class="card pf-surface mb-4" aria-labelledby="abstractHeading">
+                <div class="card-body p-4">
+                    <h5 id="abstractHeading" class="pf-section-title"><span class="pf-section-icon"><i class="ti ti-file-description"></i></span> Abstract</h5>
+                    @if (!string.IsNullOrWhiteSpace(Model.Abstract))
                     {
-                        "Completed" => "bg-success-subtle text-success",
-                        "Reading" => "bg-primary-subtle text-primary",
-                        "OnHold" => "bg-warning-subtle text-warning",
-                        _ => "bg-light text-dark border"
-                    };
-                }
+                        <p class="pf-long-text mb-0">@Model.Abstract</p>
+                    }
+                    else
+                    {
+                        <p class="pf-empty mb-0">No abstract available.</p>
+                    }
+                </div>
+            </section>
 
-                <span class="badge @statusClass">
-                    @Model.ReadingStatus
-                </span>
 
-                @foreach (string category in Model.Categories)
-                {
-                    <span class="badge bg-light text-dark border">
-                        @category
-                    </span>
-                }
+            <section class="card pf-surface mb-4"
+                     aria-labelledby="authorsHeading">
 
-            </div>
-        </div>
-    </div>
-</div>
+                <div class="card-body p-4">
 
-<!-- =========================================
-     Status messages
-     ========================================= -->
-@if (TempData["SuccessMessage"] is string successMessage)
-{
-    <div class="alert alert-success alert-dismissible fade show"
-         role="alert">
+                    <h5 id="authorsHeading" class="pf-section-title">
+                        <span class="pf-section-icon">
+                            <i class="ti ti-users"></i>
+                        </span>
 
-        <i class="ti ti-circle-check me-2"></i>
-        @successMessage
+                        Authors
 
-        <button type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close">
-        </button>
-    </div>
-}
-
-@if (TempData["ErrorMessage"] is string errorMessage)
-{
-    <div class="alert alert-danger alert-dismissible fade show"
-         role="alert">
-
-        @errorMessage
-
-        <button type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close">
-        </button>
-    </div>
-}
-
-<!-- =========================================
-     Action buttons
-     ========================================= -->
-
-<div class="d-flex flex-wrap gap-2 mb-4">
-
-    <a asp-controller="Papers"
-       asp-action="Edit"
-       asp-route-id="@Model.Id"
-       class="btn btn-primary">
-
-        <i class="ti ti-edit me-1"></i>
-        Edit Paper
-    </a>
-
-    <a asp-controller="PaperReading"
-       asp-action="Edit"
-       asp-route-id="@Model.Id"
-       class="btn btn-outline-primary">
-
-        <i class="ti ti-book-2 me-1"></i>
-        Edit Reading
-    </a>
-
-    <button type="button"
-            class="btn btn-outline-danger"
-            data-bs-toggle="modal"
-            data-bs-target="#deletePaperModal">
-
-        <i class="ti ti-trash me-1"></i>
-        Delete Paper
-    </button>
-
-    <a asp-controller="Papers"
-       asp-action="Index"
-       class="btn btn-outline-secondary">
-
-        <i class="ti ti-arrow-left me-1"></i>
-        Back to Library
-    </a>
-
-</div>
-
-<!-- =========================================
-     Main content
-     ========================================= -->
-
-<div class="row g-4">
-
-    <!-- LEFT COLUMN -->
-
-    <div class="col-lg-8">
-
-        <!-- Abstract -->
-
-        <div class="card">
-            <div class="card-body">
-
-                <h5 class="fw-semibold mb-4">
-                    <i class="ti ti-file-description me-2"></i>
-                    Abstract
-                </h5>
-
-                @if (!string.IsNullOrWhiteSpace(Model.Abstract))
-                {
-                    <p class="mb-0"
-                       style="white-space: pre-line; line-height: 1.8;">
-                        @Model.Abstract
-                    </p>
-                }
-                else
-                {
-                    <p class="text-muted mb-0">
-                        No abstract available.
-                    </p>
-                }
-
-            </div>
-        </div>
-
-        <!-- Authors -->
-
-        <div class="card">
-            <div class="card-body">
-
-                <h5 class="fw-semibold mb-4">
-                    <i class="ti ti-users me-2"></i>
-                    Authors
-                </h5>
-
-                @if (Model.Authors.Any())
-                {
-                    <ol class="mb-0 ps-4">
-
-                        @foreach (var author in Model.Authors)
+                        @if (Model.Authors?.Any() == true)
                         {
-                            <li class="mb-2">
-
-                                <span class="fw-semibold">
-                                    @author.FullName
-                                </span>
-
-                                @if (!string.IsNullOrWhiteSpace(author.Orcid))
-                                {
-                                    <a href="@($"https://orcid.org/{Uri.EscapeDataString(author.Orcid)}")"
-                                       target="_blank"
-                                       rel="noopener noreferrer"
-                                       class="small ms-2">
-
-                                        <i class="ti ti-external-link"></i>
-                                        ORCID
-                                    </a>
-                                }
-
-                            </li>
+                            <span class="text-muted small ms-2">
+                                (@Model.Authors.Count)
+                            </span>
                         }
-
-                    </ol>
-                }
-                else
-                {
-                    <p class="text-muted mb-0">
-                        No authors recorded.
-                    </p>
-                }
-
-            </div>
-        </div>
-
-        <!-- Personal Notes -->
-
-        <div class="card">
-            <div class="card-body">
-
-                <div class="d-flex justify-content-between
-                    align-items-center mb-3">
-
-                    <h5 class="fw-semibold mb-0">
-                        <i class="ti ti-notes me-2"></i>
-                        Personal Notes
                     </h5>
 
-                    <a asp-controller="PaperReading"
-                       asp-action="Edit"
-                       asp-route-id="@Model.Id"
-                       class="btn btn-outline-primary btn-sm">
-
-                        <i class="ti ti-pencil"></i>
-                        Edit Notes
-                    </a>
-
-                </div>
-
-                @if (!string.IsNullOrWhiteSpace(Model.Notes))
-                {
-                    <p class="mb-0"
-                       style="white-space: pre-line;">
-                        @Model.Notes
-                    </p>
-                }
-                else
-                {
-                    <p class="text-muted mb-0">
-                        No personal notes yet.
-                    </p>
-                }
-
-            </div>
-        </div>
-
-    </div>
-
-    <!-- RIGHT COLUMN -->
-
-    <div class="col-lg-4">
-
-        <!-- Publication Information -->
-
-        <div class="card">
-            <div class="card-body">
-
-                <h5 class="fw-semibold mb-4">
-                    <i class="ti ti-book me-2"></i>
-                    Publication Information
-                </h5>
-
-                <dl class="row mb-0">
-
-                    <dt class="col-5 text-muted">
-                        Published
-                    </dt>
-                    <dd class="col-7">
-                        @publicationDate
-                    </dd>
-
-                    <dt class="col-5 text-muted">
-                        Source
-                    </dt>
-                    <dd class="col-7">
-                        @(Model.ResearchSourceName ?? "Manual")
-                    </dd>
-
-                    <dt class="col-5 text-muted">
-                        External ID
-                    </dt>
-                    <dd class="col-7 text-break">
-                        @(Model.ExternalId ?? "N/A")
-                    </dd>
-
-                    <dt class="col-5 text-muted">
-                        DOI
-                    </dt>
-                    <dd class="col-7 text-break">
-                        @(Model.Doi ?? "N/A")
-                    </dd>
-
-                    <dt class="col-5 text-muted">
-                        Added
-                    </dt>
-                    <dd class="col-7">
-                        @Model.CreatedOn.ToString("yyyy-MM-dd")
-                    </dd>
-
-                    <dt class="col-5 text-muted">
-                        Modified
-                    </dt>
-                    <dd class="col-7">
-                        @(Model.ModifiedOn?.ToString("yyyy-MM-dd")
-                            ?? "Never")
-                    </dd>
-
-                </dl>
-
-                <div class="d-grid gap-2 mt-4">
-
-                    @if (hasPublicationUrl)
+                    @if (Model.Authors?.Any() == true)
                     {
-                        <a href="@Model.PublicationUrl"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           class="btn btn-outline-primary">
+                        <div class="pf-author-chips">
 
-                            <i class="ti ti-external-link me-1"></i>
-                            Open Publication
-                        </a>
+                            @foreach (var author in Model.Authors)
+                            {
+                                <span class="pf-author-chip">
+
+                                    <span>@author.FullName</span>
+
+                                    @if (!string.IsNullOrWhiteSpace(author.Orcid))
+                                    {
+                                        <a href="@($"https://orcid.org/{Uri.EscapeDataString(author.Orcid)}")"
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           class="pf-author-orcid"
+                                           title="View ORCID profile"
+                                           aria-label="ORCID profile for @author.FullName">
+
+                                            <i class="ti ti-external-link"></i>
+                                        </a>
+                                    }
+
+                                </span>
+                            }
+
+                        </div>
                     }
-
-                    @if (hasPdfUrl)
+                    else
                     {
-                        <a href="@Model.PdfUrl"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           class="btn btn-primary">
-
-                            <i class="ti ti-file-type-pdf me-1"></i>
-                            Open PDF
-                        </a>
-                    }
-
-                    @if (!hasPublicationUrl && !hasPdfUrl)
-                    {
-                        <p class="text-muted small mb-0">
-                            No publication or PDF link available.
+                        <p class="pf-empty mb-0">
+                            No authors recorded.
                         </p>
                     }
 
                 </div>
+            </section>
 
-            </div>
+
+            <section class="card pf-surface mb-4" aria-labelledby="notesHeading">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
+                        <h5 id="notesHeading" class="pf-section-title mb-0"><span class="pf-section-icon"><i class="ti ti-notes"></i></span> Personal Notes</h5>
+                        <a asp-controller="PaperReading" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary btn-sm"><i class="ti ti-pencil me-1"></i>Edit Notes</a>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                    {
+                        <p class="pf-long-text mb-0">@Model.Notes</p>
+                    }
+                    else
+                    {
+                        <p class="pf-empty mb-0">No personal notes yet.</p>
+                    }
+                </div>
+            </section>
         </div>
 
-        <!-- Reading Information -->
-
-        <div class="card">
-            <div class="card-body">
-
-                <div class="d-flex justify-content-between
-                    align-items-center mb-4">
-
-                    <h5 class="fw-semibold mb-0">
-                        <i class="ti ti-book-2 me-2"></i>
-                        Reading Information
-                    </h5>
-
-                    <a asp-controller="PaperReading"
-                       asp-action="Edit"
-                       asp-route-id="@Model.Id"
-                       class="btn btn-outline-primary btn-sm"
-                       title="Edit Reading">
-
-                        <i class="ti ti-edit"></i>
-                    </a>
-                </div>
-
-                <div class="mb-3">
-                    <span class="text-muted small">
-                        Reading Status
-                    </span>
-
-                    <div class="mt-1">
-                        <span class="badge @statusClass">
-                            @Model.ReadingStatus
-                        </span>
+        <aside class="col-12 col-xl-4">
+            <section class="card pf-surface mb-4" aria-labelledby="readingHeading">
+                <div class="card-body p-4">
+                    <h5 id="readingHeading" class="pf-section-title"><span class="pf-section-icon"><i class="ti ti-book-2"></i></span> Reading Progress</h5>
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-muted">Completion</span>
+                        <strong class="pf-progress-value">@(Model.ReadingProgressPercent.HasValue ? $"{progress}%" : "N/A")</strong>
                     </div>
+                    <div class="progress pf-progress-track" role="progressbar" aria-label="Reading progress" aria-valuenow="@progress" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar pf-progress-fill" style="width: @(progress)%"></div>
+                    </div>
+                    <div class="small text-muted mt-2 mb-4">Page @Model.CurrentPage of @(Model.TotalPages?.ToString() ?? "unknown")</div>
+                    <dl class="pf-metadata-list">
+                        <div><dt>Status</dt><dd><span class="pf-pill @statusTone">@status</span></dd></div>
+                        <div><dt>Rating</dt><dd>@(Model.Rating.HasValue ? $"{Model.Rating}/5" : "Not rated")</dd></div>
+                        <div><dt>Deadline</dt><dd>@deadline</dd></div>
+                        <div><dt>Started</dt><dd>@(Model.StartedReadingOn?.ToString("yyyy-MM-dd") ?? "Not started")</dd></div>
+                        <div><dt>Completed</dt><dd>@(Model.CompletedOn?.ToString("yyyy-MM-dd") ?? "Not completed")</dd></div>
+                    </dl>
+                    <a asp-controller="PaperReading" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary w-100"><i class="ti ti-pencil me-1"></i>Update Progress</a>
                 </div>
+            </section>
 
-                <div class="mb-3">
-                    <span class="text-muted small">
-                        Personal Rating
-                    </span>
-
-                    <div class="fw-semibold mt-1">
-                        @if (Model.Rating.HasValue)
+            <section class="card pf-surface mb-4" aria-labelledby="publicationHeading">
+                <div class="card-body p-4">
+                    <h5 id="publicationHeading" class="pf-section-title"><span class="pf-section-icon"><i class="ti ti-file-certificate"></i></span> Publication</h5>
+                    <dl class="pf-metadata-list">
+                        <div><dt>Published</dt><dd>@published</dd></div>
+                        <div><dt>Source</dt><dd>@(Model.ResearchSourceName ?? "Manual")</dd></div>
+                        <div><dt>External ID</dt><dd class="text-break">@(Model.ExternalId ?? "N/A")</dd></div>
+                        <div><dt>DOI</dt><dd class="text-break">@(Model.Doi ?? "N/A")</dd></div>
+                        <div><dt>Added</dt><dd>@Model.CreatedOn.ToString("yyyy-MM-dd")</dd></div>
+                        <div><dt>Updated</dt><dd>@(Model.ModifiedOn?.ToString("yyyy-MM-dd") ?? "Never")</dd></div>
+                    </dl>
+                    <div class="d-grid gap-2 mt-3">
+                        @if (hasPublication)
                         {
-                            <i class="ti ti-star-filled text-warning me-1"></i>
+                            <a class="btn btn-outline-primary" href="@Model.PublicationUrl" target="_blank" rel="noopener noreferrer"><i class="ti ti-external-link me-1"></i>Publication</a>
                         }
-
-                        @rating
+                        @if (hasPdf)
+                        {
+                            <a class="btn btn-primary" href="@Model.PdfUrl" target="_blank" rel="noopener noreferrer"><i class="ti ti-file-type-pdf me-1"></i>Open PDF</a>
+                        }
+                        @if (!hasPublication && !hasPdf)
+                        {
+                            <p class="pf-empty mb-0">No external links available.</p>
+                        }
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <span class="text-muted small">
-                        Reading Deadline
-                    </span>
-
-                    <div class="fw-semibold mt-1">
-                        @dueDate
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <span class="text-muted small">
-                        Started Reading
-                    </span>
-
-                    <div class="mt-1">
-                        @(Model.StartedReadingOn?.ToString("yyyy-MM-dd")
-                            ?? "Not started")
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <span class="text-muted small">
-                        Completed On
-                    </span>
-
-                    <div class="mt-1">
-                        @(Model.CompletedOn?.ToString("yyyy-MM-dd")
-                            ?? "Not completed")
-                    </div>
-                </div>
-
-                <!-- Reading Progress -->
-
-                <div class="mb-3">
-
-                    <div class="d-flex justify-content-between
-                        align-items-center mb-2">
-
-                        <span class="text-muted small">
-                            Reading Progress
-                        </span>
-
-                        <strong>
-                            @(Model.ReadingProgressPercent.HasValue
-                                ? $"{Model.ReadingProgressPercent.Value}%"
-                                : "N/A")
-                        </strong>
-                    </div>
-
-                    <div class="progress"
-                         style="height: 12px;">
-
-                        <div class="progress-bar"
-                             role="progressbar"
-                             style="width: @(progress)%"
-                             aria-valuenow="@progress"
-                             aria-valuemin="0"
-                             aria-valuemax="100">
-                        </div>
-
-                    </div>
-
-                    <div class="text-muted small mt-2">
-                        Page @Model.CurrentPage
-                        of @(Model.TotalPages?.ToString() ?? "unknown")
-                    </div>
-
-                </div>
-
-                <a asp-controller="PaperReading"
-                   asp-action="Edit"
-                   asp-route-id="@Model.Id"
-                   class="btn btn-outline-primary w-100">
-
-                    <i class="ti ti-pencil me-1"></i>
-                    Update Reading Progress
-                </a>
-
-            </div>
-        </div>
-
+            </section>
+        </aside>
     </div>
 </div>
 
-<!-- =========================================
-     Delete Paper Confirmation Modal
-     ========================================= -->
-
-<div class="modal fade"
-     id="deletePaperModal"
-     tabindex="-1"
-     aria-labelledby="deletePaperModalLabel"
-     aria-hidden="true">
-
+<div class="modal fade" id="deletePaperModal" tabindex="-1" aria-labelledby="deletePaperModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-
             <div class="modal-header">
-                <h5 class="modal-title fw-semibold"
-                    id="deletePaperModalLabel">
-
-                    <i class="ti ti-alert-triangle text-danger me-2"></i>
-                    Delete Paper
-                </h5>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close">
-                </button>
+                <h5 class="modal-title" id="deletePaperModalLabel"><i class="ti ti-alert-triangle text-danger me-2"></i>Delete Paper</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
             <div class="modal-body">
-
-                <p class="fw-semibold">
-                    Are you sure you want to delete this paper?
-                </p>
-
-                <div class="border rounded p-3 mb-3">
-                    <strong class="text-break">
-                        @Model.Title
-                    </strong>
-                </div>
-
-                <div class="alert alert-danger mb-0">
-                    <i class="ti ti-alert-triangle me-1"></i>
-
-                    This action cannot be undone.
-                    The paper, its reading progress,
-                    rating and personal notes will be
-                    permanently removed.
-                </div>
-
+                <p>Are you sure you want to delete this paper?</p>
+                <div class="rounded border p-3 fw-semibold text-break">@Model.Title</div>
+                <p class="text-danger small mt-3 mb-0">This action cannot be undone. Reading progress, ratings and notes will be removed.</p>
             </div>
-
             <div class="modal-footer">
-
-                <button type="button"
-                        class="btn btn-outline-secondary"
-                        data-bs-dismiss="modal">
-                    Cancel
-                </button>
-
-                <form asp-controller="Papers"
-                      asp-action="Delete"
-                      asp-route-id="@Model.Id"
-                      method="post">
-
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form asp-controller="Papers" asp-action="Delete" asp-route-id="@Model.Id" method="post">
                     @Html.AntiForgeryToken()
-
-                    <button type="submit"
-                            class="btn btn-danger">
-
-                        <i class="ti ti-trash me-1"></i>
-                        Yes, Delete Paper
-                    </button>
+                    <button type="submit" class="btn btn-danger"><i class="ti ti-trash me-1"></i>Yes, Delete Paper</button>
                 </form>
-
             </div>
-
         </div>
     </div>
 </div>
