@@ -43,10 +43,11 @@
         <!-- Main application area -->
         <div class="body-wrapper">
 
+           
             <header class="app-header">
-                <nav class="navbar navbar-expand-lg navbar-light">
+                <nav class="navbar navbar-expand-lg">
 
-                    <!-- Mobile Sidebar Toggle -->
+                    <!-- Mobile sidebar -->
                     <ul class="navbar-nav">
                         <li class="nav-item d-block d-xl-none">
                             <a class="nav-link sidebartoggler"
@@ -58,25 +59,25 @@
                         </li>
                     </ul>
 
-                    <!-- Right Header Actions -->
                     <div class="navbar-collapse justify-content-end px-0">
-                        <ul class="navbar-nav flex-row ms-auto align-items-center gap-2">
 
-                            <!-- Light / Dark Mode -->
+                        <ul class="navbar-nav flex-row ms-auto
+                            align-items-center gap-3">
+
+                            <!-- Theme switch -->
                             <li class="nav-item">
                                 <button type="button"
                                         class="pf-theme-switch"
                                         data-pf-theme-toggle
-                                        aria-label="Switch to dark theme"
-                                        aria-pressed="false"
-                                        title="Toggle light/dark mode">
+                                        aria-label="Toggle color theme"
+                                        aria-pressed="false">
 
                                     <i class="ti ti-moon"
                                        data-pf-theme-icon
                                        aria-hidden="true"></i>
 
                                     <span data-pf-theme-label
-                                          class="d-none d-md-inline">
+                                          class="d-none d-sm-inline">
                                         Dark mode
                                     </span>
                                 </button>
@@ -84,38 +85,86 @@
 
                             @if (User.Identity?.IsAuthenticated == true)
                             {
-                                <!-- Current User -->
-                                <li class="nav-item d-none d-sm-block">
-                                    <span class="pf-header-user">
-                                        <i class="ti ti-user-circle me-1"></i>
-                                        @User.Identity.Name
-                                    </span>
-                                </li>
+                                <!-- User dropdown -->
+                                <li class="nav-item dropdown">
 
-                                <!-- Logout -->
-                                <li class="nav-item">
-                                    <form asp-area="Identity"
-                                          asp-page="/Account/Logout"
-                                          asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
-                                          method="post">
+                                    <button type="button"
+                                            class="pf-account-trigger dropdown-toggle"
+                                            id="paperflowAccountMenu"
+                                            data-bs-toggle="dropdown"
+                                            data-bs-auto-close="true"
+                                            aria-expanded="false"
+                                            aria-label="Open account menu">
 
-                                        @Html.AntiForgeryToken()
+                                        <span class="pf-account-avatar">
+                                            <i class="ti ti-user-circle"></i>
+                                        </span>
 
-                                        <button type="submit"
-                                                class="btn btn-outline-primary pf-header-logout">
+                                        <span class="pf-account-name
+                                            d-none d-sm-inline">
+                                            @User.Identity.Name
+                                        </span>
 
-                                            <i class="ti ti-logout me-1"></i>
+                                        <i class="ti ti-chevron-down
+                                        pf-account-chevron"
+                                           aria-hidden="true"></i>
+                                    </button>
 
-                                            <span class="d-none d-sm-inline">
+                                    <div class="dropdown-menu dropdown-menu-end
+                                        pf-account-dropdown"
+                                         aria-labelledby="paperflowAccountMenu">
+
+                                        <div class="pf-account-dropdown-header">
+                                            <div class="fw-semibold">
+                                                My Account
+                                            </div>
+
+                                            <div class="small text-muted text-break">
+                                                @User.Identity.Name
+                                            </div>
+                                        </div>
+
+                                        <div class="dropdown-divider"></div>
+
+                                        <a asp-controller="Account"
+                                           asp-action="Profile"
+                                           class="dropdown-item">
+
+                                            <i class="ti ti-user me-2"></i>
+                                            My Profile
+                                        </a>
+
+                                        <a asp-controller="Account"
+                                           asp-action="ChangePassword"
+                                           class="dropdown-item">
+
+                                            <i class="ti ti-key me-2"></i>
+                                            Change Password
+                                        </a>
+
+                                        <div class="dropdown-divider"></div>
+
+                                        <form asp-area="Identity"
+                                              asp-page="/Account/Logout"
+                                              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
+                                              method="post">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="dropdown-item
+                                                pf-account-logout">
+
+                                                <i class="ti ti-logout me-2"></i>
                                                 Logout
-                                            </span>
-                                        </button>
-                                    </form>
+                                            </button>
+                                        </form>
+
+                                    </div>
                                 </li>
                             }
                             else
                             {
-                                <!-- Login -->
                                 <li class="nav-item">
                                     <a asp-area="Identity"
                                        asp-page="/Account/Login"
@@ -124,7 +173,6 @@
                                     </a>
                                 </li>
 
-                                <!-- Register -->
                                 <li class="nav-item">
                                     <a asp-area="Identity"
                                        asp-page="/Account/Register"
@@ -133,11 +181,11 @@
                                     </a>
                                 </li>
                             }
-
                         </ul>
                     </div>
                 </nav>
             </header>
+
 
 
             <!-- Independent scrollable content -->

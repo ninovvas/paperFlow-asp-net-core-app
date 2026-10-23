@@ -132,3 +132,116 @@ html[data-pf-theme="dark"] .body-wrapper .card .form-text {
     color: #afbdd5 !important;
 }
 
+.pf-account-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 8px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--pf-text);
+    font: inherit;
+    cursor: pointer;
+    max-width: 280px;
+}
+
+    .pf-account-trigger:hover,
+    .pf-account-trigger[aria-expanded="true"] {
+        background: var(--pf-surface);
+        border-color: var(--pf-border);
+    }
+
+    .pf-account-trigger::after {
+        display: none;
+    }
+
+.pf-account-avatar {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: rgba(100, 123, 242, 0.14);
+    color: var(--pf-primary);
+}
+
+    .pf-account-avatar i {
+        font-size: 23px;
+    }
+
+.pf-account-name {
+    color: var(--pf-text);
+    font-size: 13px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pf-account-chevron {
+    color: var(--pf-muted);
+    font-size: 15px;
+}
+
+.pf-account-dropdown {
+    min-width: 265px;
+    padding: 8px;
+    border: 1px solid var(--pf-border);
+    border-radius: 14px;
+    background: var(--pf-surface);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.15);
+    z-index: 1100;
+}
+
+.pf-account-dropdown-header {
+    padding: 12px 14px;
+    color: var(--pf-text);
+}
+
+.pf-account-dropdown .dropdown-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 4px;
+    padding: 11px 13px;
+    border-radius: 9px;
+    color: var(--pf-text);
+    background: transparent;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+    .pf-account-dropdown .dropdown-item:hover,
+    .pf-account-dropdown .dropdown-item:focus {
+        background: rgba(100, 123, 242, 0.12);
+        color: var(--pf-primary);
+    }
+
+.pf-account-dropdown .dropdown-divider {
+    border-color: var(--pf-border);
+}
+
+.pf-account-dropdown .pf-account-logout {
+    color: #e56565;
+    cursor: pointer;
+    text-align: left;
+}
+
+    .pf-account-dropdown .pf-account-logout:hover {
+        color: #ff7777;
+        background: rgba(229, 101, 101, 0.1);
+    }
+
+@media (max-width: 575px) {
+    .pf-account-trigger {
+        padding: 4px;
+    }
+
+    .pf-account-dropdown {
+        min-width: 230px;
+    }
+}
+

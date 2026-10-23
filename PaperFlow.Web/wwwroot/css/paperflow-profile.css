@@ -1,0 +1,117 @@
+﻿.pf-profile-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    color: var(--pf-text, #26344c);
+}
+
+.pf-profile-hero {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 28px;
+    border-radius: 22px;
+    background: linear-gradient(125deg,#f7f9ff,#edf2ff);
+    border: 1px solid #dfe8fd;
+}
+
+.pf-profile-avatar {
+    width: 72px;
+    height: 72px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    background: #e4ebff;
+    color: #5268ea;
+    border-radius: 20px;
+    font-size: 36px;
+}
+
+.pf-profile-eyebrow {
+    font-size: 11px;
+    letter-spacing: .12em;
+    font-weight: 800;
+    color: #5b73c9;
+    margin-bottom: 6px;
+}
+
+.pf-profile-muted {
+    color: var(--pf-muted,#71819b);
+}
+
+.pf-profile-card {
+    border: 1px solid var(--pf-border,#e3eaf4);
+    border-radius: 18px;
+}
+
+html[data-pf-theme="dark"] .pf-profile-hero {
+    background: linear-gradient(125deg,#243657,#1e2b43);
+    border-color: #405477;
+    color: #f0f4ff;
+}
+
+html[data-pf-theme="dark"] .pf-profile-avatar {
+    background: #344565;
+    color: #aebeff;
+}
+
+html[data-pf-theme="dark"] .pf-profile-eyebrow {
+    color: #afbeff;
+}
+
+html[data-pf-theme="dark"] .pf-profile-page .form-label,
+html[data-pf-theme="dark"] .pf-profile-page h1,
+html[data-pf-theme="dark"] .pf-profile-page h2 {
+    color: #f0f4ff;
+}
+
+html[data-pf-theme="dark"] .pf-profile-page .form-control {
+    background: #172238;
+    color: #f0f4ff;
+    border-color: #455977;
+}
+
+    html[data-pf-theme="dark"] .pf-profile-page .form-control[readonly] {
+        opacity: .85;
+    }
+
+html[data-pf-theme="dark"] .pf-profile-muted,
+html[data-pf-theme="dark"] .pf-profile-page .form-text {
+    color: #afbdd5 !important;
+}
+
+@media(max-width:575px) {
+    .pf-profile-hero {
+        padding: 20px;
+        align-items: flex-start;
+    }
+
+    .pf-profile-avatar {
+        width: 52px;
+        height: 52px;
+        font-size: 27px;
+    }
+}
+
+/* Password form - shared light/dark profile palette */
+.pf-password-page {
+    max-width: 820px;
+}
+
+    .pf-password-page .pf-profile-card {
+        max-width: 720px;
+    }
+
+.pf-profile-page .form-control:focus {
+    border-color: var(--pf-primary,#5268f6);
+    box-shadow: 0 0 0 .2rem var(--pf-ring,rgba(82,104,246,.2));
+}
+
+html[data-pf-theme="dark"] .pf-profile-page .pf-profile-card {
+    background: var(--pf-surface,#1d2940);
+    color: var(--pf-text,#e9eefc);
+    border-color: var(--pf-border,#35445e);
+}
+
+html[data-pf-theme="dark"] .pf-profile-page .form-control[readonly] {
+    background: #22304b;
+}
