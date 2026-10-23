@@ -1,122 +1,273 @@
-/* PaperFlow 5J.4 - additive global theme. Load AFTER Modernize and page CSS. */
 :root {
-  --pf-primary: #5268f6;
-  --pf-primary-hover: #4055dc;
-  --pf-accent: #20a8aa;
-  --pf-page: #f4f7fc;
-  --pf-surface: #ffffff;
-  --pf-text: #26344c;
-  --pf-muted: #71819b;
-  --pf-border: #e3eaf4;
-  --pf-shadow: 0 8px 30px rgba(31, 53, 91, .055);
-  --pf-radius: 16px;
-  --pf-ring: rgba(82, 104, 246, .22);
-  color-scheme: light;
+    --pf-primary: #5268f6;
+    --pf-primary-hover: #4055dc;
+    --pf-accent: #20a8aa;
+    --pf-page: #f4f7fc;
+    --pf-surface: #ffffff;
+    --pf-text: #26344c;
+    --pf-muted: #71819b;
+    --pf-border: #e3eaf4;
+    --pf-shadow: 0 8px 30px rgba(31, 53, 91, .055);
+    --pf-radius: 16px;
+    --pf-ring: rgba(82, 104, 246, .22);
+    color-scheme: light;
 }
 
-html { scroll-behavior: smooth; }
-body { background-color: var(--pf-page); color: var(--pf-text); }
-a { text-underline-offset: .16em; }
-a:not(.btn):focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible { outline: 2px solid var(--pf-primary); outline-offset: 3px; }
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--pf-page);
+    color: var(--pf-text);
+}
+
+a {
+    text-underline-offset: .16em;
+}
+
+    a:not(.btn):focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+        outline: 2px solid var(--pf-primary);
+        outline-offset: 3px;
+    }
 
 /* Common content elements; existing component structure remains untouched. */
 .card, .pf-surface {
-  background-color: var(--pf-surface);
-  border-color: var(--pf-border);
-  box-shadow: var(--pf-shadow);
-  border-radius: var(--pf-radius);
+    background-color: var(--pf-surface);
+    border-color: var(--pf-border);
+    box-shadow: var(--pf-shadow);
+    border-radius: var(--pf-radius);
 }
-.card-header, .card-footer { border-color: var(--pf-border); }
-.text-muted, .form-text { color: var(--pf-muted) !important; }
-.btn { border-radius: 10px; font-weight: 600; transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease; }
-.btn:not(:disabled):active { transform: translateY(1px); }
-.btn-primary { background-color: var(--pf-primary); border-color: var(--pf-primary); }
-.btn-primary:hover, .btn-primary:focus-visible { background-color: var(--pf-primary-hover); border-color: var(--pf-primary-hover); }
-.btn-outline-primary { border-color: var(--pf-primary); color: var(--pf-primary); }
-.btn-outline-primary:hover { background-color: var(--pf-primary); border-color: var(--pf-primary); color: white; }
-.form-control, .form-select { border-color: var(--pf-border); border-radius: 10px; }
-.form-control:focus, .form-select:focus { border-color: var(--pf-primary); box-shadow: 0 0 0 .22rem var(--pf-ring); }
-.table { --bs-table-bg: transparent; }
-.table thead th { color: var(--pf-muted); font-size: .84rem; letter-spacing: .02em; }
-.table td { border-color: var(--pf-border); }
-.paperflow-date, .pf-date { white-space: nowrap; }
-.breadcrumb { --bs-breadcrumb-divider-color: var(--pf-muted); }
-.breadcrumb-item.active { color: var(--pf-muted); }
+
+.card-header, .card-footer {
+    border-color: var(--pf-border);
+}
+
+.text-muted, .form-text {
+    color: var(--pf-muted) !important;
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+    .btn:not(:disabled):active {
+        transform: translateY(1px);
+    }
+
+.btn-primary {
+    background-color: var(--pf-primary);
+    border-color: var(--pf-primary);
+}
+
+    .btn-primary:hover, .btn-primary:focus-visible {
+        background-color: var(--pf-primary-hover);
+        border-color: var(--pf-primary-hover);
+    }
+
+.btn-outline-primary {
+    border-color: var(--pf-primary);
+    color: var(--pf-primary);
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--pf-primary);
+        border-color: var(--pf-primary);
+        color: white;
+    }
+
+.form-control, .form-select {
+    border-color: var(--pf-border);
+    border-radius: 10px;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--pf-primary);
+        box-shadow: 0 0 0 .22rem var(--pf-ring);
+    }
+
+.table {
+    --bs-table-bg: transparent;
+}
+
+    .table thead th {
+        color: var(--pf-muted);
+        font-size: .84rem;
+        letter-spacing: .02em;
+    }
+
+    .table td {
+        border-color: var(--pf-border);
+    }
+
+.paperflow-date, .pf-date {
+    white-space: nowrap;
+}
+
+.breadcrumb {
+    --bs-breadcrumb-divider-color: var(--pf-muted);
+}
+
+.breadcrumb-item.active {
+    color: var(--pf-muted);
+}
+
 .pf-theme-switch {
-  display: inline-flex; justify-content: center; align-items: center; gap: .45rem;
-  padding: .48rem .72rem; border-radius: 999px;
-  background: var(--pf-surface); color: var(--pf-text);
-  border: 1px solid var(--pf-border); cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: .45rem;
+    padding: .48rem .72rem;
+    border-radius: 999px;
+    background: var(--pf-surface);
+    color: var(--pf-text);
+    border: 1px solid var(--pf-border);
+    cursor: pointer;
 }
-.pf-theme-switch:hover { border-color: var(--pf-primary); }
-.pf-theme-switch .ti { font-size: 1.1rem; }
-.pf-theme-switch:focus-visible { outline: 2px solid var(--pf-primary); outline-offset: 3px; }
+
+    .pf-theme-switch:hover {
+        border-color: var(--pf-primary);
+    }
+
+    .pf-theme-switch .ti {
+        font-size: 1.1rem;
+    }
+
+    .pf-theme-switch:focus-visible {
+        outline: 2px solid var(--pf-primary);
+        outline-offset: 3px;
+    }
 
 /* Supports common Modernize sidebar/header selectors, but does not change their positioning. */
-.left-sidebar, .app-header, .topbar, .navbar { border-color: var(--pf-border) !important; }
-.left-sidebar .sidebar-link, .left-sidebar .hide-menu { transition: color .16s ease, background-color .16s ease; }
-.left-sidebar .sidebar-link:hover { color: var(--pf-primary); }
+.left-sidebar, .app-header, .topbar, .navbar {
+    border-color: var(--pf-border) !important;
+}
+
+    .left-sidebar .sidebar-link, .left-sidebar .hide-menu {
+        transition: color .16s ease, background-color .16s ease;
+    }
+
+        .left-sidebar .sidebar-link:hover {
+            color: var(--pf-primary);
+        }
 
 /* Optional dark mode; enabled only by the button (data-pf-theme="dark"). */
 html[data-pf-theme="dark"] {
-  --pf-primary: #95a5ff;
-  --pf-primary-hover: #b1bdff;
-  --pf-accent: #5bd5d1;
-  --pf-page: #121a2a;
-  --pf-surface: #1d2940;
-  --pf-text: #e9eefc;
-  --pf-muted: #afbdd5;
-  --pf-border: #35445e;
-  --pf-shadow: 0 8px 30px rgba(0,0,0,.18);
-  --pf-ring: rgba(149,165,255,.27);
-  color-scheme: dark;
-  --bs-body-bg: var(--pf-page);
-  --bs-body-color: var(--pf-text);
-  --bs-border-color: var(--pf-border);
-  --bs-card-bg: var(--pf-surface);
-  --bs-card-color: var(--pf-text);
-  --bs-secondary-color: var(--pf-muted);
+    --pf-primary: #95a5ff;
+    --pf-primary-hover: #b1bdff;
+    --pf-accent: #5bd5d1;
+    --pf-page: #121a2a;
+    --pf-surface: #1d2940;
+    --pf-text: #e9eefc;
+    --pf-muted: #afbdd5;
+    --pf-border: #35445e;
+    --pf-shadow: 0 8px 30px rgba(0,0,0,.18);
+    --pf-ring: rgba(149,165,255,.27);
+    color-scheme: dark;
+    --bs-body-bg: var(--pf-page);
+    --bs-body-color: var(--pf-text);
+    --bs-border-color: var(--pf-border);
+    --bs-card-bg: var(--pf-surface);
+    --bs-card-color: var(--pf-text);
+    --bs-secondary-color: var(--pf-muted);
 }
-html[data-pf-theme="dark"] body,
-html[data-pf-theme="dark"] .main-wrapper,
-html[data-pf-theme="dark"] .body-wrapper,
-html[data-pf-theme="dark"] .container-fluid { color: var(--pf-text); }
-html[data-pf-theme="dark"] .card,
-html[data-pf-theme="dark"] .pf-surface,
-html[data-pf-theme="dark"] .modal-content,
-html[data-pf-theme="dark"] .dropdown-menu,
-html[data-pf-theme="dark"] .left-sidebar,
-html[data-pf-theme="dark"] .app-header,
-html[data-pf-theme="dark"] .topbar,
-html[data-pf-theme="dark"] .navbar {
-  background-color: var(--pf-surface) !important;
-  color: var(--pf-text);
-  border-color: var(--pf-border);
-}
-html[data-pf-theme="dark"] .form-control,
-html[data-pf-theme="dark"] .form-select,
-html[data-pf-theme="dark"] .input-group-text {
-  background-color: #172137; color: var(--pf-text); border-color: var(--pf-border);
-}
-html[data-pf-theme="dark"] .form-control::placeholder { color: var(--pf-muted); }
-html[data-pf-theme="dark"] .table { color: var(--pf-text); --bs-table-color: var(--pf-text); --bs-table-border-color: var(--pf-border); }
-html[data-pf-theme="dark"] .table-hover > tbody > tr:hover > * { --bs-table-accent-bg: #263553; color: var(--pf-text); }
-html[data-pf-theme="dark"] .bg-white,
-html[data-pf-theme="dark"] .bg-light { background-color: var(--pf-surface) !important; }
-html[data-pf-theme="dark"] .text-dark { color: var(--pf-text) !important; }
-html[data-pf-theme="dark"] .btn-primary { background-color: #687bf2; border-color: #687bf2; color: #fff; }
-html[data-pf-theme="dark"] .btn-outline-primary { color: #a7b4ff; border-color: #8395fa; }
-html[data-pf-theme="dark"] .btn-outline-primary:hover { color: #11182c; background-color: #a7b4ff; }
-html[data-pf-theme="dark"] .left-sidebar .sidebar-link { color: var(--pf-text); }
-html[data-pf-theme="dark"] .left-sidebar .sidebar-link:hover { background-color: #273753; }
-html[data-pf-theme="dark"] .pf-author-chip { background: #293a5e; color: var(--pf-text); border-color: var(--pf-border); }
+
+    html[data-pf-theme="dark"] body,
+    html[data-pf-theme="dark"] .main-wrapper,
+    html[data-pf-theme="dark"] .body-wrapper,
+    html[data-pf-theme="dark"] .container-fluid {
+        color: var(--pf-text);
+    }
+
+    html[data-pf-theme="dark"] .card,
+    html[data-pf-theme="dark"] .pf-surface,
+    html[data-pf-theme="dark"] .modal-content,
+    html[data-pf-theme="dark"] .dropdown-menu,
+    html[data-pf-theme="dark"] .left-sidebar,
+    html[data-pf-theme="dark"] .app-header,
+    html[data-pf-theme="dark"] .topbar,
+    html[data-pf-theme="dark"] .navbar {
+        background-color: var(--pf-surface) !important;
+        color: var(--pf-text);
+        border-color: var(--pf-border);
+    }
+
+    html[data-pf-theme="dark"] .form-control,
+    html[data-pf-theme="dark"] .form-select,
+    html[data-pf-theme="dark"] .input-group-text {
+        background-color: #172137;
+        color: var(--pf-text);
+        border-color: var(--pf-border);
+    }
+
+        html[data-pf-theme="dark"] .form-control::placeholder {
+            color: var(--pf-muted);
+        }
+
+    html[data-pf-theme="dark"] .table {
+        color: var(--pf-text);
+        --bs-table-color: var(--pf-text);
+        --bs-table-border-color: var(--pf-border);
+    }
+
+    html[data-pf-theme="dark"] .table-hover > tbody > tr:hover > * {
+        --bs-table-accent-bg: #263553;
+        color: var(--pf-text);
+    }
+
+    html[data-pf-theme="dark"] .bg-white,
+    html[data-pf-theme="dark"] .bg-light {
+        background-color: var(--pf-surface) !important;
+    }
+
+    html[data-pf-theme="dark"] .text-dark {
+        color: var(--pf-text) !important;
+    }
+
+    html[data-pf-theme="dark"] .btn-primary {
+        background-color: #687bf2;
+        border-color: #687bf2;
+        color: #fff;
+    }
+
+    html[data-pf-theme="dark"] .btn-outline-primary {
+        color: #a7b4ff;
+        border-color: #8395fa;
+    }
+
+        html[data-pf-theme="dark"] .btn-outline-primary:hover {
+            color: #11182c;
+            background-color: #a7b4ff;
+        }
+
+    html[data-pf-theme="dark"] .left-sidebar .sidebar-link {
+        color: var(--pf-text);
+    }
+
+        html[data-pf-theme="dark"] .left-sidebar .sidebar-link:hover {
+            background-color: #273753;
+        }
+
+    html[data-pf-theme="dark"] .pf-author-chip {
+        background: #293a5e;
+        color: var(--pf-text);
+        border-color: var(--pf-border);
+    }
+
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .btn, .left-sidebar .sidebar-link { transition: none; }
+    html {
+        scroll-behavior: auto;
+    }
+
+    .btn, .left-sidebar .sidebar-link {
+        transition: none;
+    }
 }
 
 
@@ -132,72 +283,154 @@ html[data-pf-theme="dark"] .body-wrapper .card .form-text {
     color: #afbdd5 !important;
 }
 
-.pf-account-trigger {
+
+
+/* ============================================
+   Identity pages: Login, Register, Forgot Password
+   Matches the classes in _AuthLayout.cshtml.
+   ============================================ */
+html[data-pf-theme="dark"] body.paperflow-auth-body {
+    background: #121a2a !important;
+    color: #e9eefc !important;
+}
+
+html[data-pf-theme="dark"] .paperflow-auth-wrapper {
+    background: transparent !important;
+    color: #e9eefc !important;
+}
+
+html[data-pf-theme="dark"] .paperflow-auth-card {
+    background: #1d2940 !important;
+    color: #e9eefc !important;
+    border: 1px solid #35445e !important;
+    box-shadow: 0 16px 48px rgba(0,0,0,.23) !important;
+}
+
+    html[data-pf-theme="dark"] .paperflow-auth-card h1,
+    html[data-pf-theme="dark"] .paperflow-auth-card h2,
+    html[data-pf-theme="dark"] .paperflow-auth-card h3,
+    html[data-pf-theme="dark"] .paperflow-auth-card h4,
+    html[data-pf-theme="dark"] .paperflow-auth-card h5,
+    html[data-pf-theme="dark"] .paperflow-auth-card label,
+    html[data-pf-theme="dark"] .paperflow-auth-card .form-label,
+    html[data-pf-theme="dark"] .paperflow-auth-card .form-check-label {
+        color: #f0f4ff !important;
+    }
+
+    html[data-pf-theme="dark"] .paperflow-auth-card p,
+    html[data-pf-theme="dark"] .paperflow-auth-card .text-muted,
+    html[data-pf-theme="dark"] .paperflow-auth-card .form-text,
+    html[data-pf-theme="dark"] .paperflow-auth-footer {
+        color: #b4c3dd !important;
+    }
+
+    html[data-pf-theme="dark"] .paperflow-auth-card .form-control,
+    html[data-pf-theme="dark"] .paperflow-auth-card .form-select {
+        background-color: #172238 !important;
+        border-color: #465a79 !important;
+        color: #f0f4ff !important;
+    }
+
+        html[data-pf-theme="dark"] .paperflow-auth-card .form-control::placeholder {
+            color: #a2b2cc !important;
+        }
+
+        html[data-pf-theme="dark"] .paperflow-auth-card .form-control:focus {
+            border-color: #95a5ff !important;
+            box-shadow: 0 0 0 .2rem rgba(149,165,255,.18) !important;
+        }
+
+    html[data-pf-theme="dark"] .paperflow-auth-card a:not(.btn) {
+        color: #a9b8ff;
+    }
+
+    html[data-pf-theme="dark"] .paperflow-auth-card .btn-primary {
+        background: #687bf2 !important;
+        border-color: #687bf2 !important;
+        color: white !important;
+    }
+
+    html[data-pf-theme="dark"] .paperflow-auth-card .validation-summary-errors,
+    html[data-pf-theme="dark"] .paperflow-auth-card .field-validation-error,
+    html[data-pf-theme="dark"] .paperflow-auth-card .text-danger {
+        color: #ffaca8 !important;
+    }
+
+
+/* Header account dropdown - both themes, without browser-native button styling. */
+.app-header .pf-account-trigger {
+    appearance: none;
+    -webkit-appearance: none;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 5px 8px;
+    gap: .55rem;
+    min-height: 42px;
+    max-width: 260px;
+    padding: .3rem .7rem;
+    background: transparent;
     border: 1px solid transparent;
     border-radius: 12px;
-    background: transparent;
     color: var(--pf-text);
     font: inherit;
     cursor: pointer;
-    max-width: 280px;
+    box-shadow: none;
 }
 
-    .pf-account-trigger:hover,
-    .pf-account-trigger[aria-expanded="true"] {
+    .app-header .pf-account-trigger.dropdown-toggle::after {
+        display: none;
+    }
+
+    .app-header .pf-account-trigger:hover,
+    .app-header .pf-account-trigger[aria-expanded="true"] {
         background: var(--pf-surface);
         border-color: var(--pf-border);
     }
 
-    .pf-account-trigger::after {
-        display: none;
-    }
-
 .pf-account-avatar {
-    width: 38px;
-    height: 38px;
-    flex: 0 0 38px;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
     display: inline-flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     border-radius: 50%;
-    background: rgba(100, 123, 242, 0.14);
     color: var(--pf-primary);
+    background: rgba(104,123,242,.14);
 }
 
-    .pf-account-avatar i {
-        font-size: 23px;
+    .pf-account-avatar .ti {
+        font-size: 22px;
     }
 
 .pf-account-name {
-    color: var(--pf-text);
-    font-size: 13px;
-    font-weight: 600;
+    min-width: 0;
+    max-width: 180px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: var(--pf-text);
+    font-size: .85rem;
+    font-weight: 600;
 }
 
 .pf-account-chevron {
     color: var(--pf-muted);
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .pf-account-dropdown {
-    min-width: 265px;
+    min-width: 250px;
     padding: 8px;
     border: 1px solid var(--pf-border);
     border-radius: 14px;
     background: var(--pf-surface);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.15);
+    color: var(--pf-text);
+    box-shadow: 0 16px 40px rgba(0,0,0,.18);
     z-index: 1100;
 }
 
 .pf-account-dropdown-header {
-    padding: 12px 14px;
+    padding: 10px 12px;
     color: var(--pf-text);
 }
 
@@ -205,18 +438,18 @@ html[data-pf-theme="dark"] .body-wrapper .card .form-text {
     display: flex;
     align-items: center;
     width: 100%;
-    gap: 4px;
-    padding: 11px 13px;
+    padding: 10px 12px;
+    border: 0;
     border-radius: 9px;
-    color: var(--pf-text);
     background: transparent;
-    font-size: 13px;
-    text-decoration: none;
+    color: var(--pf-text);
+    text-align: left;
+    font-size: .88rem;
 }
 
     .pf-account-dropdown .dropdown-item:hover,
     .pf-account-dropdown .dropdown-item:focus {
-        background: rgba(100, 123, 242, 0.12);
+        background: rgba(104,123,242,.14);
         color: var(--pf-primary);
     }
 
@@ -225,23 +458,25 @@ html[data-pf-theme="dark"] .body-wrapper .card .form-text {
 }
 
 .pf-account-dropdown .pf-account-logout {
-    color: #e56565;
-    cursor: pointer;
-    text-align: left;
+    color: #e77777;
 }
 
     .pf-account-dropdown .pf-account-logout:hover {
-        color: #ff7777;
-        background: rgba(229, 101, 101, 0.1);
+        color: #ff9b9b;
+        background: rgba(229,101,101,.12);
     }
 
-@media (max-width: 575px) {
-    .pf-account-trigger {
-        padding: 4px;
-    }
-
-    .pf-account-dropdown {
-        min-width: 230px;
-    }
+/* Default headings were using fixed light-mode ink on the Home Dashboard. */
+html[data-pf-theme="dark"] .body-wrapper main h1,
+html[data-pf-theme="dark"] .body-wrapper main h2,
+html[data-pf-theme="dark"] .body-wrapper main h3,
+html[data-pf-theme="dark"] .body-wrapper main h4,
+html[data-pf-theme="dark"] .body-wrapper main h5,
+html[data-pf-theme="dark"] .body-wrapper main h6 {
+    color: var(--pf-text);
 }
 
+html[data-pf-theme="dark"] .left-sidebar .nav-small-cap,
+html[data-pf-theme="dark"] .left-sidebar .sidebar-nav .nav-small-cap {
+    color: var(--pf-muted) !important;
+}

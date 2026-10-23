@@ -17,6 +17,26 @@
           href="~/css/paperflow.css"
           asp-append-version="true" />
 
+    <!-- PaperFlow global CSS -->
+    <link rel="stylesheet"
+          href="~/css/paperflow-theme.css"
+          asp-append-version="true" />
+
+    <!-- Initialize saved theme before rendering -->
+    <script>
+            (() => {
+                try {
+                    const theme = localStorage.getItem("paperflow.theme");
+
+                    document.documentElement.setAttribute(
+                        "data-pf-theme",
+                        theme === "dark" ? "dark" : "light");
+                } catch {
+                    // Local storage may be unavailable; use light mode.
+                }
+            })();
+    </script>
+
     @await RenderSectionAsync("Styles", required: false)
 </head>
 
