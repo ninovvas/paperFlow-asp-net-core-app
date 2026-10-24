@@ -35,7 +35,6 @@ a {
         outline-offset: 3px;
     }
 
-/* Common content elements; existing component structure remains untouched. */
 .card, .pf-surface {
     background-color: var(--pf-surface);
     border-color: var(--pf-border);
@@ -144,7 +143,6 @@ a {
         outline-offset: 3px;
     }
 
-/* Supports common Modernize sidebar/header selectors, but does not change their positioning. */
 .left-sidebar, .app-header, .topbar, .navbar {
     border-color: var(--pf-border) !important;
 }
@@ -157,7 +155,6 @@ a {
             color: var(--pf-primary);
         }
 
-/* Optional dark mode; enabled only by the button (data-pf-theme="dark"). */
 html[data-pf-theme="dark"] {
     --pf-primary: #95a5ff;
     --pf-primary-hover: #b1bdff;
@@ -271,8 +268,6 @@ html[data-pf-theme="dark"] {
 }
 
 
-/* Dark Mode - Form Labels */
-
 html[data-pf-theme="dark"] .body-wrapper .card .form-label,
 html[data-pf-theme="dark"] .body-wrapper .card label:not(.btn),
 html[data-pf-theme="dark"] .body-wrapper .card legend {
@@ -283,12 +278,6 @@ html[data-pf-theme="dark"] .body-wrapper .card .form-text {
     color: #afbdd5 !important;
 }
 
-
-
-/* ============================================
-   Identity pages: Login, Register, Forgot Password
-   Matches the classes in _AuthLayout.cshtml.
-   ============================================ */
 html[data-pf-theme="dark"] body.paperflow-auth-body {
     background: #121a2a !important;
     color: #e9eefc !important;
@@ -357,7 +346,7 @@ html[data-pf-theme="dark"] .paperflow-auth-card {
     }
 
 
-/* Header account dropdown - both themes, without browser-native button styling. */
+
 .app-header .pf-account-trigger {
     appearance: none;
     -webkit-appearance: none;
@@ -466,7 +455,7 @@ html[data-pf-theme="dark"] .paperflow-auth-card {
         background: rgba(229,101,101,.12);
     }
 
-/* Default headings were using fixed light-mode ink on the Home Dashboard. */
+
 html[data-pf-theme="dark"] .body-wrapper main h1,
 html[data-pf-theme="dark"] .body-wrapper main h2,
 html[data-pf-theme="dark"] .body-wrapper main h3,
@@ -480,3 +469,47 @@ html[data-pf-theme="dark"] .left-sidebar .nav-small-cap,
 html[data-pf-theme="dark"] .left-sidebar .sidebar-nav .nav-small-cap {
     color: var(--pf-muted) !important;
 }
+
+
+  
+    html[data-pf-theme="dark"] .left-sidebar .sidebar-nav .nav-small-cap,
+    html[data-pf-theme="dark"] .left-sidebar .sidebar-nav .nav-small-cap .hide-menu,
+    html[data-pf-theme="dark"] .left-sidebar .sidebar-nav .nav-small-cap span {
+        color: #aebfdd !important;
+        opacity: 1 !important;
+    }
+
+html:not([data-pf-theme="dark"]) .left-sidebar .sidebar-nav .nav-small-cap .hide-menu {
+    color: #687890;
+    opacity: 1;
+}
+
+
+html[data-pf-theme="dark"] .pf-public-page,
+html[data-pf-theme="dark"] .pf-public-page .card {
+    color: #e9eefc;
+}
+
+    html[data-pf-theme="dark"] .pf-public-page h1,
+    html[data-pf-theme="dark"] .pf-public-page h2,
+    html[data-pf-theme="dark"] .pf-public-page h3,
+    html[data-pf-theme="dark"] .pf-public-page h4,
+    html[data-pf-theme="dark"] .pf-public-page h5 {
+        color: #f0f4ff !important;
+    }
+
+    html[data-pf-theme="dark"] .pf-public-page p:not(.text-danger) {
+        color: #c4d2e9;
+    }
+
+    html[data-pf-theme="dark"] .pf-public-page .text-muted {
+        color: #afbdd5 !important;
+    }
+
+    html[data-pf-theme="dark"] .pf-public-page a:not(.btn) {
+        color: #9eafff;
+    }
+
+        html[data-pf-theme="dark"] .pf-public-page a:not(.btn):hover {
+            color: #c3ceff;
+        }

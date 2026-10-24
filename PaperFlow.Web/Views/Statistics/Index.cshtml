@@ -1,0 +1,95 @@
+﻿@model PaperFlow.Services.Models.StatisticsDashboardDto
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Research Statistics";
+    var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    var monthlyJson = JsonSerializer.Serialize(Model.Monthly, jsonOptions);
+    var statusJson = JsonSerializer.Serialize(Model.ByStatus, jsonOptions);
+    var sourceJson = JsonSerializer.Serialize(Model.BySource, jsonOptions);
+    var categoryJson = JsonSerializer.Serialize(Model.ByCategory, jsonOptions);
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/paperflow-statistics.css" asp-append-version="true" />
+}
+
+<div class="pf-statistics">
+    <div class="pf-stats-hero mb-4">
+        <span class="pf-stats-eyebrow"><i class="ti ti-chart-bar me-2"></i>RESEARCH ANALYTICS</span>
+        <h2>Research Statistics</h2>
+        <p class="mb-0">Understand your research library and reading activity.</p>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Total Papers</span><strong>@Model.TotalPapers</strong><small>Saved to your library</small></div></div>
+        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Reading</span><strong>@Model.Reading</strong><small>In progress</small></div></div>
+        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Completed</span><strong>@Model.Completed</strong><small>@Model.CompletionRate.ToString("F1")% of library</small></div></div>
+        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Read / Reading</span><strong>@Model.ReadOrReading</strong><small>Reading + Completed</small></div></div>
+        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Added This Month</span><strong>@Model.AddedThisMonth</strong><small>Based on CreatedOn</small></div></div>
+        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Completed This Month</span><strong>@Model.CompletedThisMonth</strong><small>Based on CompletedOn</small></div></div>
+        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Overdue</span><strong>@Model.Overdue</strong><small>Deadline passed, not completed</small></div></div>
+        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Average Rating</span><strong>@(Model.AverageRating?.ToString("F1") ?? "N/A")</strong><small>Only rated papers</small></div></div>
+    </div>
+
+    @{
+        var bestMonth = Model.Monthly.OrderByDescending(m => m.Added).FirstOrDefault();
+        var topSource = Model.BySource.OrderByDescending(x => x.Value).FirstOrDefault();
+        var topCategory = Model.ByCategory.OrderByDescending(x => x.Value).FirstOrDefault();
+        var averageAdded = Model.Monthly.Count > 0 ? Model.Monthly.Average(m => m.Added) : 0;
+    }
+    <div class="row g-4 mb-4 pf-stat-main-row">
+        <div class="col-12 col-xl-8"><section class="pf-chart-card"><h5>Added and Completed per Month</h5><p>Last 12 calendar months, including this month</p><div class="pf-chart-wide"><canvas id="monthlyChart" aria-label="Papers added and completed per month" role="img"></canvas></div></section></div>
+        <div class="col-12 col-xl-4">
+            <section class="pf-chart-card pf-insights-card">
+                <h5><i class="ti ti-bulb me-2"></i>Quick Insights</h5>
+                <p>Highlights from your library</p>
+                <dl class="pf-insights-list">
+                    <div><dt>Top research source</dt><dd>@(topSource?.Label ?? "—") <small>@(topSource?.Value.ToString() ?? "0") papers</small></dd></div>
+                    <div><dt>Top category</dt><dd>@(topCategory?.Label ?? "—") <small>@(topCategory?.Value.ToString() ?? "0") papers</small></dd></div>
+                    <div><dt>Most active month</dt><dd>@(bestMonth?.Added > 0 ? bestMonth.Month : "—") <small>@(bestMonth?.Added.ToString() ?? "0") added</small></dd></div>
+                    <div><dt>Average added / month</dt><dd>@averageAdded.ToString("F1")</dd></div>
+                    <div><dt>Completion rate</dt><dd>@Model.CompletionRate.ToString("F1")%</dd></div>
+                </dl>
+            </section>
+        </div>
+    </div>
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6"><section class="pf-chart-card"><h5>Reading Status</h5><p>Current status distribution</p><div class="pf-chart-height"><canvas id="statusChart" aria-label="Reading status chart" role="img"></canvas></div></section></div>
+        <div class="col-lg-6"><section class="pf-chart-card"><h5>Papers by Research Source</h5><p>arXiv, manual papers, and other imported sources</p><div class="pf-chart-height"><canvas id="sourceChart" aria-label="Research source chart" role="img"></canvas></div></section></div>
+        <div class="col-12 col-xl-7"><section class="pf-chart-card"><h5>Top 10 Categories</h5><p>A paper may appear in multiple categories</p><div class="pf-chart-wide"><canvas id="categoryChart" aria-label="Paper categories chart" role="img"></canvas></div></section></div>
+        <div class="col-12 col-xl-5">
+            <section class="pf-chart-card">
+                <h5><i class="ti ti-clock me-2"></i>Recently Added Papers</h5><p>Five latest additions to your personal library</p>
+                @if (Model.RecentPapers.Count == 0)
+                {
+                    <p class="pf-stats-empty">No saved papers yet.</p>
+                }
+                else
+                {
+
+                    <ul class="pf-recent-list">
+                        @foreach (var paper in Model.RecentPapers)
+                        {
+                            <li>
+                                <a asp-controller="PaperDetails" asp-action="Details" asp-route-id="@paper.Id" title="@paper.Title">@paper.Title</a>
+                                <span>@paper.CreatedOn.ToString("dd MMM yyyy") · @paper.Status</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </section>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script>
+        window.paperflowStatistics = {
+            monthly: @Html.Raw(monthlyJson),
+            statuses: @Html.Raw(statusJson),
+            sources: @Html.Raw(sourceJson),
+            categories: @Html.Raw(categoryJson)
+                };
+    </script>
+    <script src="~/js/paperflow-statistics.js" asp-append-version="true"></script>
+}

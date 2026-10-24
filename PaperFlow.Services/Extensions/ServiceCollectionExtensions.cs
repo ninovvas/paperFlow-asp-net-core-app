@@ -47,6 +47,8 @@
 
             services.AddScoped<IPaperSavedStatusService, PaperSavedStatusService>();
 
+            services.AddScoped<IStatisticsService, StatisticsService>();
+
             return services;
         }
 

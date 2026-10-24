@@ -1,78 +1,25 @@
-﻿
-<div>
-    <div class="brand-logo d-flex align-items-center justify-content-between">
-        <a asp-controller="Home"
-           asp-action="Index"
-           class="text-nowrap logo-img text-decoration-none">
-            <span class="fs-6 fw-bold text-primary">
-                PaperFlow
-            </span>
-        </a>
-
-        <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer"
-             id="sidebarCollapse">
-            <i class="ti ti-x fs-6"></i>
-        </div>
-    </div>
-
-    <nav class="sidebar-nav scroll-sidebar" data-simplebar>
-        <ul id="sidebarnav">
-
-            <li class="nav-small-cap">
-                <span class="hide-menu">RESEARCH</span>
-            </li>
-
-            <li class="sidebar-item">
-                <a class="sidebar-link"
-                   asp-controller="Home"
-                   asp-action="Index">
-                    <i class="ti ti-layout-dashboard"></i>
-                    <span class="hide-menu">Dashboard</span>
-                </a>
-            </li>
-
-            <li class="sidebar-item">
-                <a class="sidebar-link"
-                   asp-controller="PaperSearch"
-                   asp-action="Index">
-                    <i class="ti ti-search"></i>
-                    <span class="hide-menu">Search Papers</span>
-                </a>
-            </li>
-
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <li class="nav-small-cap">
-                    <span class="hide-menu">MY LIBRARY</span>
-                </li>
-
-                <li class="sidebar-item">
-                    <a class="sidebar-link"
-                       asp-controller="Papers"
-                       asp-action="Index">
-                        <i class="ti ti-books"></i>
-                        <span class="hide-menu">My Papers</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a class="sidebar-link"
-                       asp-controller="Papers"
-                       asp-action="Create">
-                        <i class="ti ti-file-plus"></i>
-                        <span class="hide-menu">Add Paper Manually</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a class="sidebar-link"
-                       asp-controller="ImportTest"
-                       asp-action="Index">
-                        <i class="ti ti-download"></i>
-                        <span class="hide-menu">Import Test</span>
-                    </a>
-                </li>
-            }
-        </ul>
-    </nav>
+﻿<div class="brand-logo d-flex align-items-center justify-content-between px-3 py-3">
+    <a asp-controller="Home" asp-action="Index" class="text-decoration-none fw-semibold fs-5">PaperFlow</a>
+    <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse"><i class="ti ti-x fs-6"></i></div>
 </div>
+<nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+    <ul id="sidebarnav">
+        <li class="nav-small-cap"><span class="hide-menu">OVERVIEW</span></li>
+        <li class="sidebar-item"><a class="sidebar-link" asp-controller="Home" asp-action="Index"><i class="ti ti-layout-dashboard"></i><span class="hide-menu">Dashboard</span></a></li>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <li class="sidebar-item"><a class="sidebar-link" asp-controller="Statistics" asp-action="Index"><i class="ti ti-chart-bar"></i><span class="hide-menu">Statistics</span></a></li>
+        }
+        <li class="nav-small-cap"><span class="hide-menu">RESEARCH</span></li>
+        <li class="sidebar-item"><a class="sidebar-link" asp-controller="PaperSearch" asp-action="Index"><i class="ti ti-search"></i><span class="hide-menu">Search Papers</span></a></li>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <li class="nav-small-cap"><span class="hide-menu">MY LIBRARY</span></li>
+            <li class="sidebar-item"><a class="sidebar-link" asp-controller="Papers" asp-action="Index"><i class="ti ti-books"></i><span class="hide-menu">My Papers</span></a></li>
+            <li class="sidebar-item"><a class="sidebar-link" asp-controller="Papers" asp-action="Create"><i class="ti ti-file-plus"></i><span class="hide-menu">Add Paper Manually</span></a></li>
+        }
+        <li class="nav-small-cap"><span class="hide-menu">INFORMATION</span></li>
+        <li class="sidebar-item"><a class="sidebar-link" asp-controller="ResearchSources" asp-action="Index"><i class="ti ti-plug"></i><span class="hide-menu">Research Sources</span></a></li>
+        <li class="sidebar-item"><a class="sidebar-link" asp-controller="About" asp-action="Index"><i class="ti ti-info-circle"></i><span class="hide-menu">About PaperFlow</span></a></li>
+    </ul>
+</nav>
