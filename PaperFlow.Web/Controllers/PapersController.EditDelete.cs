@@ -13,7 +13,7 @@
     public partial class PapersController
     {
         // =====================================
-        // GET: /Papers/Edit/5
+        // GET: /Papers/Edit/1
         // =====================================
 
         [HttpGet]
@@ -92,6 +92,12 @@
                         result.Message);
                     break;
 
+                case PaperEditStatus.DuplicateTitle:
+                    ModelState.AddModelError(
+                        nameof(model.Title),
+                        result.Message);
+                    break;
+
                 default:
                     ModelState.AddModelError(
                         string.Empty,
@@ -103,7 +109,7 @@
         }
 
         // =====================================
-        // POST: /Papers/Delete/5
+        // POST: /Papers/Delete/1
         // =====================================
 
         [HttpPost]

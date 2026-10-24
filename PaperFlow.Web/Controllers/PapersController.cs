@@ -5,6 +5,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
 
+    using PaperFlow.Common;
     using PaperFlow.Data;
     using PaperFlow.Data.Models;
     using PaperFlow.Web.ViewModels.Papers;
@@ -158,13 +159,12 @@
 
             string userId = GetUserId();
 
-            string? doi = NormalizeDoi(model.Doi);
+            string? doi = DoiHelper.Normalize(model.Doi);
 
             if (doi != null && doi.Length > 255)
             {
                 ModelState.AddModelError(
-                    nameof(model.Doi),
-                    "DOI must not exceed 255 characters.");
+                    nameof(model.Doi), "DOI must not exceed 255 characters.");
 
                 return View(model);
             }
@@ -175,15 +175,32 @@
                     cancellationToken))
             {
                 ModelState.AddModelError(
-                    nameof(model.Doi),
-                    "This DOI already exists in your library.");
+                    nameof(model.Doi), "This DOI already exists in your library.");
+
+                return View(model);
+            }
+
+            string title = model.Title.Trim();
+            string titleForComparison = title.ToUpperInvariant();
+
+            bool titleAlreadyExists = await context.Papers
+                .AsNoTracking()
+                .AnyAsync(p =>
+                    p.UserId == userId &&
+                    p.Title.Trim().ToUpper() == titleForComparison,
+                    cancellationToken);
+
+            if (titleAlreadyExists)
+            {
+                ModelState.AddModelError(
+                    nameof(model.Title), "A paper with this title already exists in your library.");
 
                 return View(model);
             }
 
             var paper = new Paper
             {
-                Title = model.Title.Trim(),
+                Title = title,
                 Abstract = model.Abstract?.Trim(),
                 PublicationDate = model.PublicationDate,
                 Doi = doi,
@@ -193,31 +210,32 @@
                 CreatedOn = DateTime.UtcNow
             };
 
-            foreach (string name in ParseNames(model.Authors))
+            List<string> authorNames = ParseNames(model.Authors);
+            List<string> categoryNames = ParseNames(model.Categories);
+
+            foreach (string name in authorNames)
             {
-                if (name.Length > 200)
+                if (name.Length > DataConstants.Author.NameMaxLength)
                 {
                     ModelState.AddModelError(
-                        nameof(model.Authors),
-                        "An author name exceeds 200 characters.");
+                        nameof(model.Authors), "An author name exceeds 200 characters.");
                     return View(model);
                 }
             }
 
-            foreach (string name in ParseNames(model.Categories))
+            foreach (string name in categoryNames)
             {
-                if (name.Length > 100)
+                if (name.Length > DataConstants.Category.NameMaxLength)
                 {
                     ModelState.AddModelError(
-                        nameof(model.Categories),
-                        "A category exceeds 100 characters.");
+                        nameof(model.Categories), "A category exceeds 100 characters.");
                     return View(model);
                 }
             }
 
             int order = 1;
 
-            foreach (string name in ParseNames(model.Authors))
+            foreach (string name in authorNames)
             {
                 var author = await context.Authors
                     .FirstOrDefaultAsync(
@@ -240,7 +258,7 @@
                 });
             }
 
-            foreach (string name in ParseNames(model.Categories))
+            foreach (string name in categoryNames)
             {
                 var category = await context.Categories
                     .FirstOrDefaultAsync(
@@ -300,32 +318,5 @@
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
         }
-
-        private static string? NormalizeDoi(string? value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return null;
-            }
-
-            string doi = value.Trim();
-
-            if (doi.StartsWith(
-                "https://doi.org/",
-                StringComparison.OrdinalIgnoreCase))
-            {
-                doi = doi["https://doi.org/".Length..];
-            }
-
-            if (doi.StartsWith(
-                "doi:",
-                StringComparison.OrdinalIgnoreCase))
-            {
-                doi = doi[4..];
-            }
-
-            return doi.Trim().ToLowerInvariant();
-        }
     }
 }
-

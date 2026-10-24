@@ -6,6 +6,7 @@ namespace PaperFlow.Services.Models
         Success,
         NotFound,
         DuplicateDoi,
+        DuplicateTitle,
         ValidationFailed,
         Conflict
     }

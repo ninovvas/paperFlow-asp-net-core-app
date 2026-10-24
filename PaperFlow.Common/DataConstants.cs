@@ -9,6 +9,10 @@
 
             public const int AbstractMaxLength = 10000;
             public const int DoiMaxLength = 255;
+            public const string DoiPattern =
+                @"^(?:(?:[Hh][Tt][Tt][Pp][Ss]://[Dd][Oo][Ii]\.[Oo][Rr][Gg]/)|[Dd][Oo][Ii]:\s*)?10\.[0-9]{4,9}/\S+$";
+            public const string DoiErrorMessage =
+                "Enter a valid DOI, for example 10.1000/123 or https://doi.org/10.1000/123.";
             public const int ExternalIdMaxLength = 255;
             public const int UrlMaxLength = 2048;
             public const int FilePathMaxLength = 1024;

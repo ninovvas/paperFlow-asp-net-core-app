@@ -7,136 +7,138 @@
 <link rel="stylesheet" href="~/css/paperflow-details-edit.css" asp-append-version="true" />
 
 <div class="pf-paper-edit-page">
-<div class="mb-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a asp-controller="Papers" asp-action="Index">
-                    My Papers
-                </a>
-            </li>
-            <li class="breadcrumb-item active">Edit Paper</li>
-        </ol>
-    </nav>
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-controller="Papers" asp-action="Index">
+                        My Papers
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">Edit Paper</li>
+            </ol>
+        </nav>
 
-    <h3 class="fw-semibold">Edit Paper</h3>
-    <p class="text-muted">
-        Update publication metadata, authors and categories.
-    </p>
-</div>
+        <h3 class="fw-semibold">Edit Paper</h3>
+        <p class="text-muted">
+            Update publication metadata, authors and categories.
+        </p>
+    </div>
 
-<div class="card">
-    <div class="card-body">
+    <div class="card">
+        <div class="card-body">
 
-        <form asp-controller="Papers"
-              asp-action="Edit"
-              asp-route-id="@Model.Id"
-              method="post">
+            <form asp-controller="Papers"
+                  asp-action="Edit"
+                  asp-route-id="@Model.Id"
+                  method="post">
 
-            @Html.AntiForgeryToken()
-            <input asp-for="Id" type="hidden" />
+                @Html.AntiForgeryToken()
+                <input asp-for="Id" type="hidden" />
 
-            <div asp-validation-summary="ModelOnly"
-                 class="text-danger mb-3"></div>
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
 
-            <div class="mb-3">
-                <label asp-for="Title" class="form-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title"
-                      class="text-danger"></span>
-            </div>
-
-            <div class="row g-3">
-
-                <div class="col-md-6">
-                    <label asp-for="PublicationDate"
-                           class="form-label"></label>
-                    <input asp-for="PublicationDate"
-                           type="date"
-                           class="form-control" />
-                    <span asp-validation-for="PublicationDate"
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title"
                           class="text-danger"></span>
                 </div>
 
-                <div class="col-md-6">
-                    <label asp-for="Doi" class="form-label"></label>
-                    <input asp-for="Doi" class="form-control"
-                           placeholder="10.xxxx/xxxxx" />
-                    <span asp-validation-for="Doi"
-                          class="text-danger"></span>
-                </div>
+                <div class="row g-3">
 
-                <div class="col-12">
-                    <label asp-for="Authors"
-                           class="form-label"></label>
-                    <input asp-for="Authors" class="form-control"
-                           placeholder="Author One, Author Two" />
-                    <span asp-validation-for="Authors"
-                          class="text-danger"></span>
-                    <div class="form-text">
-                        Separate author names with commas.
-                        The entered order is preserved.
+                    <div class="col-md-6">
+                        <label asp-for="PublicationDate"
+                               class="form-label"></label>
+                        <input asp-for="PublicationDate"
+                               type="date"
+                               class="form-control" />
+                        <span asp-validation-for="PublicationDate"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Doi" class="form-label"></label>
+                        <input asp-for="Doi" class="form-control"
+                               placeholder="10.xxxx/xxxxx" />
+                        <span asp-validation-for="Doi"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Authors"
+                               class="form-label"></label>
+                        <input asp-for="Authors" class="form-control"
+                               placeholder="Jane Smith, John Doe" />
+                        <span asp-validation-for="Authors"
+                              class="text-danger"></span>
+                        <div class="form-text">
+                            Separate author names with commas.
+                            The entered order is preserved.
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Categories"
+                               class="form-label"></label>
+                        <input asp-for="Categories"
+                               class="form-control"
+                               placeholder="Robotics, Artificial Intelligence" />
+                        <span asp-validation-for="Categories"
+                              class="text-danger"></span>
+                        <div class="form-text">Separate categories with commas. Do not leave empty entries.</div>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Abstract"
+                               class="form-label"></label>
+                        <textarea asp-for="Abstract"
+                                  class="form-control"
+                                  rows="8"></textarea>
+                        <span asp-validation-for="Abstract"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="PublicationUrl"
+                               class="form-label"></label>
+                        <input asp-for="PublicationUrl"
+                               class="form-control" />
+                        <span asp-validation-for="PublicationUrl"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="PdfUrl"
+                               class="form-label"></label>
+                        <input asp-for="PdfUrl"
+                               class="form-control" />
+                        <span asp-validation-for="PdfUrl"
+                              class="text-danger"></span>
                     </div>
                 </div>
 
-                <div class="col-12">
-                    <label asp-for="Categories"
-                           class="form-label"></label>
-                    <input asp-for="Categories"
-                           class="form-control"
-                           placeholder="cs.RO, cs.AI" />
-                    <span asp-validation-for="Categories"
-                          class="text-danger"></span>
+                <div class="d-flex gap-2 flex-wrap mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ti ti-device-floppy me-1"></i>
+                        Save Changes
+                    </button>
+
+                    <a asp-controller="PaperDetails"
+                       asp-action="Details"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
                 </div>
-
-                <div class="col-12">
-                    <label asp-for="Abstract"
-                           class="form-label"></label>
-                    <textarea asp-for="Abstract"
-                              class="form-control"
-                              rows="8"></textarea>
-                    <span asp-validation-for="Abstract"
-                          class="text-danger"></span>
-                </div>
-
-                <div class="col-md-6">
-                    <label asp-for="PublicationUrl"
-                           class="form-label"></label>
-                    <input asp-for="PublicationUrl"
-                           class="form-control" />
-                    <span asp-validation-for="PublicationUrl"
-                          class="text-danger"></span>
-                </div>
-
-                <div class="col-md-6">
-                    <label asp-for="PdfUrl"
-                           class="form-label"></label>
-                    <input asp-for="PdfUrl"
-                           class="form-control" />
-                    <span asp-validation-for="PdfUrl"
-                          class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="d-flex gap-2 flex-wrap mt-4">
-                <button type="submit" class="btn btn-primary">
-                    <i class="ti ti-device-floppy me-1"></i>
-                    Save Changes
-                </button>
-
-                <a asp-controller="PaperDetails"
-                   asp-action="Details"
-                   asp-route-id="@Model.Id"
-                   class="btn btn-outline-secondary">
-                    Cancel
-                </a>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/paperflow-list-validation.js" asp-append-version="true"></script>
 }
 

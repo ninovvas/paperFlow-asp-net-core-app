@@ -39,7 +39,9 @@
 
                 <input asp-for="Authors"
                        class="form-control"
-                       placeholder="Author One, Author Two" />
+                       placeholder="Jane Smith, John Doe" />
+                <span asp-validation-for="Authors" class="text-danger"></span>
+                <div class="form-text">Separate full names with commas, for example Jane Smith, John Doe.</div>
             </div>
 
             <div class="mb-3">
@@ -48,7 +50,9 @@
 
                 <input asp-for="Categories"
                        class="form-control"
-                       placeholder="Robotics, AI" />
+                       placeholder="Robotics, Artificial Intelligence" />
+                <span asp-validation-for="Categories" class="text-danger"></span>
+                <div class="form-text">Separate categories with commas. Do not leave empty entries.</div>
             </div>
 
             <div class="row">
@@ -69,7 +73,8 @@
                            class="form-label"></label>
 
                     <input asp-for="Doi"
-                           class="form-control" />
+                           class="form-control"
+                           placeholder="10.1000/12345" />
 
                     <span asp-validation-for="Doi"
                           class="text-danger"></span>
@@ -126,5 +131,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/paperflow-list-validation.js" asp-append-version="true"></script>
 }
 

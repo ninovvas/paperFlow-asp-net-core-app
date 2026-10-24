@@ -4,6 +4,7 @@
     using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
 
+    using PaperFlow.Common;
     using PaperFlow.Common.Enums;
     using PaperFlow.Data;
     using PaperFlow.Data.Models;
@@ -38,8 +39,7 @@
             string normalizedId =
                 ArxivPaperLookupService.NormalizeId(arxivId);
 
-            // First check: avoid an unnecessary API request
-            // when this user has already imported the paper.
+            // First check: avoid an unnecessary API request when this user has already imported the paper.
 
             var existingByExternalId = await context.Papers
                 .AsNoTracking()
@@ -58,8 +58,7 @@
             }
 
             // Retrieve trusted publication metadata from arXiv.
-            // Do not hold a database transaction during HTTP I/O.
-
+       
             PaperSearchResult? result =
                 await arxivLookup.GetByIdAsync(
                     normalizedId,
@@ -77,7 +76,11 @@
                     "Publication title violates model validation.");
             }
 
-            string? doi = NormalizeDoi(result.Doi);
+            string? doi = DoiHelper.Normalize(result.Doi);
+            if (doi is { Length: > DataConstants.Paper.DoiMaxLength })
+            {
+                throw new InvalidOperationException("DOI exceeds the supported length.");
+            }
 
             // Begin the transaction after the API request.
 
@@ -121,6 +124,22 @@
                         existingPaper.Id);
                 }
 
+                if (doi == null)
+                {
+                    string normalizedTitle = result.Title.Trim().ToUpperInvariant();
+                    var existingByTitle = await context.Papers
+                        .AsNoTracking()
+                        .Where(p =>
+                            p.UserId == userId &&
+                            p.Doi == null &&
+                            p.Title.Trim().ToUpper() == normalizedTitle)
+                        .Select(p => new { p.Id })
+                        .FirstOrDefaultAsync(cancellationToken);
+
+                    if (existingByTitle != null)
+                        return PaperImportResult.Duplicate(existingByTitle.Id);
+                }
+
                 // Source: arXiv
 
                 ResearchSource? source = await context
@@ -160,8 +179,6 @@
                 };
 
                 // Authors
-                // Reuse exact-name matches for this initial MVP.
-
                 int authorOrder = 1;
 
                 foreach (string authorName in result.Authors
@@ -250,9 +267,7 @@
                 we return a conflict and let the user retry. */
 
                 throw new InvalidOperationException(
-                    "A conflicting record was inserted concurrently. " +
-                    "Please retry the import.",
-                    ex);
+                    "A conflicting record was inserted concurrently. " + "Please retry the import.", ex);
             }
             catch
             {
@@ -262,39 +277,6 @@
                 throw;
             }
         }
-
-        private static string? NormalizeDoi(string? doi)
-        {
-            if (string.IsNullOrWhiteSpace(doi))
-            {
-                return null;
-            }
-
-            string normalized = doi.Trim();
-
-            if (normalized.StartsWith(
-                "https://doi.org/",
-                StringComparison.OrdinalIgnoreCase))
-            {
-                normalized =
-                    normalized["https://doi.org/".Length..];
-            }
-
-            if (normalized.StartsWith(
-                "doi:",
-                StringComparison.OrdinalIgnoreCase))
-            {
-                normalized = normalized[4..];
-            }
-
-            normalized = normalized.Trim().ToLowerInvariant();
-
-            return normalized.Length <= 255
-                ? normalized
-                : throw new InvalidOperationException(
-                    "DOI exceeds the supported length.");
-        }
-
         private static string? Truncate(
             string? value,
             int maxLength)

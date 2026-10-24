@@ -66,40 +66,44 @@
                     nameof(userId));
             }
 
-            // Normalize values ONCE
+            // Normalize values only ONCE
             string title = data.Title?.Trim() ?? string.Empty;
-            string? doi = NormalizeDoi(data.Doi);
+            string? doi = DoiHelper.Normalize(data.Doi);
 
             var authorNames = NormalizeList(data.Authors);
             var categoryNames = NormalizeList(data.Categories);
 
-            // Validation using centralized constants
-            if (title.Length < DataConstants.Paper.TitleMinLength ||
-                title.Length > DataConstants.Paper.TitleMaxLength ||
-                (data.Abstract?.Length ?? 0) >
-                    DataConstants.Paper.AbstractMaxLength ||
-                (doi?.Length ?? 0) >
-                    DataConstants.Paper.DoiMaxLength ||
-                (data.PublicationUrl?.Length ?? 0) >
-                    DataConstants.Paper.UrlMaxLength ||
-                (data.PdfUrl?.Length ?? 0) >
-                    DataConstants.Paper.UrlMaxLength ||
-                authorNames.Any(name =>
-                    name.Length > DataConstants.Author.NameMaxLength) ||
-                categoryNames.Any(name =>
-                    name.Length > DataConstants.Category.NameMaxLength) ||
+            bool invalidTitle =
+                title.Length < DataConstants.Paper.TitleMinLength ||
+                title.Length > DataConstants.Paper.TitleMaxLength;
+
+            bool invalidMetadata =
+                (data.Abstract?.Length ?? 0) > DataConstants.Paper.AbstractMaxLength ||
+                (doi?.Length ?? 0) > DataConstants.Paper.DoiMaxLength;
+
+            bool invalidUrls =
+                (data.PublicationUrl?.Length ?? 0) > DataConstants.Paper.UrlMaxLength ||
+                (data.PdfUrl?.Length ?? 0) > DataConstants.Paper.UrlMaxLength ||
                 !ValidUrl(data.PublicationUrl) ||
-                !ValidUrl(data.PdfUrl))
+                !ValidUrl(data.PdfUrl);
+
+            bool invalidAuthors = authorNames.Any(
+                name => name.Length > DataConstants.Author.NameMaxLength);
+            bool invalidCategories = categoryNames.Any(
+                name => name.Length > DataConstants.Category.NameMaxLength);
+
+            if (invalidTitle || invalidMetadata || invalidUrls ||
+                invalidAuthors || invalidCategories)
             {
                 return new PaperEditResult(
                     PaperEditStatus.ValidationFailed,
                     "Please correct the paper metadata.");
             }
 
-    
-        await using var transaction =
-                await context.Database.BeginTransactionAsync(
-                    cancellationToken);
+
+            await using var transaction =
+                    await context.Database.BeginTransactionAsync(
+                        cancellationToken);
 
             var paper = await context.Papers
                 .Include(p => p.PaperAuthors)
@@ -124,6 +128,22 @@
                 if (duplicate)
                     return new(
                         PaperEditStatus.DuplicateDoi, "This DOI already exists in your library.");
+            }
+
+            string normalizedTitle = title.ToUpperInvariant();
+            bool duplicateTitle = await context.Papers
+                .AsNoTracking()
+                .AnyAsync(p =>
+                    p.Id != data.Id &&
+                    p.UserId == userId &&
+                    p.Title.Trim().ToUpper() == normalizedTitle,
+                    cancellationToken);
+
+            if (duplicateTitle)
+            {
+                return new(
+                    PaperEditStatus.DuplicateTitle,
+                    "A paper with this title already exists in your library.");
             }
 
             paper.Title = title;
@@ -229,29 +249,6 @@
             return string.IsNullOrWhiteSpace(value)
                 ? null
                 : value.Trim();
-        }
-
-        private static string? NormalizeDoi(string? value)
-        {
-            string? doi = EmptyToNull(value);
-
-            if (doi == null)
-                return null;
-
-            if (doi.StartsWith(
-                "https://doi.org/",
-                StringComparison.OrdinalIgnoreCase))
-            {
-                doi = doi["https://doi.org/".Length..];
-            }
-            else if (doi.StartsWith(
-                "doi:",
-                StringComparison.OrdinalIgnoreCase))
-            {
-                doi = doi[4..];
-            }
-
-            return EmptyToNull(doi)?.ToLowerInvariant();
         }
 
         private static bool ValidUrl(string? value)

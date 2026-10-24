@@ -10,12 +10,14 @@
     {
         public int Id { get; set; }
 
+        [Display(Name = "Paper Title")]
         [Required]
         [StringLength(
             DataConstants.Paper.TitleMaxLength,
             MinimumLength = DataConstants.Paper.TitleMinLength)]
         public string Title { get; set; } = string.Empty;
 
+        [Display(Name = "Abstract")]
         [MaxLength(DataConstants.Paper.AbstractMaxLength)]
         public string? Abstract { get; set; }
 
@@ -23,7 +25,10 @@
         [DataType(DataType.Date)]
         public DateOnly? PublicationDate { get; set; }
 
+        [Display(Name = "DOI")]
         [StringLength(DataConstants.Paper.DoiMaxLength)]
+        [RegularExpression(DataConstants.Paper.DoiPattern,
+            ErrorMessage = DataConstants.Paper.DoiErrorMessage)]
         public string? Doi { get; set; }
 
         [Display(Name = "Publication URL")]
@@ -34,9 +39,11 @@
         [StringLength(DataConstants.Paper.UrlMaxLength)]
         public string? PdfUrl { get; set; }
 
+        [CommaSeparatedList(DataConstants.Author.NameMaxLength)]
         [Display(Name = "Authors (comma-separated)")]
         public string? Authors { get; set; }
 
+        [CommaSeparatedList(DataConstants.Category.NameMaxLength)]
         [Display(Name = "Categories (comma-separated)")]
         public string? Categories { get; set; }
 
@@ -67,23 +74,6 @@
                 }
             }
 
-            foreach (string author in Split(Authors))
-            {
-                if (author.Length >
-                    DataConstants.Author.NameMaxLength)
-                {
-                    yield return new ValidationResult("An author name exceeds the maximum length.", new[] { nameof(Authors) });
-                }
-            }
-
-            foreach (string category in Split(Categories))
-            {
-                if (category.Length >
-                    DataConstants.Category.NameMaxLength)
-                {
-                    yield return new ValidationResult("A category name exceeds the maximum length.", new[] { nameof(Categories) });
-                }
-            }
         }
 
         public PaperEditDto ToDto()

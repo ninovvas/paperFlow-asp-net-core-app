@@ -40,10 +40,6 @@ namespace PaperFlow.Services.Providers
                 nextAllowedRequest =
                     DateTimeOffset.UtcNow + MinimumInterval;
 
-                // Keep the semaphore during the HTTP request.
-                using var cancellationRegistration =
-                    cancellationToken.Register(() => { });
-
                 HttpResponseMessage response =
                     await send(cancellationToken);
 
