@@ -1,12 +1,45 @@
-﻿@using PaperFlow.Common.Enums
+﻿@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Html
+@using PaperFlow.Common.Enums
 @model PaperFlow.Web.ViewModels.Papers.PaperLibraryViewModel
 <link rel="stylesheet" href="~/css/paperflow-library.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/paperflow-library-search.css" asp-append-version="true" />
 @{
     ViewData["Title"] = "My Papers";
     var q = Model.Query;
     var statuses = Enum.GetNames<ReadingStatus>();
     int first = Model.FilteredCount == 0 ? 0 : (q.Page - 1) * q.PageSize + 1;
     int last = Math.Min(q.Page * q.PageSize, Model.FilteredCount);
+    IHtmlContent Highlight(string? value)
+    {
+        var text = value ?? string.Empty;
+        var term = q.Search;
+        if (string.IsNullOrWhiteSpace(term)) return new HtmlString(HtmlEncoder.Default.Encode(text));
+        int at = 0;
+        var result = new System.Text.StringBuilder();
+        while (at < text.Length)
+        {
+            int found = text.IndexOf(term, at, StringComparison.OrdinalIgnoreCase);
+            if (found < 0) { result.Append(HtmlEncoder.Default.Encode(text[at..])); break; }
+            result.Append(HtmlEncoder.Default.Encode(text[at..found]));
+            result.Append("<mark class=\"pf-search-match\">");
+            result.Append(HtmlEncoder.Default.Encode(text.Substring(found, term.Length)));
+            result.Append("</mark>");
+            at = found + term.Length;
+        }
+        return new HtmlString(result.ToString());
+    }
+    string? AbstractSnippet(string? abstractText)
+    {
+        if (string.IsNullOrWhiteSpace(abstractText) || string.IsNullOrWhiteSpace(q.Search)) return null;
+        int hit = abstractText.IndexOf(q.Search, StringComparison.OrdinalIgnoreCase);
+        if (hit < 0) return null;
+        int start = Math.Max(0, hit - 45);
+        int length = Math.Min(abstractText.Length - start, 190);
+        return (start > 0 ? "…" : "") + abstractText.Substring(start, length) +
+            (start + length < abstractText.Length ? "…" : "");
+    }
+
 }
 
 <div class="pf-library-header d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
@@ -39,7 +72,7 @@
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><div><h5 class="fw-semibold mb-1">Research Library</h5><div class="text-muted small">Your saved publications, in one place</div></div><span class="pf-results-count">@Model.FilteredCount matching / @Model.TotalPapers total</span></div>
 
         <form asp-controller="Papers" asp-action="Index" method="get" id="libraryFilters" class="row g-3 align-items-end mb-4 pf-library-filters">
-            <div class="col-lg-4 col-md-6"><label for="librarySearch" class="form-label">Search by title, DOI or author</label><input id="librarySearch" name="Search" value="@q.Search" maxlength="200" class="form-control" placeholder="Search my library..." /></div>
+            <div class="col-lg-4 col-md-6"><label for="librarySearch" class="form-label">Search by title, DOI, author, category or abstract</label><input id="librarySearch" name="Search" value="@q.Search" maxlength="200" class="form-control" placeholder="Search my library..." /></div>
             <div class="col-lg-2 col-md-3">
                 <label for="libraryStatus" class="form-label">Reading status</label><select id="libraryStatus" name="Status" class="form-select">
                 <option value="">All statuses</option>
@@ -74,7 +107,7 @@
     </div>
     <div class="col-lg-2 col-md-3">
         <label for="librarySort" class="form-label">Sort by</label><select id="librarySort" name="Sort" class="form-select">
-        @foreach (var sortItem in new[] { ("added_desc", "Recently added"), ("added_asc", "Oldest added"), ("title_asc", "Title A–Z"), ("title_desc", "Title Z–A"), ("published_desc", "Newest publication"), ("published_asc", "Oldest publication"), ("status_asc", "Status A–Z"), ("status_desc", "Status Z–A"), ("rating_desc", "Highest rating"), ("rating_asc", "Lowest rating") })
+        @foreach (var sortItem in new[] { ("relevance", "Best match"), ("added_desc", "Recently added"), ("added_asc", "Oldest added"), ("title_asc", "Title A–Z"), ("title_desc", "Title Z–A"), ("published_desc", "Newest publication"), ("published_asc", "Oldest publication"), ("status_asc", "Status A–Z"), ("status_desc", "Status Z–A"), ("rating_desc", "Highest rating"), ("rating_asc", "Lowest rating") })
         {
             if (q.Sort == sortItem.Item1)
             {
@@ -124,7 +157,13 @@ else
                 @foreach (var paper in Model.Papers)
                 {
                     <tr>
-                        <td class="paperflow-title-column"><a asp-controller="PaperDetails" asp-action="Details" asp-route-id="@paper.Id" class="fw-semibold text-decoration-none paperflow-title-clamp">@paper.Title</a></td>
+                        <td class="paperflow-title-column">
+                            <a asp-controller="PaperDetails" asp-action="Details" asp-route-id="@paper.Id" class="fw-semibold text-decoration-none paperflow-title-clamp">@Highlight(paper.Title)</a>
+                            @if (AbstractSnippet(paper.Abstract) is string snippet)
+                            {
+                                <div class="pf-search-snippet mt-1">@Highlight(snippet)</div>
+                            }
+                        </td>
                         <td class="paperflow-date">@(paper.PublicationDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
                         <td>
                             @{
@@ -198,22 +237,22 @@ else
 
 @section Scripts {
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const modal = document.getElementById("deletePaperModal");
             if (modal) {
-                modal.addEventListener("show.bs.modal", function(event) {
+                modal.addEventListener("show.bs.modal", function (event) {
                     const button = event.relatedTarget;
                     document.getElementById("deletePaperTitle").textContent = button.dataset.paperTitle;
                     document.getElementById("deletePaperForm").action = "@Url.Content("~/Papers/Delete/")" + encodeURIComponent(button.dataset.paperId);
                 });
             }
-            window.addEventListener("pageshow", function() {
+            window.addEventListener("pageshow", function () {
                 const btn = document.querySelector('#libraryFilters button[type="submit"]');
                 if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-filter me-1"></i>Apply'; }
             });
             const filterForm = document.getElementById("libraryFilters");
             if (filterForm) {
-                filterForm.addEventListener("submit", function() {
+                filterForm.addEventListener("submit", function () {
                     const submit = filterForm.querySelector('button[type="submit"]');
                     if (submit) { submit.disabled = true; submit.innerHTML = '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>Loading'; }
                 });

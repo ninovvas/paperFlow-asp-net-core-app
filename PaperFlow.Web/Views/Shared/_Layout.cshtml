@@ -35,6 +35,8 @@
     </script>
     <script src="~/js/paperflow-theme.js" asp-append-version="true" defer></script>
 
+    <link rel="stylesheet" href="~/css/paperflow-header-search.css" asp-append-version="true" />
+
     @await RenderSectionAsync("Styles", required: false)
 </head>
 
@@ -97,6 +99,47 @@
 
                             @if (User.Identity?.IsAuthenticated == true)
                             {
+
+                                <!-- PaperFlow Global Library Search -->
+                                <li class="nav-item pf-global-search-item">
+                                    <form asp-controller="Papers"
+                                          asp-action="Index"
+                                          method="get"
+                                          role="search"
+                                          class="pf-global-search"
+                                          data-pf-library-search
+                                          data-endpoint="@Url.Action("Suggest", "LibrarySearch")">
+
+                                        <i class="ti ti-search"
+                                           aria-hidden="true"></i>
+
+                                        <input type="search"
+                                               name="Search"
+                                               class="pf-global-search-input"
+                                               data-pf-search-input
+                                               autocomplete="off"
+                                               aria-autocomplete="list"
+                                               aria-expanded="false"
+                                               aria-controls="pf-library-suggestions"
+                                               placeholder="Search my papers..."
+                                               aria-label="Search my research library"
+                                               maxlength="200" />
+
+                                        <button type="submit"
+                                                class="pf-global-search-submit"
+                                                aria-label="Start library search">
+                                            <i class="ti ti-arrow-right"></i>
+                                        </button>
+                                        <div id="pf-library-suggestions"
+                                             class="pf-search-suggestions"
+                                             data-pf-search-results
+                                             role="listbox"
+                                             aria-label="Matching papers"
+                                             hidden></div>
+                                    </form>
+                                </li>
+
+
                                 <!-- User dropdown -->
                                 <li class="nav-item dropdown">
 
@@ -218,6 +261,8 @@
     <script src="~/modernize/assets/js/app.min.js"></script>
 
     <script src="~/modernize/assets/libs/simplebar/dist/simplebar.js"></script>
+
+    <script src="~/js/paperflow-header-search.js" asp-append-version="true" defer></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

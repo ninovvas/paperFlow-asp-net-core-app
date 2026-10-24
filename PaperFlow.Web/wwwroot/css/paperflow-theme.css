@@ -490,26 +490,157 @@ html[data-pf-theme="dark"] .pf-public-page .card {
     color: #e9eefc;
 }
 
-    html[data-pf-theme="dark"] .pf-public-page h1,
-    html[data-pf-theme="dark"] .pf-public-page h2,
-    html[data-pf-theme="dark"] .pf-public-page h3,
-    html[data-pf-theme="dark"] .pf-public-page h4,
-    html[data-pf-theme="dark"] .pf-public-page h5 {
-        color: #f0f4ff !important;
+html[data-pf-theme="dark"] .pf-public-page h1,
+html[data-pf-theme="dark"] .pf-public-page h2,
+html[data-pf-theme="dark"] .pf-public-page h3,
+html[data-pf-theme="dark"] .pf-public-page h4,
+html[data-pf-theme="dark"] .pf-public-page h5 {
+    color: #f0f4ff !important;
+}
+
+html[data-pf-theme="dark"] .pf-public-page p:not(.text-danger) {
+    color: #c4d2e9;
+}
+
+html[data-pf-theme="dark"] .pf-public-page .text-muted {
+    color: #afbdd5 !important;
+}
+
+html[data-pf-theme="dark"] .pf-public-page a:not(.btn) {
+    color: #9eafff;
+}
+
+html[data-pf-theme="dark"] .pf-public-page a:not(.btn):hover {
+    color: #c3ceff;
+}
+
+
+
+/* ============================================
+   PaperFlow Scrollbar Styling
+   ============================================ */
+
+:root {
+    --pf-scrollbar-thumb: #b4bfd3;
+    --pf-scrollbar-hover: #8294b7;
+}
+
+html[data-pf-theme="dark"] {
+    --pf-scrollbar-thumb: #526588;
+    --pf-scrollbar-hover: #8195c6;
+}
+
+/* Firefox */
+html,
+.body-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: var(--pf-scrollbar-thumb) transparent;
+}
+
+/* Chrome / Edge */
+html::-webkit-scrollbar,
+.body-wrapper::-webkit-scrollbar {
+    width: 7px;
+}
+
+html::-webkit-scrollbar-thumb,
+.body-wrapper::-webkit-scrollbar-thumb {
+    background: var(--pf-scrollbar-thumb);
+    border-radius: 999px;
+}
+
+    html::-webkit-scrollbar-thumb:hover,
+    .body-wrapper::-webkit-scrollbar-thumb:hover {
+        background: var(--pf-scrollbar-hover);
     }
 
-    html[data-pf-theme="dark"] .pf-public-page p:not(.text-danger) {
-        color: #c4d2e9;
+html::-webkit-scrollbar-track,
+.body-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+/* ============================================
+   Global Library Search
+   ============================================ */
+
+.pf-global-search-item {
+    width: clamp(230px, 30vw, 480px);
+    min-width: 0;
+}
+
+.pf-global-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 44px;
+    padding: 4px 8px 4px 14px;
+    background: var(--pf-surface);
+    border: 1px solid var(--pf-border);
+    border-radius: 14px;
+}
+
+    .pf-global-search:focus-within {
+        border-color: var(--pf-primary);
+        box-shadow: 0 0 0 3px var(--pf-ring);
     }
 
-    html[data-pf-theme="dark"] .pf-public-page .text-muted {
-        color: #afbdd5 !important;
+    .pf-global-search > .ti {
+        color: var(--pf-muted);
+        font-size: 19px;
     }
 
-    html[data-pf-theme="dark"] .pf-public-page a:not(.btn) {
-        color: #9eafff;
+.pf-global-search-input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--pf-text);
+    font: inherit;
+    font-size: 13px;
+}
+
+    .pf-global-search-input::placeholder {
+        color: var(--pf-muted);
     }
 
-        html[data-pf-theme="dark"] .pf-public-page a:not(.btn):hover {
-            color: #c3ceff;
-        }
+.pf-global-search-submit {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    width: 32px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--pf-primary);
+    color: #fff;
+    cursor: pointer;
+}
+
+html[data-pf-theme="dark"] .pf-global-search-submit {
+    background: #687bf2;
+}
+
+@media (max-width: 991px) {
+    .pf-global-search-item {
+        width: 220px;
+    }
+}
+
+@media (max-width: 650px) {
+    .pf-global-search-item {
+        width: 44px;
+    }
+
+    .pf-global-search {
+        justify-content: center;
+        padding: 4px;
+    }
+
+    .pf-global-search-input,
+    .pf-global-search-submit {
+        display: none;
+    }
+}

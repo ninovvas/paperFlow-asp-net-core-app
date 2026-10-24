@@ -1,0 +1,19 @@
+﻿.pf-search-match {
+    background: #ffe29a;
+    color: #263044;
+    border-radius: 3px;
+    padding: 0 .1em;
+}
+
+.pf-search-snippet {
+    max-width: 560px;
+    color: var(--pf-muted, #71819b);
+    font-size: .79rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+html[data-pf-theme="dark"] .pf-search-match {
+    background: #8b641e;
+    color: #fff3cb;
+}

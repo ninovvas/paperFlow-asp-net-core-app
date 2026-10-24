@@ -51,8 +51,9 @@
                 filtered = filtered.Where(p =>
                     p.Title.Contains(term) ||
                     (p.Doi != null && p.Doi.Contains(term)) ||
-                    p.PaperAuthors.Any(pa =>
-                        pa.Author.FullName.Contains(term)));
+                    (p.Abstract != null && p.Abstract.Contains(term)) ||
+                    p.PaperAuthors.Any(pa => pa.Author.FullName.Contains(term)) ||
+                    p.PaperCategories.Any(pc => pc.Category.Name.Contains(term)));
             }
 
             if (!string.IsNullOrWhiteSpace(query.Status))
@@ -76,8 +77,19 @@
                     p => p.ResearchSourceId == query.SourceId.Value);
             }
 
+            string searchTerm = query.Search ?? string.Empty;
             filtered = query.Sort switch
             {
+                "relevance" when query.Search != null => filtered
+                    .OrderByDescending(p => p.Title == searchTerm)
+                    .ThenByDescending(p => p.Title.StartsWith(searchTerm))
+                    .ThenByDescending(p => p.Title.Contains(searchTerm))
+                    .ThenByDescending(p => p.Doi != null && p.Doi.Contains(searchTerm))
+                    .ThenByDescending(p => p.PaperAuthors.Any(pa => pa.Author.FullName.Contains(searchTerm)))
+                    .ThenByDescending(p => p.PaperCategories.Any(pc => pc.Category.Name.Contains(searchTerm)))
+                    .ThenByDescending(p => p.Abstract != null && p.Abstract.Contains(searchTerm))
+                    .ThenByDescending(p => p.CreatedOn)
+                    .ThenByDescending(p => p.Id),
                 "added_asc" => filtered.OrderBy(p => p.CreatedOn).ThenBy(p => p.Id),
                 "title_asc" => filtered.OrderBy(p => p.Title).ThenBy(p => p.Id),
                 "title_desc" => filtered.OrderByDescending(p => p.Title).ThenBy(p => p.Id),

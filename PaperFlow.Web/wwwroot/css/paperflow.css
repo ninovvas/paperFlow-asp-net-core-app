@@ -50,10 +50,43 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: 24px !important;
-    margin: 0 auto;
+    margin: 0;
     width: 100%;
-    max-width: 1400px;
+    max-width: none;
+    scrollbar-width: thin;
+    scrollbar-color: var(--pf-scrollbar-thumb, #9aa9c5) transparent;
     scroll-behavior: smooth;
+}
+
+    /* Keep content centered without moving the scrollbar inward. */
+    #main-wrapper .body-wrapper .paperflow-content > main {
+        width: 100%;
+        max-width: 1400px;
+        margin-inline: auto;
+        min-width: 0;
+    }
+
+    /* Slim scrollbar inside the full-width scroll area (Edge / Chrome). */
+    #main-wrapper .body-wrapper .paperflow-content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #main-wrapper .body-wrapper .paperflow-content::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    #main-wrapper .body-wrapper .paperflow-content::-webkit-scrollbar-thumb {
+        background: var(--pf-scrollbar-thumb, #9aa9c5);
+        border-radius: 999px;
+    }
+
+        #main-wrapper .body-wrapper .paperflow-content::-webkit-scrollbar-thumb:hover {
+            background: var(--pf-scrollbar-hover, #768bad);
+        }
+
+html[data-pf-theme="dark"] {
+    --pf-scrollbar-thumb: #526588;
+    --pf-scrollbar-hover: #8398c4;
 }
 
 /* Sidebar branding */
@@ -215,5 +248,3 @@
         min-width: 240px;
     }
 }
-
-
