@@ -78,7 +78,7 @@
 
                 <div class="mb-3 pf-search-query">
                     <label asp-for="Query"
-                           class="form-label"></label>
+                           class="form-label">Search Keywords</label>
 
                     <input asp-for="Query"
                            class="form-control"
@@ -97,7 +97,7 @@
 
                         <div class="col-md-6">
                             <label asp-for="SearchField"
-                                   class="form-label"></label>
+                                   class="form-label">Search Field</label>
 
                             <select asp-for="SearchField"
                                     class="form-select">
@@ -109,7 +109,7 @@
 
                         <div class="col-md-6">
                             <label asp-for="Category"
-                                   class="form-label"></label>
+                                   class="form-label">Research Category</label>
 
                             <select asp-for="Category"
                                     class="form-select">
@@ -125,7 +125,7 @@
 
                         <div class="col-md-12">
                             <label asp-for="Author"
-                                   class="form-label"></label>
+                                   class="form-label">Author</label>
 
                             <input asp-for="Author"
                                    class="form-control"
@@ -144,7 +144,7 @@
                         
                         <div class="col-md-6">
                             <label asp-for="SubmittedFrom"
-                                   class="form-label"></label>
+                                   class="form-label">Submitted From</label>
 
                             <input asp-for="SubmittedFrom"
                                    type="date"
@@ -156,7 +156,7 @@
 
                         <div class="col-md-6">
                             <label asp-for="SubmittedTo"
-                                   class="form-label"></label>
+                                   class="form-label">Submitted To</label>
 
                             <input asp-for="SubmittedTo"
                                    type="date"
@@ -171,7 +171,7 @@
 
                         <div class="col-md-4">
                             <label asp-for="SortBy"
-                                   class="form-label"></label>
+                                   class="form-label">Sort By</label>
 
                             <select asp-for="SortBy"
                                     class="form-select">
@@ -183,7 +183,7 @@
 
                         <div class="col-md-4">
                             <label asp-for="SortOrder"
-                                   class="form-label"></label>
+                                   class="form-label">Sort Order</label>
 
                             <select asp-for="SortOrder"
                                     class="form-select">
@@ -194,7 +194,7 @@
 
                         <div class="col-md-4">
                             <label asp-for="MaxResults"
-                                   class="form-label"></label>
+                                   class="form-label">Maximum Results</label>
 
                             <select asp-for="MaxResults"
                                     class="form-select">
@@ -210,7 +210,7 @@
                                        class="form-check-input" />
 
                                 <label asp-for="OnlyWithPdf"
-                                       class="form-check-label"></label>
+                                       class="form-check-label">Only Papers with PDF</label>
                             </div>
                         </div>
                     </div>
@@ -257,6 +257,7 @@
                     }
                 </h4>
             </div>
+            <span class="pf-results-caption">Results loaded from the selected sources</span>
         </div>
 
         @if (User.Identity?.IsAuthenticated == true &&

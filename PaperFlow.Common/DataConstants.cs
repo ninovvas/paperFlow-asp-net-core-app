@@ -23,6 +23,9 @@
 
             public const int MinPages = 1;
             public const int MaxPages = 100000;
+          
+            public const int MinCurrentPage = 0;
+    
         }
 
         public static class Author

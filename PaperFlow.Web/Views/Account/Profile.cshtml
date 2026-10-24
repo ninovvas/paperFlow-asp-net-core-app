@@ -38,11 +38,11 @@
                         @Html.AntiForgeryToken()
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
                         <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <label asp-for="Email" class="form-label fw-semibold">Email Address</label>
                             <input asp-for="Email" class="form-control" readonly />
                         </div>
                         <div class="mb-4">
-                            <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                            <label asp-for="PhoneNumber" class="form-label fw-semibold">Phone Number</label>
                             <input asp-for="PhoneNumber" type="tel" autocomplete="tel" class="form-control" placeholder="+49 ..." />
                             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>

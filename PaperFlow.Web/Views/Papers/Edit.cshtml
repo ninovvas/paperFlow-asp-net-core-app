@@ -40,7 +40,7 @@
                      class="text-danger mb-3"></div>
 
                 <div class="mb-3">
-                    <label asp-for="Title" class="form-label"></label>
+                    <label asp-for="Title" class="form-label">Paper Title</label>
                     <input asp-for="Title" class="form-control" />
                     <span asp-validation-for="Title"
                           class="text-danger"></span>
@@ -50,7 +50,7 @@
 
                     <div class="col-md-6">
                         <label asp-for="PublicationDate"
-                               class="form-label"></label>
+                               class="form-label">Publication Date</label>
                         <input asp-for="PublicationDate"
                                type="date"
                                class="form-control" />
@@ -59,7 +59,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label asp-for="Doi" class="form-label"></label>
+                        <label asp-for="Doi" class="form-label">DOI</label>
                         <input asp-for="Doi" class="form-control"
                                placeholder="10.xxxx/xxxxx" />
                         <span asp-validation-for="Doi"
@@ -68,7 +68,7 @@
 
                     <div class="col-12">
                         <label asp-for="Authors"
-                               class="form-label"></label>
+                               class="form-label">Authors (comma-separated)</label>
                         <input asp-for="Authors" class="form-control"
                                placeholder="Jane Smith, John Doe" />
                         <span asp-validation-for="Authors"
@@ -81,7 +81,7 @@
 
                     <div class="col-12">
                         <label asp-for="Categories"
-                               class="form-label"></label>
+                               class="form-label">Categories (comma-separated)</label>
                         <input asp-for="Categories"
                                class="form-control"
                                placeholder="Robotics, Artificial Intelligence" />
@@ -102,7 +102,7 @@
 
                     <div class="col-md-6">
                         <label asp-for="PublicationUrl"
-                               class="form-label"></label>
+                               class="form-label">Publication URL</label>
                         <input asp-for="PublicationUrl"
                                class="form-control" />
                         <span asp-validation-for="PublicationUrl"
@@ -111,7 +111,7 @@
 
                     <div class="col-md-6">
                         <label asp-for="PdfUrl"
-                               class="form-label"></label>
+                               class="form-label">PDF URL</label>
                         <input asp-for="PdfUrl"
                                class="form-control" />
                         <span asp-validation-for="PdfUrl"

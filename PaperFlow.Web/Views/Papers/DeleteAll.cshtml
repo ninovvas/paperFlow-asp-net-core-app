@@ -26,8 +26,8 @@
 <div class="card border-danger">
     <div class="card-body">
 
-        <div class="alert alert-danger">
-            <h5 class="fw-semibold">
+        <div class="alert alert-danger pf-delete-warning" role="alert">
+            <h5 class="fw-semibold pf-delete-warning-title">
                 <i class="ti ti-alert-triangle me-1"></i>
                 Warning: Irreversible Action
             </h5>
@@ -86,3 +86,18 @@
     </div>
 </div>
 
+
+<style>
+    .pf-delete-warning {
+        background-color: #f8d7da !important;
+        border: 1px solid #f1aeb5 !important;
+        color: #58151c !important;
+    }
+
+        .pf-delete-warning .pf-delete-warning-title,
+        .pf-delete-warning .pf-delete-warning-title i,
+        .pf-delete-warning p,
+        .pf-delete-warning strong {
+            color: #58151c !important;
+        }
+</style>

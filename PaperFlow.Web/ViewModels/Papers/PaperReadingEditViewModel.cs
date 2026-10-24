@@ -3,6 +3,7 @@
 
     using System.ComponentModel.DataAnnotations;
     using PaperFlow.Services.Models;
+    using PaperFlow.Common;
 
     public sealed class PaperReadingEditViewModel : IValidatableObject
     {
@@ -19,19 +20,19 @@
         public DateOnly? DueDate { get; set; }
 
         [Display(Name = "Personal Rating")]
-        [Range(1, 5)]
+        [Range(DataConstants.Paper.MinRating, DataConstants.Paper.MaxRating)]
         public int? Rating { get; set; }
 
         [Display(Name = "Current Page")]
-        [Range(0, 100000)]
+        [Range(DataConstants.Paper.MinCurrentPage, DataConstants.Paper.MaxPages)]
         public int CurrentPage { get; set; }
 
         [Display(Name = "Total Pages")]
-        [Range(1, 100000)]
+        [Range(DataConstants.Paper.MinPages, DataConstants.Paper.MaxPages)]
         public int? TotalPages { get; set; }
 
         [Display(Name = "Personal Notes")]
-        [MaxLength(10000)]
+        [MaxLength(DataConstants.Paper.NotesMaxLength)]
         public string? Notes { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -39,10 +40,10 @@
             if (TotalPages.HasValue &&
                 CurrentPage > TotalPages.Value)
             {
-                yield return new ValidationResult("Current Page cannot exceed Total Pages.",new[] {nameof(CurrentPage), nameof(TotalPages)});
+                yield return new ValidationResult("Current Page cannot exceed Total Pages.", new[] { nameof(CurrentPage), nameof(TotalPages) });
             }
 
-            if (!TotalPages.HasValue && CurrentPage > 0)
+            if (!TotalPages.HasValue && CurrentPage > 0 && Status != "Completed")
             {
                 yield return new ValidationResult(
                     "Enter Total Pages before setting Current Page.", new[] { nameof(TotalPages) });

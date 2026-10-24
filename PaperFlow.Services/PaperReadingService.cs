@@ -4,6 +4,7 @@
     using Microsoft.EntityFrameworkCore;
 
     using PaperFlow.Data;
+    using PaperFlow.Common;
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Models;
     public sealed class PaperReadingService : IPaperReadingService
@@ -74,13 +75,14 @@
                 throw new ArgumentException("Invalid reading status.");
             }
 
-            if (data.Rating is < 1 or > 5)
+            if (data.Rating is < DataConstants.Paper.MinRating or > DataConstants.Paper.MaxRating)
             {
                 throw new ArgumentException("Rating must be between 1 and 5.");
             }
 
-            if (data.CurrentPage < 0 ||
-                data.TotalPages is <= 0 ||
+            if (data.CurrentPage < DataConstants.Paper.MinCurrentPage ||
+                data.CurrentPage > DataConstants.Paper.MaxPages ||
+                data.TotalPages is < DataConstants.Paper.MinPages or > DataConstants.Paper.MaxPages ||
                 (data.TotalPages.HasValue &&
                  data.CurrentPage > data.TotalPages.Value) ||
                 (!data.TotalPages.HasValue &&
@@ -89,7 +91,7 @@
                 throw new ArgumentException("Invalid reading progress.");
             }
 
-            if (data.Notes?.Length > 10000)
+            if (data.Notes?.Length > DataConstants.Paper.NotesMaxLength)
             {
                 throw new ArgumentException("Notes exceed the maximum length.");
             }
@@ -105,10 +107,8 @@
                 return false;
             }
 
-  
-            var newStatus = ParseStatus(paper.Status,data.Status);
 
-            string oldStatus = paper.Status.ToString();
+            var newStatus = ParseStatus(paper.Status, data.Status);
 
             DateTime now = DateTime.UtcNow;
 
@@ -116,28 +116,26 @@
 
             paper.DueDate = data.DueDate;
             paper.Rating = data.Rating;
-            paper.CurrentPage = data.CurrentPage;
+            
+            paper.CurrentPage = data.Status == "Completed"
+                ? data.TotalPages ?? 0
+                : data.CurrentPage;
             paper.TotalPages = data.TotalPages;
             paper.Notes = data.Notes?.Trim();
 
-            
-            if (oldStatus != data.Status)
+
+            if (data.Status == "Completed")
             {
-                if (data.Status == "Reading" &&
-                    paper.StartedReadingOn == null)
+                paper.StartedReadingOn ??= now;
+                paper.CompletedOn ??= now;
+            }
+            else
+            {
+                paper.CompletedOn = null;
+
+                if (data.Status == "Reading" && paper.StartedReadingOn == null)
                 {
                     paper.StartedReadingOn = now;
-                }
-
-                if (data.Status == "Completed")
-                {
-                    paper.StartedReadingOn ??= now;
-                    paper.CompletedOn = now;
-                }
-                else
-                {
-                    // If the paper is no longer completed, clear its completion timestamp.
-                    paper.CompletedOn = null;
                 }
             }
 

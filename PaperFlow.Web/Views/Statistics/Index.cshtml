@@ -24,8 +24,8 @@
         <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Reading</span><strong>@Model.Reading</strong><small>In progress</small></div></div>
         <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Completed</span><strong>@Model.Completed</strong><small>@Model.CompletionRate.ToString("F1")% of library</small></div></div>
         <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Read / Reading</span><strong>@Model.ReadOrReading</strong><small>Reading + Completed</small></div></div>
-        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Added This Month</span><strong>@Model.AddedThisMonth</strong><small>Based on CreatedOn</small></div></div>
-        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Completed This Month</span><strong>@Model.CompletedThisMonth</strong><small>Based on CompletedOn</small></div></div>
+        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Added This Month</span><strong>@Model.AddedThisMonth</strong><small>Based on Created On</small></div></div>
+        <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Completed This Month</span><strong>@Model.CompletedThisMonth</strong><small>Based on Completed On</small></div></div>
         <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Overdue</span><strong>@Model.Overdue</strong><small>Deadline passed, not completed</small></div></div>
         <div class="col-6 col-lg-3"><div class="pf-stat-card"><span>Average Rating</span><strong>@(Model.AverageRating?.ToString("F1") ?? "N/A")</strong><small>Only rated papers</small></div></div>
     </div>
