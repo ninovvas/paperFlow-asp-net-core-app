@@ -1,12 +1,11 @@
 ﻿namespace PaperFlow.Services
 {
     using Microsoft.EntityFrameworkCore;
-
+    using PaperFlow.Common;
     using PaperFlow.Data;
     using PaperFlow.Data.Models;
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Models;
-    using PaperFlow.Common;
 
     public sealed class PaperEditService : IPaperEditService
     {

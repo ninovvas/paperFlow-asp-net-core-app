@@ -29,8 +29,7 @@ namespace PaperFlow.Services
 
             ArgumentNullException.ThrowIfNull(arxivIds);
 
-            /* Limit query values to one displayed search page,
-            not the entire arXiv corpus. */
+            /* Limit query values to one displayed search page, not the entire arXiv corpus. */
 
             string[] ids = arxivIds
                 .Where(id => !string.IsNullOrWhiteSpace(id))
@@ -41,8 +40,7 @@ namespace PaperFlow.Services
             if (ids.Length == 0)
                 return new HashSet<string>(StringComparer.Ordinal);
 
-            /*Matches the original SQL Server schema: ResearchSources.Name and
-            Papers.ResearchSourceId + ExternalId. This prevents false matches
+            /*Matches the original SQL Server schema: ResearchSources.Name and Papers.ResearchSourceId + ExternalId. This prevents false matches
             against external IDs belonging to a different provider. */
 
             int? sourceId = await context.ResearchSources

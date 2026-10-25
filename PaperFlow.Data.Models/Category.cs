@@ -1,10 +1,7 @@
 ﻿namespace PaperFlow.Data.Models
 {
-
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Text;
     using static PaperFlow.Common.DataConstants.Category;
     public class Category
     {

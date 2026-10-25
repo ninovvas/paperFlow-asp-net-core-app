@@ -1,11 +1,11 @@
 ﻿namespace PaperFlow.Services
 {
-    using System.Globalization;
     using Microsoft.EntityFrameworkCore;
     using PaperFlow.Common.Enums;
     using PaperFlow.Data;
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Models;
+    using System.Globalization;
 
     public sealed class StatisticsService(PowerFlowDbContext context) : IStatisticsService
     {

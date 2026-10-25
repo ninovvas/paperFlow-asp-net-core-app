@@ -1,9 +1,9 @@
 ﻿namespace PaperFlow.Web.Controllers
 {
-    using System.Security.Claims;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using PaperFlow.Services.Interfaces;
+    using System.Security.Claims;
 
     [Authorize]
     [Route("Statistics")]

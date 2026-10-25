@@ -1,13 +1,13 @@
 namespace PaperFlow.Web.Controllers
 {
-    using System.Net;
-    using System.Security.Claims;
-    using System.Xml;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Caching.Memory;
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Web.ViewModels.Papers;
+    using System.Net;
+    using System.Security.Claims;
+    using System.Xml;
 
     [Route("PaperSearch")]
     public class PaperSearchController : Controller

@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Identity;
 
 namespace PaperFlow.Web.Areas.Identity.Pages.Account;
 

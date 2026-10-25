@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using PaperFlow.Data.Models;
-
-namespace PaperFlow.Data
+﻿namespace PaperFlow.Data
 {
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;
+    using PaperFlow.Data.Models;
     public class PowerFlowDbContext : IdentityDbContext
     {
         public PowerFlowDbContext(

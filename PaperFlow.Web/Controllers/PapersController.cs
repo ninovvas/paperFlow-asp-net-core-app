@@ -1,14 +1,13 @@
 ﻿namespace PaperFlow.Web.Controllers
 {
-    using System.Security.Claims;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
-
     using PaperFlow.Common;
     using PaperFlow.Data;
     using PaperFlow.Data.Models;
     using PaperFlow.Web.ViewModels.Papers;
+    using System.Security.Claims;
 
     [Authorize]
     public partial class PapersController : Controller

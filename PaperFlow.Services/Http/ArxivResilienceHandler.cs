@@ -1,8 +1,8 @@
 ﻿namespace PaperFlow.Services.Http
 {
-    using System.Net;
     using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.Logging;
+    using System.Net;
 
     public sealed class ArxivResilienceHandler : DelegatingHandler
 {

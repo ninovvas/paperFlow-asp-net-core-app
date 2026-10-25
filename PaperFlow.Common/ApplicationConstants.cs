@@ -1,9 +1,5 @@
 ﻿namespace PaperFlow.Common
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
     public class ApplicationConstants
     {
         public const string ApplicationName = "PaperFlow";

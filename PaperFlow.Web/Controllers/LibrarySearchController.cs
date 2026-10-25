@@ -1,11 +1,11 @@
 ﻿
 namespace PaperFlow.Web.Controllers
 {
-    using System.Security.Claims;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using PaperFlow.Data;
+    using System.Security.Claims;
 
     [ApiController]
     [Authorize]
