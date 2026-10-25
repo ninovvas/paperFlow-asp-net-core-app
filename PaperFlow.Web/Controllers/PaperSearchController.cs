@@ -36,7 +36,7 @@ namespace PaperFlow.Web.Controllers
         // GET: /PaperSearch or /PaperSearch?execute=true&...
         // GET: /PaperSearch?searchId=<token> restores cached results.
         [HttpGet("")]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<IActionResult> Index(
             [FromQuery] PaperSearchViewModel model,
             [FromQuery] bool execute = false,
@@ -180,8 +180,7 @@ namespace PaperFlow.Web.Controllers
                 model.Results = combined;
                 model.FailedSources = result.FailedSources;
 
-                // One request covers the same offset for each selected provider.
-                // Advance by the requested page size, NOT the de-duplicated count.
+                // One request covers the same offset for each selected provider. Advance by the requested page size, NOT the de-duplicated count.
                 // A partial failure must be retryable, not silently skipped.
                 if (result.FailedSources.Count > 0)
                 {

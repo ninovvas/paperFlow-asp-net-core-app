@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Welcome to PaperFlow";
+}
+<link rel="stylesheet" href="~/css/paperflow-landing.css" asp-append-version="true" />
+
+<div class="pf-landing">
+    <section class="pf-landing-hero" aria-labelledby="landing-title">
+        <div class="pf-landing-hero-content">
+            <span class="pf-landing-eyebrow"><i class="ti ti-book-2" aria-hidden="true"></i> Research paper management</span>
+            <h1 id="landing-title">Your research library, organized in one place.</h1>
+            <p>Discover scientific papers, save useful publications, and keep track of what you are reading - from your first search to your final notes.</p>
+            <div class="pf-landing-actions">
+                <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Register"><i class="ti ti-user-plus me-1" aria-hidden="true"></i> Create an Account</a>
+                <a class="btn btn-outline-primary" asp-area="Identity" asp-page="/Account/Login">Log In</a>
+                <a class="pf-landing-text-link" asp-controller="ResearchSources" asp-action="Index">Explore Research Sources <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+            </div>
+        </div>
+        <div class="pf-landing-visual" aria-hidden="true">
+            <div class="pf-landing-mini-card"><i class="ti ti-search"></i><span>Discover papers</span></div>
+            <div class="pf-landing-mini-card"><i class="ti ti-bookmarks"></i><span>Build your library</span></div>
+            <div class="pf-landing-mini-card"><i class="ti ti-chart-bar"></i><span>Track your progress</span></div>
+        </div>
+    </section>
+
+    <section class="pf-landing-section" aria-labelledby="features-title">
+        <div class="pf-landing-section-head">
+            <div>
+                <span class="pf-landing-kicker">WHAT YOU CAN DO</span>
+                <h2 id="features-title">A practical workspace for your papers</h2>
+                <p>PaperFlow brings searching, organizing, and reading activity together in a personal research library.</p>
+            </div>
+        </div>
+        <div class="pf-landing-grid">
+            <article class="pf-landing-feature"><span class="pf-landing-feature-icon"><i class="ti ti-search"></i></span><h3>Find research papers</h3><p>Search arXiv by keywords and research fields, review results, and import papers into your library.</p></article>
+            <article class="pf-landing-feature"><span class="pf-landing-feature-icon"><i class="ti ti-books"></i></span><h3>Organize your library</h3><p>Save publications, add papers manually, and manage metadata, authors, categories, and links.</p></article>
+            <article class="pf-landing-feature"><span class="pf-landing-feature-icon"><i class="ti ti-book-2"></i></span><h3>Track reading progress</h3><p>Set reading statuses and deadlines, track pages, and keep ratings and personal notes.</p></article>
+            <article class="pf-landing-feature"><span class="pf-landing-feature-icon"><i class="ti ti-chart-bar"></i></span><h3>Understand your activity</h3><p>See library statistics, reading status breakdowns, and monthly additions and completions.</p></article>
+            <article class="pf-landing-feature"><span class="pf-landing-feature-icon"><i class="ti ti-filter"></i></span><h3>Search your own collection</h3><p>Find saved papers by title, DOI, author, category, or abstract, with filters and sorting.</p></article>
+            <article class="pf-landing-feature"><span class="pf-landing-feature-icon"><i class="ti ti-shield-lock"></i></span><h3>Keep your research personal</h3><p>Sign in to access your own library and reading information, separate from other accounts.</p></article>
+        </div>
+    </section>
+
+    <section class="pf-landing-section" aria-labelledby="providers-title">
+        <div class="pf-landing-section-head">
+            <div>
+                <span class="pf-landing-kicker">RESEARCH PROVIDERS</span>
+                <h2 id="providers-title">Connected today. More planned.</h2>
+                <p>PaperFlow currently supports arXiv search and import. Additional scholarly metadata sources are planned, not yet integrated.</p>
+            </div>
+            <a class="pf-landing-text-link" asp-controller="ResearchSources" asp-action="Index">Provider details <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+        </div>
+        <div class="pf-landing-provider-grid">
+            <article class="pf-landing-provider"><div class="pf-landing-provider-top"><h3>arXiv</h3><span class="pf-landing-state pf-landing-state-active">Integrated</span></div><p>Search and import open-access research preprints. External API rate limits may apply.</p></article>
+            <article class="pf-landing-provider"><div class="pf-landing-provider-top"><h3>Crossref</h3><span class="pf-landing-state">Planned</span></div><p>Planned support for DOI-based discovery and publication metadata.</p></article>
+            <article class="pf-landing-provider"><div class="pf-landing-provider-top"><h3>OpenAlex</h3><span class="pf-landing-state">Planned</span></div><p>Planned support for research works, authors, institutions, and citation relationships.</p></article>
+        </div>
+    </section>
+
+    <section class="pf-landing-cta">
+        <div><h2>Start building your research library</h2><p>Create an account to search, save, and manage your papers in PaperFlow.</p></div>
+        <div class="pf-landing-actions"><a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Register">Get Started</a><a class="btn btn-outline-primary" asp-controller="About" asp-action="Index">About PaperFlow</a></div>
+    </section>
+</div>
