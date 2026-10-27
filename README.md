@@ -7,8 +7,6 @@
 ![Database](https://img.shields.io/badge/Database-SQL_Server-lightgrey)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-> **Project context:** Developed for the ASP.NET Fundamentals course. The clean-clone installation test is still pending; the setup steps below will be verified before submission.
-
 ## Table of Contents
 
 - [About the Project](#about-the-project)
@@ -52,7 +50,7 @@ PaperFlow uses ASP.NET Core MVC, Entity Framework Core with SQL Server, and ASP.
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) with ASP.NET and web development workload, or VS Code with the C# extension
-- SQL Server Express, Developer Edition, or SQL Server LocalDB (on Windows)
+- SQL Server Express (`.\SQLEXPRESS`, tested), Developer Edition, or SQL Server LocalDB (Windows alternative)
 - [Git](https://git-scm.com/)
 - An internet connection for restoring NuGet packages and searching arXiv
 - `dotnet-ef` CLI tool if applying migrations using the command line
@@ -76,7 +74,19 @@ dotnet restore PaperFlow.Web/PaperFlow.Web.csproj
 
 ### 3. Configure SQL Server
 
-The application reads the connection string named **`DefaultConnection`**. For a local Windows installation using SQL Server LocalDB, you can provide this configuration in `PaperFlow.Web/appsettings.Development.json`:
+PaperFlow reads **`ConnectionStrings:DefaultConnection`**. The clean installation was successfully tested with SQL Server Express and a database named `PaperFlowDb`:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.\\SQLEXPRESS;Database=PaperFlowDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False;"
+  }
+}
+```
+
+Use the connection string in `PaperFlow.Web/appsettings.Development.json`, or supply it through the environment variable `ConnectionStrings__DefaultConnection` (see [Configuration](#configuration)). Do not commit personal credentials. Start the local `SQL Server (SQLEXPRESS)` service before applying migrations.
+
+**LocalDB alternative (not used for the documented successful test):**
 
 ```json
 {
@@ -88,14 +98,21 @@ The application reads the connection string named **`DefaultConnection`**. For a
 
 The same configuration can be supplied through an environment variable named `ConnectionStrings__DefaultConnection`. Do not commit credentials or machine-specific private configuration.
 
-> A valid default connection string should also exist in the tracked configuration so a reviewer can start the application using the documented local defaults. The current committed values still need to be verified during the clean installation test.
+> The database name `PaperFlowDb` is just the database name; the `--context` command argument must use the C# context class `PowerFlowDbContext`. The default connection string must point to an available SQL Server instance.
 
 ### 4. Apply the existing migrations
 
 If the EF Core CLI tool is not installed:
 
 ```powershell
-dotnet tool install --global dotnet-ef --version 10.*
+dotnet tool install --global dotnet-ef --version "10.*"
+```
+
+Verify the tool and optionally list the existing migrations:
+
+```powershell
+dotnet ef --version
+dotnet ef migrations list --project PaperFlow.Data/PaperFlow.Data.csproj --startup-project PaperFlow.Web/PaperFlow.Web.csproj --context PowerFlowDbContext
 ```
 
 Then run from the repository root:
@@ -125,92 +142,108 @@ dotnet dev-certs https --trust
 
 On first launch, open the public landing page and register an account to access personal research features.
 
-## Clean Installation Verification
+## Clean Installation
 
-This section describes a **fresh installation on Windows** using SQL Server LocalDB. It is intended to verify that the submitted GitHub repository can be downloaded and run without changing application source code. **The procedure is documented but has not yet been independently completed on a clean machine.**
+A clean installation was **successfully performed on Windows 11 (26 October 2026)** using the public GitHub repository, .NET 10 and **SQL Server Express (`.\SQLEXPRESS`)**. 
 
-### 1. Prepare a clean environment
+The clean installation proves that the application can be cloned, compiled, migrated, and launched **in the tested Windows environment without changes to C# source code**. Full cross-machine portability and a complete end-to-end feature test have not been established.
 
-Install the .NET 10 SDK, Git, and SQL Server LocalDB (or another supported SQL Server instance). The EF Core command-line tool is needed for database migrations. Check the installations:
+### 1. Clone and build
 
-```powershell
-dotnet --version
-git --version
-sqllocaldb info
-```
+Open **Windows Command Prompt (CMD)** in an empty directory:
 
-If `sqllocaldb` is not recognized, install SQL Server Express LocalDB or use a configured SQL Server instance. The database server must be available before applying migrations.
-
-### 2. Clone a fresh copy
-
-Do not use an existing Visual Studio working directory or copy a previously created database. Use a new folder:
-
-```powershell
-mkdir PaperFlow-Clean-Test
-cd PaperFlow-Clean-Test
+```cmd
 git clone https://github.com/ninovvas/paperFlow-asp-net-core-app.git
 cd paperFlow-asp-net-core-app
-```
-
-### 3. Restore and build
-
-```powershell
 dotnet restore PaperFlow.Web/PaperFlow.Web.csproj
-dotnet build PaperFlow.Web/PaperFlow.Web.csproj --no-incremental
+dotnet build PaperFlow.Web/PaperFlow.Web.csproj
 ```
 
-The build should finish with no compilation errors. Review any NuGet security or analyzer warnings rather than suppressing them.
+### 2. Configure the tested SQL Server Express connection
 
-### 4. Configure the database connection
+Start the `SQL Server (SQLEXPRESS)` Windows service. The following connection string was used during the successful test:
 
-The application expects `ConnectionStrings:DefaultConnection`. When using the **LocalDB** example below, no SQL Server password is necessary because Windows authentication is used:
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.\\SQLEXPRESS;Database=PaperFlowDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False;"
+  }
+}
+```
+
+Provide it through `PaperFlow.Web/appsettings.Development.json` or an environment variable. If using **CMD** for the current session:
+
+```cmd
+set ASPNETCORE_ENVIRONMENT=Development
+set "ConnectionStrings__DefaultConnection=Server=.\SQLEXPRESS;Database=PaperFlowDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False;"
+```
+
+For **PowerShell**, use:
 
 ```powershell
 $env:ASPNETCORE_ENVIRONMENT = "Development"
-$env:ConnectionStrings__DefaultConnection = "Server=(localdb)\MSSQLLocalDB;Database=PaperFlowDb;Trusted_Connection=True;TrustServerCertificate=True"
+$env:ConnectionStrings__DefaultConnection = "Server=.\SQLEXPRESS;Database=PaperFlowDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False;"
 ```
 
-These environment variables apply only to the **current PowerShell session**. Keep using the same session for the migration command and application run command. For SQL Server Express or Developer Edition, substitute an appropriate connection string. Do not commit passwords or private connection strings.
+Use the same terminal session for migration and startup when using session-scoped environment variables. `SQLEXPRESS` is an example of an installed SQL Server instance; adjust the configuration if your system uses a different instance. Do not change application source code or commit passwords.
 
-A clone must provide a usable default configuration or follow the documented environment-variable setup; no C# source edits should be necessary.
+### 3. Install EF Core CLI (once per computer)
 
-### 5. Apply the existing EF Core migrations
+On the clean-install machine, `dotnet ef` was initially unavailable. Install the CLI tool and verify it:
 
-If necessary, install the EF Core CLI version compatible with EF Core 10:
-
-```powershell
+```cmd
 dotnet tool install --global dotnet-ef --version "10.*"
+dotnet ef --version
 ```
 
-If the tool is already installed, verify it with `dotnet ef --version`. From the repository root run:
+If the tool was previously installed, use `dotnet tool update --global dotnet-ef --version "10.*"` as needed. On Windows, reopen the terminal if the global-tools PATH has not refreshed (`%USERPROFILE%\.dotnet\tools`).
 
-```powershell
+### 4. Apply and verify existing migrations
+
+From the repository root:
+
+```cmd
+dotnet ef migrations list --project PaperFlow.Data/PaperFlow.Data.csproj --startup-project PaperFlow.Web/PaperFlow.Web.csproj --context PowerFlowDbContext
+
 dotnet ef database update --project PaperFlow.Data/PaperFlow.Data.csproj --startup-project PaperFlow.Web/PaperFlow.Web.csproj --context PowerFlowDbContext
+
+dotnet ef migrations list --project PaperFlow.Data/PaperFlow.Data.csproj --startup-project PaperFlow.Web/PaperFlow.Web.csproj --context PowerFlowDbContext
 ```
 
-This command creates or updates the SQL Server database using the **existing project migrations**. It does **not** require creating a new migration. Inspect the resulting database in SQL Server Management Studio if desired.
+The successful test returned the following migrations without a `(Pending)` suffix:
 
-### 6. Start PaperFlow
+```text
+00000000000000_CreateIdentitySchema
+20261014040542_AddPaperFlowModels
+```
 
-```powershell
-dotnet dev-certs https --trust
+**Do not create a new `InitialCreate` migration.** Existing migrations build the database schema. `PowerFlowDbContext` is the .NET DbContext class; `PaperFlowDb` is the SQL Server database name.
+
+### 5. Run the application
+
+```cmd
 dotnet run --project PaperFlow.Web/PaperFlow.Web.csproj --launch-profile https
 ```
 
-Open `https://localhost:7184` (as configured in the current development launch profile). Confirm that the app starts without modifying source files.
+Visit **https://localhost:7184**. If the local HTTPS certificate is not trusted, run `dotnet dev-certs https --trust`.
+
+### 6. Functional smoke test
+
+After startup, check the public Landing, About and Research Sources pages. Register a test user and verify login, manual paper creation, edit/delete, reading progress and statistics. Verify that private pages redirect an unauthenticated visitor to login. These checks are recommended for each fresh installation.
+
+arXiv is an external provider. Its API returned HTTP 503 and `Rate exceeded` during testing; PaperFlow handled the failure with an explanatory notice. An arXiv search and bulk import later succeeded. Availability may vary; manual paper entry and the local research library do not require arXiv to be online.
 
 ### 7. Troubleshooting
 
-| Issue | What to check |
+| Problem | Resolution |
 |---|---|
-| `dotnet` not recognized | Install the .NET 10 SDK and restart the terminal. |
-| `dotnet ef` not recognized | Install `dotnet-ef` and check the CLI tools path. |
-| SQL Server connection error | Check LocalDB installation/instance name, Windows authentication, and `DefaultConnection`. |
-| Migration cannot locate context | Execute the command from the repository root with the supplied `--project`, `--startup-project` and `--context` parameters. |
+| `dotnet ef` is not recognized | Install `dotnet-ef` as shown above; reopen CMD if necessary. |
+| Migrations command uses `--context PowerFlowDbTest` | Use `--context PowerFlowDbContext` (the class name), not the database name. |
+| SQL Server is unreachable | Start `SQL Server (SQLEXPRESS)`; check `DefaultConnection` and Windows authentication. |
+| Migration is marked `(Pending)` | Run `dotnet ef database update` with the correct project and context. |
 | HTTPS certificate warning | Run `dotnet dev-certs https --trust`. |
-| Port already in use | Stop another PaperFlow instance or use the documented development profile settings. |
-| arXiv rate limiting (HTTP 429) | Retry later; it is an external API limit, not a SQL Server installation failure. |
-
+| Port 7184 already in use | Stop any other PaperFlow instance, then restart. |
+| arXiv responds with 429, 503 or `Rate exceeded` | External provider limitation. Retry later; local Paper CRUD remains available. |
 
 ## Project Structure
 
@@ -249,7 +282,7 @@ PaperFlow follows a layered **ASP.NET Core MVC** architecture with a clear separ
 
 The project architecture is showed in the diagram below:
 
-![PaperFlow Architecture](PaperFlow.Web/docs/images/paperflow-architecture.png)
+![PaperFlow Architecture](./PaperFlow.Web/docs/images/paperflow-architecture.png)
 
 
 ### Request and data flow
@@ -317,7 +350,6 @@ PaperFlow uses SQL Server together with Entity Framework Core Code-First. The ma
 7. Open **Statistics** to review personal research activity and library distributions.
 8. Use the header search to locate papers already stored in your own library.
 
-> Screenshots may be added under `docs/` after final UI review, for example `docs/dashboard.png` and `docs/library.png`.
 
 ## Database Setup
 
@@ -336,8 +368,6 @@ The `DefaultConnection` configuration key is required. Apply the **existing** mi
 ```powershell
 dotnet ef database update --project PaperFlow.Data/PaperFlow.Data.csproj --startup-project PaperFlow.Web/PaperFlow.Web.csproj --context PowerFlowDbContext
 ```
-
-Database initialization has not yet been independently verified against a clean SQL Server instance. The project does not require a documented seed-data step unless one is added before submission.
 
 ## Configuration
 
