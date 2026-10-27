@@ -1,0 +1,327 @@
+﻿.pf-about {
+    color: var(--pf-text);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-bottom: 32px
+}
+
+    .pf-about h1, .pf-about h2, .pf-about h3, .pf-about strong {
+        color: var(--pf-text)
+    }
+
+    .pf-about p {
+        color: var(--pf-muted);
+        line-height: 1.65;
+        margin-bottom: 0
+    }
+
+.pf-about-hero {
+    display: grid;
+    grid-template-columns: minmax(0,1.5fr) minmax(250px,1fr);
+    gap: 30px;
+    align-items: center;
+    padding: 40px 44px;
+    border: 1px solid var(--pf-border);
+    border-radius: 22px;
+    background: linear-gradient(115deg,rgba(93,120,255,.14),rgba(32,168,170,.10)),var(--pf-surface);
+    overflow: hidden
+}
+
+.pf-about-eyebrow, .pf-about-kicker {
+    font-size: 11px;
+    letter-spacing: .095em;
+    font-weight: 800;
+    color: var(--pf-primary);
+    text-transform: uppercase
+}
+
+    .pf-about-eyebrow i {
+        font-size: 15px;
+        vertical-align: middle;
+        margin-right: 5px
+    }
+
+.pf-about-hero h1 {
+    font-size: clamp(29px,3.2vw,44px);
+    letter-spacing: -.03em;
+    line-height: 1.12;
+    margin: 15px 0
+}
+
+.pf-about-lead {
+    font-size: 16px;
+    max-width: 620px
+}
+
+.pf-about-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 24px
+}
+
+    .pf-about-actions .btn {
+        padding: 10px 18px
+    }
+
+.pf-about-hero-visual {
+    display: grid;
+    justify-items: center;
+    gap: 8px
+}
+
+.pf-about-visual-card {
+    width: min(100%,245px);
+    min-height: 51px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-radius: 13px;
+    padding: 13px 21px;
+    background: var(--pf-surface);
+    border: 1px solid var(--pf-border);
+    box-shadow: var(--pf-shadow);
+    font-weight: 700;
+    color: var(--pf-text)
+}
+
+    .pf-about-visual-card i {
+        color: var(--pf-primary);
+        font-size: 22px
+    }
+
+.pf-about-visual-connector {
+    height: 15px;
+    width: 2px;
+    background: var(--pf-primary);
+    opacity: .55
+}
+
+.pf-about-section {
+    margin-top: 34px
+}
+
+.pf-about-section-heading {
+    margin: 0 0 18px
+}
+
+    .pf-about-section-heading h2, .pf-about-panel h2, .pf-about-footer-panel h2 {
+        font-size: 23px;
+        letter-spacing: -.02em;
+        margin: 7px 0 7px
+    }
+
+.pf-about-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 15px
+}
+
+.pf-about-feature, .pf-about-panel, .pf-about-footer-panel {
+    background: var(--pf-surface);
+    border: 1px solid var(--pf-border);
+    border-radius: 17px
+}
+
+.pf-about-feature {
+    padding: 24px 21px;
+    min-height: 216px
+}
+
+.pf-about-feature-icon {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: rgba(93,120,255,.13);
+    color: var(--pf-primary);
+    font-size: 22px;
+    margin-bottom: 17px
+}
+
+.pf-about-feature h3 {
+    font-size: 16px;
+    margin-bottom: 9px;
+    font-weight: 700
+}
+
+.pf-about-feature p {
+    font-size: 13px
+}
+
+.pf-about-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 22px
+}
+
+.pf-about-panel {
+    padding: 28px
+}
+
+.pf-about-steps {
+    list-style: none;
+    padding: 0;
+    margin: 23px 0 0;
+    display: grid;
+    gap: 19px
+}
+
+    .pf-about-steps li {
+        display: flex;
+        gap: 14px
+    }
+
+    .pf-about-steps strong {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 3px
+    }
+
+    .pf-about-steps p {
+        font-size: 13px
+    }
+
+.pf-about-step-number {
+    display: grid;
+    place-items: center;
+    flex: 0 0 31px;
+    width: 31px;
+    height: 31px;
+    border-radius: 10px;
+    background: rgba(93,120,255,.14);
+    color: var(--pf-primary);
+    font-size: 13px;
+    font-weight: 800
+}
+
+.pf-about-providers {
+    margin-top: 22px;
+    display: grid;
+    gap: 0
+}
+
+.pf-about-provider {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--pf-border)
+}
+
+    .pf-about-provider strong {
+        display: block;
+        font-size: 14px
+    }
+
+    .pf-about-provider small {
+        display: block;
+        margin-top: 3px;
+        color: var(--pf-muted);
+        font-size: 12px
+    }
+
+.pf-about-status {
+    display: inline-flex;
+    border-radius: 999px;
+    white-space: nowrap;
+    padding: 5px 10px;
+    background: rgba(135,148,169,.16);
+    color: var(--pf-muted);
+    font-size: 11px;
+    font-weight: 700
+}
+
+.pf-about-status-live {
+    background: rgba(30,180,132,.15);
+    color: #179a75
+}
+
+.pf-about-inline-link {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: 17px;
+    color: var(--pf-primary);
+    font-weight: 700;
+    font-size: 13px
+}
+
+.pf-about-footer-panel {
+    padding: 28px;
+    display: flex;
+    gap: 22px;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 22px
+}
+
+    .pf-about-footer-panel > div:first-child {
+        max-width: 660px
+    }
+
+    .pf-about-footer-panel p {
+        font-size: 13px
+    }
+
+.pf-about-tech {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 7px;
+    max-width: 330px
+}
+
+    .pf-about-tech span {
+        padding: 7px 11px;
+        border: 1px solid var(--pf-border);
+        border-radius: 8px;
+        background: rgba(120,140,175,.07);
+        color: var(--pf-text);
+        font-size: 12px;
+        font-weight: 600
+    }
+
+@media(max-width:1050px) {
+    .pf-about-feature-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr))
+    }
+
+    .pf-about-hero {
+        grid-template-columns: 1fr
+    }
+}
+
+@media(max-width:690px) {
+    .pf-about-hero {
+        padding: 26px 22px
+    }
+
+    .pf-about-hero-visual {
+        display: none
+    }
+
+    .pf-about-feature-grid, .pf-about-split {
+        grid-template-columns: 1fr
+    }
+
+    .pf-about-feature {
+        min-height: 0
+    }
+
+    .pf-about-panel, .pf-about-footer-panel {
+        padding: 22px
+    }
+
+    .pf-about-footer-panel {
+        display: block
+    }
+
+    .pf-about-tech {
+        justify-content: flex-start;
+        margin-top: 17px
+    }
+}

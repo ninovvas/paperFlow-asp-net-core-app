@@ -1,12 +1,78 @@
 ﻿@{
-	ViewData["Title"] = "About PaperFlow";
+    ViewData["Title"] = "About PaperFlow";
 }
 
-<div class="pf-public-page">
-	<div class="card p-4">
-		<h2>About PaperFlow</h2>
-		<p>PaperFlow helps researchers find, organize, and track scientific publications.</p>
-		<p>Search scientific sources, save publications to your own library, record reading status, and review your personal reading statistics.</p>
-		<p class="text-muted">Personal paper libraries and statistics are available only to signed-in users.</p></div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/paperflow-about.css" asp-append-version="true" />
+}
 
+<div class="pf-about">
+    <section class="pf-about-hero" aria-labelledby="pf-about-title">
+        <div class="pf-about-hero-copy">
+            <span class="pf-about-eyebrow"><i class="ti ti-books" aria-hidden="true"></i> ABOUT PAPERFLOW</span>
+            <h1 id="pf-about-title">From discovery to understanding.</h1>
+            <p class="pf-about-lead">PaperFlow keeps your research papers, reading progress, and notes together in one organized workspace.</p>
+            <div class="pf-about-actions">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="PaperSearch" asp-action="Index" class="btn btn-primary"><i class="ti ti-search me-1" aria-hidden="true"></i> Find Research Papers</a>
+                    <a asp-controller="Papers" asp-action="Index" class="btn btn-outline-primary">Open My Library</a>
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary">Get Started</a>
+                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-primary">Log In</a>
+                }
+            </div>
+        </div>
+        <div class="pf-about-hero-visual" aria-hidden="true">
+            <div class="pf-about-visual-card"><i class="ti ti-search"></i><span>Discover</span></div>
+            <div class="pf-about-visual-connector"></div>
+            <div class="pf-about-visual-card"><i class="ti ti-books"></i><span>Organize</span></div>
+            <div class="pf-about-visual-connector"></div>
+            <div class="pf-about-visual-card"><i class="ti ti-chart-bar"></i><span>Learn</span></div>
+        </div>
+    </section>
+
+    <section class="pf-about-section" aria-labelledby="pf-about-features">
+        <div class="pf-about-section-heading">
+            <span class="pf-about-kicker">WHAT PAPERFLOW DOES</span>
+            <h2 id="pf-about-features">Tools for your research workflow</h2>
+            <p>Move from finding an interesting paper to keeping track of what you have read.</p>
+        </div>
+        <div class="pf-about-feature-grid">
+            <article class="pf-about-feature"><div class="pf-about-feature-icon"><i class="ti ti-search" aria-hidden="true"></i></div><h3>Find publications</h3><p>Search arXiv for research papers and import useful results into your library.</p></article>
+            <article class="pf-about-feature"><div class="pf-about-feature-icon"><i class="ti ti-books" aria-hidden="true"></i></div><h3>Build your library</h3><p>Add papers manually or import them. Keep titles, authors, DOI information, and categories organized.</p></article>
+            <article class="pf-about-feature"><div class="pf-about-feature-icon"><i class="ti ti-book-2" aria-hidden="true"></i></div><h3>Track reading</h3><p>Record your reading status, deadlines, page progress, ratings, and personal notes.</p></article>
+            <article class="pf-about-feature"><div class="pf-about-feature-icon"><i class="ti ti-chart-bar" aria-hidden="true"></i></div><h3>Understand your progress</h3><p>Explore your library with monthly activity charts, reading metrics, and category breakdowns.</p></article>
+        </div>
+    </section>
+
+    <section class="pf-about-split" aria-label="How PaperFlow works and supported research providers">
+        <div class="pf-about-panel">
+            <span class="pf-about-kicker">HOW IT WORKS</span>
+            <h2>A simple research routine</h2>
+            <ol class="pf-about-steps">
+                <li><span class="pf-about-step-number">1</span><div><strong>Discover or add</strong><p>Search for a paper through arXiv, or create a record yourself.</p></div></li>
+                <li><span class="pf-about-step-number">2</span><div><strong>Save and organize</strong><p>Keep publications in your personal library and find them again when needed.</p></div></li>
+                <li><span class="pf-about-step-number">3</span><div><strong>Read and review</strong><p>Update your reading progress and see how your research activity develops.</p></div></li>
+            </ol>
+        </div>
+        <div class="pf-about-panel">
+            <span class="pf-about-kicker">RESEARCH SOURCES</span>
+            <h2>Connected today. Ready to grow.</h2>
+            <div class="pf-about-providers">
+                <div class="pf-about-provider"><div><strong>arXiv</strong><small>Search and import research preprints</small></div><span class="pf-about-status pf-about-status-live">Integrated</span></div>
+                <div class="pf-about-provider"><div><strong>Crossref</strong><small>Publication and DOI metadata</small></div><span class="pf-about-status">Planned</span></div>
+                <div class="pf-about-provider"><div><strong>OpenAlex</strong><small>Works, authors, and citation information</small></div><span class="pf-about-status">Planned</span></div>
+            </div>
+            <a asp-controller="ResearchSources" asp-action="Index" class="pf-about-inline-link">Learn about research sources <i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+        </div>
+    </section>
+
+    <section class="pf-about-footer-panel">
+        <div><span class="pf-about-kicker">BUILT WITH ASP.NET CORE</span><h2>Made for research. Built as a learning project.</h2><p>PaperFlow demonstrates ASP.NET Core MVC, Entity Framework Core with SQL Server, Razor views, ASP.NET Core Identity, and a responsive Bootstrap interface.</p></div>
+        <div class="pf-about-tech"><span>.NET 10</span><span>ASP.NET Core MVC</span><span>EF Core</span><span>SQL Server</span><span>Bootstrap</span></div>
+    </section>
 </div>
+
