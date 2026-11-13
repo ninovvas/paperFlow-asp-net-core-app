@@ -23,7 +23,16 @@
                 })
             .AddHttpMessageHandler<ArxivRateLimitHandler>();
 
-            // Central multi-source coordinator
+            // Crossref metadata search (independent of arXiv rate limiting)
+            services.AddHttpClient<IResearchPaperProvider, CrossrefSearchService>(client =>
+            {
+                client.BaseAddress = new Uri("https://api.crossref.org/");
+                client.Timeout = TimeSpan.FromSeconds(30);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("PaperFlow/1.0 (research application)");
+                client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+            });
+
+            // Central multi source coordinator
             services.AddScoped<IPaperSearchService, PaperSearchService>();
 
             // arXiv lookup for imports
