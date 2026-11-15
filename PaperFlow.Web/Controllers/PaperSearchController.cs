@@ -1,13 +1,13 @@
 namespace PaperFlow.Web.Controllers
 {
+    using System.Net;
+    using System.Security.Claims;
+    using System.Xml;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Caching.Memory;
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Web.ViewModels.Papers;
-    using System.Net;
-    using System.Security.Claims;
-    using System.Xml;
 
     [Route("PaperSearch")]
     public class PaperSearchController : Controller
@@ -91,7 +91,7 @@ namespace PaperFlow.Web.Controllers
                     result.Papers.Count >= model.ToCriteria().MaxResults;
                 if (result.FailedSources.Count > 0 && result.Papers.Count == 0)
                     model.ErrorMessage =
-                        "arXiv is temporarily unavailable or rate-limited. " +
+                        "A research provider is temporarily unavailable or rate-limited. " +
                         "Your library is safe. Please try again later.";
 
                 // check the database for previously imported papers.
@@ -180,13 +180,14 @@ namespace PaperFlow.Web.Controllers
                 model.Results = combined;
                 model.FailedSources = result.FailedSources;
 
-                // One request covers the same offset for each selected provider. Advance by the requested page size, NOT the de-duplicated count.
+                // One request covers the same offset for each selected provider.
+                // Advance by the requested page size, NOT the de-duplicated count.
                 // A partial failure must be retryable, not silently skipped.
                 if (result.FailedSources.Count > 0)
                 {
                     model.HasMoreResults = false;
                     TempData["ErrorMessage"] =
-                        "arXiv is temporarily unavailable or rate-limited. " +
+                        "A research provider is temporarily unavailable or rate-limited. " +
                         "Previously loaded papers are preserved. Try again later.";
                 }
                 else
@@ -268,17 +269,18 @@ namespace PaperFlow.Web.Controllers
                 return BackToSearch();
             }
 
-            if (!string.Equals(sourceId, "arxiv", StringComparison.OrdinalIgnoreCase))
+            bool supported = string.Equals(sourceId, "arxiv", StringComparison.OrdinalIgnoreCase) ||
+                             string.Equals(sourceId, "crossref", StringComparison.OrdinalIgnoreCase);
+            if (!supported)
             {
-                TempData["ErrorMessage"] =
-                    "Import from this source is not implemented yet.";
+                TempData["ErrorMessage"] = "Unsupported research source.";
                 return BackToSearch();
             }
 
-            // Accept only a paper that actually occurred in this user's search.
+            // Only accept an ID from this user's cached search results.
             bool isInResults = cached.Results.Any(p =>
-                string.Equals(p.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase) &&
-                string.Equals(p.ExternalId, externalId, StringComparison.Ordinal));
+                string.Equals(p.SourceName, sourceId, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(p.ExternalId, externalId, StringComparison.OrdinalIgnoreCase));
 
             if (!isInResults)
             {
@@ -288,8 +290,9 @@ namespace PaperFlow.Web.Controllers
 
             try
             {
-                var result = await importService.ImportFromArxivAsync(
-                    externalId, userId, cancellationToken);
+                var result = string.Equals(sourceId, "crossref", StringComparison.OrdinalIgnoreCase)
+                    ? await importService.ImportFromCrossrefAsync(externalId, userId, cancellationToken)
+                    : await importService.ImportFromArxivAsync(externalId, userId, cancellationToken);
 
                 if (result.AlreadyExists)
                 {
@@ -316,7 +319,7 @@ namespace PaperFlow.Web.Controllers
                 logger.LogWarning(ex, "Paper import failed");
                 TempData["ErrorMessage"] =
                     ex.StatusCode == HttpStatusCode.TooManyRequests
-                        ? "arXiv is limiting API requests."
+                        ? "The research provider is limiting API requests."
                         : "Unable to retrieve the selected paper.";
             }
             catch (XmlException ex)
@@ -388,11 +391,14 @@ namespace PaperFlow.Web.Controllers
             }
 
             var allowed = cached.Results
-                .Where(p => string.Equals(p.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase)
-                            && !string.IsNullOrWhiteSpace(p.ExternalId))
-                .GroupBy(p => "arxiv:" + p.ExternalId, StringComparer.Ordinal)
-                .ToDictionary(g => g.Key, g => g.First().ExternalId,
-                    StringComparer.Ordinal);
+                .Where(p => (p.SourceName.Equals("arxiv", StringComparison.OrdinalIgnoreCase) ||
+                             p.SourceName.Equals("crossref", StringComparison.OrdinalIgnoreCase)) &&
+                            !string.IsNullOrWhiteSpace(p.ExternalId))
+                .GroupBy(p => p.SourceName.ToLowerInvariant() + ":" + p.ExternalId,
+                    StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key,
+                    g => (Source: g.First().SourceName, Id: g.First().ExternalId),
+                    StringComparer.OrdinalIgnoreCase);
 
             // Reject the entire request if any key was injected or expired.
             if (distinctKeys.Any(key => !allowed.ContainsKey(key)))
@@ -410,7 +416,8 @@ namespace PaperFlow.Web.Controllers
             foreach (string key in distinctKeys)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                string externalId = allowed[key];
+                var selection = allowed[key];
+                string externalId = selection.Id;
 
                 if (cached.SavedExternalIds.Contains(externalId))
                 {
@@ -420,8 +427,9 @@ namespace PaperFlow.Web.Controllers
 
                 try
                 {
-                    var result = await importService.ImportFromArxivAsync(
-                        externalId, userId, cancellationToken);
+                    var result = selection.Source.Equals("crossref", StringComparison.OrdinalIgnoreCase)
+                        ? await importService.ImportFromCrossrefAsync(externalId, userId, cancellationToken)
+                        : await importService.ImportFromArxivAsync(externalId, userId, cancellationToken);
 
                     if (result.AlreadyExists)
                     {
@@ -441,7 +449,7 @@ namespace PaperFlow.Web.Controllers
                 }
                 catch (ArgumentException ex)
                 {
-                    logger.LogWarning(ex, "Invalid arXiv paper {ExternalId}", externalId);
+                    logger.LogWarning(ex, "Invalid selected paper {ExternalId}", externalId);
                     failed++;
                     failedTitles.Add(externalId);
                 }
@@ -450,11 +458,12 @@ namespace PaperFlow.Web.Controllers
                     logger.LogWarning(ex, "Bulk import failed for {ExternalId}", externalId);
                     failed++;
                     failedTitles.Add(externalId);
-                    // Stop when rate limited: avoid hammering arXiv with more requests.
-                    if (ex.StatusCode == HttpStatusCode.TooManyRequests)
+                    // Stop when rate limited rather than repeating the same failed requests.
+                    if (ex.StatusCode == HttpStatusCode.TooManyRequests ||
+                        ex.StatusCode == HttpStatusCode.ServiceUnavailable)
                     {
                         TempData["InfoMessage"] =
-                            "arXiv is temporarily limiting requests. Remaining papers were not processed.";
+                            "A research provider is unavailable. Remaining papers were not processed.";
                         break;
                     }
                 }
@@ -484,7 +493,7 @@ namespace PaperFlow.Web.Controllers
 
             if (failedTitles.Count > 0)
                 TempData["BulkImportFailures"] =
-                    "Failed arXiv IDs: " + string.Join(", ", failedTitles);
+                    "Failed paper IDs: " + string.Join(", ", failedTitles);
 
             return BackToSearch();
         }
@@ -512,8 +521,18 @@ namespace PaperFlow.Web.Controllers
 
             // Replacing instead of unioning the set also correctly handles deletion
             // of papers from My Library while the search cache is still alive.
-            model.SavedExternalIds = await savedStatusService.GetSavedArxivIdsAsync(
+            var saved = await savedStatusService.GetSavedArxivIdsAsync(
                 userId, arxivIds, cancellationToken);
+
+            var crossrefIds = model.Results
+                .Where(p => string.Equals(p.SourceName, "crossref", StringComparison.OrdinalIgnoreCase))
+                .Select(p => p.ExternalId)
+                .Where(id => !string.IsNullOrWhiteSpace(id))
+                .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+
+            saved.UnionWith(await savedStatusService.GetSavedCrossrefIdsAsync(
+                userId, crossrefIds, cancellationToken));
+            model.SavedExternalIds = saved;
         }
 
         private bool TryGetCachedSearch(

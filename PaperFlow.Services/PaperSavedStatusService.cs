@@ -1,6 +1,4 @@
-﻿
-
-namespace PaperFlow.Services
+﻿namespace PaperFlow.Services
 {
     using Microsoft.EntityFrameworkCore;
     using PaperFlow.Data;
@@ -19,6 +17,29 @@ namespace PaperFlow.Services
             this.context = context;
         }
 
+        public async Task<HashSet<string>> GetSavedCrossrefIdsAsync(
+            string userId, IReadOnlyCollection<string> dois,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException("Authenticated user ID is required.", nameof(userId));
+            ArgumentNullException.ThrowIfNull(dois);
+
+            var normalized = dois.Where(d => !string.IsNullOrWhiteSpace(d))
+                .Select(d => d.Trim().ToLowerInvariant())
+                .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+            if (normalized.Length == 0)
+                return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            var existingDois = await context.Papers.AsNoTracking()
+                .Where(p => p.UserId == userId && p.Doi != null &&
+                    normalized.Contains(p.Doi))
+                .Select(p => p.Doi!)
+                .ToListAsync(cancellationToken);
+
+            return existingDois.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        }
+
         public async Task<HashSet<string>> GetSavedArxivIdsAsync(
             string userId,
             IReadOnlyCollection<string> arxivIds,
@@ -29,7 +50,8 @@ namespace PaperFlow.Services
 
             ArgumentNullException.ThrowIfNull(arxivIds);
 
-            /* Limit query values to one displayed search page, not the entire arXiv corpus. */
+            /* Limit query values to one displayed search page,
+            not the entire arXiv corpus. */
 
             string[] ids = arxivIds
                 .Where(id => !string.IsNullOrWhiteSpace(id))
@@ -40,7 +62,8 @@ namespace PaperFlow.Services
             if (ids.Length == 0)
                 return new HashSet<string>(StringComparer.Ordinal);
 
-            /*Matches the original SQL Server schema: ResearchSources.Name and Papers.ResearchSourceId + ExternalId. This prevents false matches
+            /*Matches the original SQL Server schema: ResearchSources.Name and
+            Papers.ResearchSourceId + ExternalId. This prevents false matches
             against external IDs belonging to a different provider. */
 
             int? sourceId = await context.ResearchSources

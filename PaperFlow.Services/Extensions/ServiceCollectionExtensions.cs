@@ -32,7 +32,15 @@
                 client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
             });
 
-            // Central multi source coordinator
+            services.AddHttpClient<ICrossrefPaperLookupService, CrossrefPaperLookupService>(client =>
+            {
+                client.BaseAddress = new Uri("https://api.crossref.org/");
+                client.Timeout = TimeSpan.FromSeconds(30);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("PaperFlow/1.0 (research application)");
+                client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+            });
+
+            // Central multi-source coordinator
             services.AddScoped<IPaperSearchService, PaperSearchService>();
 
             // arXiv lookup for imports
@@ -44,9 +52,9 @@
                 })
             .AddHttpMessageHandler<ArxivRateLimitHandler>();
 
-            services.AddScoped<IPaperImportService,PaperImportService>();
+            services.AddScoped<IPaperImportService, PaperImportService>();
 
-            services.AddScoped<IPaperDetailsService,PaperDetailsService>();
+            services.AddScoped<IPaperDetailsService, PaperDetailsService>();
 
             services.AddScoped<IPaperReadingService, PaperReadingService>();
 

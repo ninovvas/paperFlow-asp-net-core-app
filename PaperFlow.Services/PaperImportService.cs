@@ -11,17 +11,20 @@
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Models;
     using PaperFlow.Services.Providers;
-    public class PaperImportService : IPaperImportService
+    public partial class PaperImportService : IPaperImportService
     {
         private readonly PowerFlowDbContext context;
         private readonly IArxivPaperLookupService arxivLookup;
+        private readonly ICrossrefPaperLookupService crossrefLookup;
 
         public PaperImportService(
             PowerFlowDbContext context,
-            IArxivPaperLookupService arxivLookup)
+            IArxivPaperLookupService arxivLookup,
+            ICrossrefPaperLookupService crossrefLookup)
         {
             this.context = context;
             this.arxivLookup = arxivLookup;
+            this.crossrefLookup = crossrefLookup;
         }
 
         public async Task<PaperImportResult> ImportFromArxivAsync(
@@ -39,7 +42,8 @@
             string normalizedId =
                 ArxivPaperLookupService.NormalizeId(arxivId);
 
-            // First check: avoid an unnecessary API request when this user has already imported the paper.
+            // First check: avoid an unnecessary API request
+            // when this user has already imported the paper.
 
             var existingByExternalId = await context.Papers
                 .AsNoTracking()
@@ -58,7 +62,8 @@
             }
 
             // Retrieve trusted publication metadata from arXiv.
-       
+            // Do not hold a database transaction during HTTP I/O.
+
             PaperSearchResult? result =
                 await arxivLookup.GetByIdAsync(
                     normalizedId,
@@ -124,6 +129,8 @@
                         existingPaper.Id);
                 }
 
+                // A title-only fallback is used only when no DOI is available.
+                // Distinct arXiv IDs or DOIs take precedence over matching titles.
                 if (doi == null)
                 {
                     string normalizedTitle = result.Title.Trim().ToUpperInvariant();
@@ -179,6 +186,8 @@
                 };
 
                 // Authors
+                // Reuse exact-name matches for this initial MVP.
+
                 int authorOrder = 1;
 
                 foreach (string authorName in result.Authors
@@ -267,7 +276,7 @@
                 we return a conflict and let the user retry. */
 
                 throw new InvalidOperationException(
-                    "A conflicting record was inserted concurrently. " + "Please retry the import.", ex);
+                    "A conflicting record was inserted concurrently. Please retry the import.", ex);
             }
             catch
             {
@@ -277,6 +286,7 @@
                 throw;
             }
         }
+
         private static string? Truncate(
             string? value,
             int maxLength)

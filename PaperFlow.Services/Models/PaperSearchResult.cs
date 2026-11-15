@@ -21,6 +21,11 @@
 
         public string SourceName { get; set; } = string.Empty;
 
+        public string? Publisher { get; set; }
+        public string? PublicationVenue { get; set; }
+        public string? PublicationType { get; set; }
+        public int? CitationCount { get; set; }
+
         public List<string> Authors { get; set; } = new();
 
         public List<string> Categories { get; set; } = new();
