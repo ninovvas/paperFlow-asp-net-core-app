@@ -17,6 +17,38 @@
             this.context = context;
         }
 
+        public async Task<HashSet<string>> GetSavedOpenAlexIdsAsync(
+            string userId, IReadOnlyCollection<PaperFlow.Services.Models.PaperSearchResult> papers,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException("Authenticated user ID is required.", nameof(userId));
+            ArgumentNullException.ThrowIfNull(papers);
+            var works = papers.Where(p => p.SourceName.Equals("OpenAlex", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            var ids = works.Select(p => p.ExternalId).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+            var dois = works.Where(p => !string.IsNullOrWhiteSpace(p.Doi))
+                .Select(p => p.Doi!).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+            var saved = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (ids.Length == 0) return saved;
+            var direct = await context.Papers.AsNoTracking()
+                .Where(p => p.UserId == userId && p.ResearchSource != null &&
+                    p.ResearchSource.Name == "OpenAlex" && p.ExternalId != null &&
+                    ids.Contains(p.ExternalId))
+                .Select(p => p.ExternalId!).ToListAsync(cancellationToken);
+            saved.UnionWith(direct);
+            if (dois.Length > 0)
+            {
+                var savedDois = await context.Papers.AsNoTracking()
+                    .Where(p => p.UserId == userId && p.Doi != null && dois.Contains(p.Doi))
+                    .Select(p => p.Doi!).ToListAsync(cancellationToken);
+                var existing = savedDois.ToHashSet(StringComparer.OrdinalIgnoreCase);
+                foreach (var paper in works.Where(p => p.Doi != null && existing.Contains(p.Doi)))
+                    saved.Add(paper.ExternalId);
+            }
+            return saved;
+        }
+
         public async Task<HashSet<string>> GetSavedCrossrefIdsAsync(
             string userId, IReadOnlyCollection<string> dois,
             CancellationToken cancellationToken = default)

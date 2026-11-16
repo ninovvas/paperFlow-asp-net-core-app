@@ -40,6 +40,12 @@
                 client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
             });
 
+            // OpenAlex search, DOI abstract lookup, and work import.
+            services.AddMemoryCache();
+            services.AddHttpClient<IResearchPaperProvider, OpenAlexSearchService>(ConfigureOpenAlexClient);
+            services.AddHttpClient<IOpenAlexWorkLookupService, OpenAlexWorkLookupService>(ConfigureOpenAlexClient);
+            services.AddHttpClient<IOpenAlexAbstractService, OpenAlexAbstractService>(ConfigureOpenAlexClient);
+
             // Central multi-source coordinator
             services.AddScoped<IPaperSearchService, PaperSearchService>();
 
@@ -67,6 +73,19 @@
             services.AddScoped<IStatisticsService, StatisticsService>();
 
             return services;
+        }
+
+        private static void ConfigureOpenAlexClient(HttpClient client)
+        {
+            client.BaseAddress = new Uri("https://api.openalex.org/");
+            client.Timeout = TimeSpan.FromSeconds(20);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("PaperFlow/1.0 (research application)");
+            client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+            // Optional key: configure via OpenAlex__ApiKey environment variable.
+            string? key = Environment.GetEnvironmentVariable("OpenAlex__ApiKey");
+            if (!string.IsNullOrWhiteSpace(key))
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", key.Trim());
         }
 
         private static void ConfigureArxivClient(

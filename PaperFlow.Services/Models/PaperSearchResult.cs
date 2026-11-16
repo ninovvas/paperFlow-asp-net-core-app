@@ -21,6 +21,7 @@
 
         public string SourceName { get; set; } = string.Empty;
 
+        public string? AbstractSource { get; set; }
         public string? Publisher { get; set; }
         public string? PublicationVenue { get; set; }
         public string? PublicationType { get; set; }

@@ -11,15 +11,18 @@
             string, IResearchPaperProvider> providers;
 
         private readonly ILogger<PaperSearchService> logger;
+        private readonly IOpenAlexAbstractService openAlexAbstracts;
 
         public IReadOnlyList<string> AvailableProviderIds =>
             providers.Keys.OrderBy(x => x).ToList();
 
         public PaperSearchService(
             IEnumerable<IResearchPaperProvider> providers,
-            ILogger<PaperSearchService> logger)
+            ILogger<PaperSearchService> logger,
+            IOpenAlexAbstractService openAlexAbstracts)
         {
             this.logger = logger;
+            this.openAlexAbstracts = openAlexAbstracts;
 
             this.providers = providers.ToDictionary(
                 p => p.ProviderId,
@@ -73,7 +76,45 @@
                         criteria,
                         cancellationToken);
 
-                    result.Papers.AddRange(papers);
+                    var page = papers.ToList();
+                    if (provider.ProviderId.Equals("crossref", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Enrichment is optional and bounded to keep searches responsive.
+                        var missing = page.Where(p =>
+                            string.IsNullOrWhiteSpace(p.Abstract) &&
+                            !string.IsNullOrWhiteSpace(p.Doi)).Take(6).ToList();
+                        using var gate = new SemaphoreSlim(3);
+                        await Task.WhenAll(missing.Select(async paper =>
+                        {
+                            await gate.WaitAsync(cancellationToken);
+                            try
+                            {
+                                using var timeout = CancellationTokenSource.CreateLinkedTokenSource(
+                                    cancellationToken);
+                                timeout.CancelAfter(TimeSpan.FromSeconds(7));
+                                string? text = await openAlexAbstracts.GetAbstractByDoiAsync(
+                                    paper.Doi!, timeout.Token);
+                                if (!string.IsNullOrWhiteSpace(text))
+                                {
+                                    paper.Abstract = text;
+                                    paper.AbstractSource = "OpenAlex";
+                                }
+                            }
+                            catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+                            {
+                                // Skip enrichment if the secondary provider is slow.
+                            }
+                            catch (HttpRequestException ex)
+                            {
+                                logger.LogWarning(ex, "Optional OpenAlex abstract lookup failed");
+                            }
+                            finally
+                            {
+                                gate.Release();
+                            }
+                        }));
+                    }
+                    result.Papers.AddRange(page);
                     result.SuccessfulSources.Add(provider.ProviderName);
                 }
                 catch (OperationCanceledException)
@@ -107,7 +148,8 @@
             result.Papers = result.Papers
                 .GroupBy(GetDeduplicationKey,
                     StringComparer.OrdinalIgnoreCase)
-                .Select(group => group.First())
+                .Select(group => group.OrderByDescending(p =>
+                    !string.IsNullOrWhiteSpace(p.Abstract)).First())
                 .ToList();
 
             return result;

@@ -180,9 +180,7 @@ namespace PaperFlow.Web.Controllers
                 model.Results = combined;
                 model.FailedSources = result.FailedSources;
 
-                // One request covers the same offset for each selected provider.
-                // Advance by the requested page size, NOT the de-duplicated count.
-                // A partial failure must be retryable, not silently skipped.
+                
                 if (result.FailedSources.Count > 0)
                 {
                     model.HasMoreResults = false;
@@ -270,7 +268,8 @@ namespace PaperFlow.Web.Controllers
             }
 
             bool supported = string.Equals(sourceId, "arxiv", StringComparison.OrdinalIgnoreCase) ||
-                             string.Equals(sourceId, "crossref", StringComparison.OrdinalIgnoreCase);
+                             string.Equals(sourceId, "crossref", StringComparison.OrdinalIgnoreCase) ||
+                             string.Equals(sourceId, "openalex", StringComparison.OrdinalIgnoreCase);
             if (!supported)
             {
                 TempData["ErrorMessage"] = "Unsupported research source.";
@@ -292,7 +291,9 @@ namespace PaperFlow.Web.Controllers
             {
                 var result = string.Equals(sourceId, "crossref", StringComparison.OrdinalIgnoreCase)
                     ? await importService.ImportFromCrossrefAsync(externalId, userId, cancellationToken)
-                    : await importService.ImportFromArxivAsync(externalId, userId, cancellationToken);
+                    : string.Equals(sourceId, "openalex", StringComparison.OrdinalIgnoreCase)
+                        ? await importService.ImportFromOpenAlexAsync(externalId, userId, cancellationToken)
+                        : await importService.ImportFromArxivAsync(externalId, userId, cancellationToken);
 
                 if (result.AlreadyExists)
                 {
@@ -392,7 +393,8 @@ namespace PaperFlow.Web.Controllers
 
             var allowed = cached.Results
                 .Where(p => (p.SourceName.Equals("arxiv", StringComparison.OrdinalIgnoreCase) ||
-                             p.SourceName.Equals("crossref", StringComparison.OrdinalIgnoreCase)) &&
+                             p.SourceName.Equals("crossref", StringComparison.OrdinalIgnoreCase) ||
+                             p.SourceName.Equals("openalex", StringComparison.OrdinalIgnoreCase)) &&
                             !string.IsNullOrWhiteSpace(p.ExternalId))
                 .GroupBy(p => p.SourceName.ToLowerInvariant() + ":" + p.ExternalId,
                     StringComparer.OrdinalIgnoreCase)
@@ -429,7 +431,9 @@ namespace PaperFlow.Web.Controllers
                 {
                     var result = selection.Source.Equals("crossref", StringComparison.OrdinalIgnoreCase)
                         ? await importService.ImportFromCrossrefAsync(externalId, userId, cancellationToken)
-                        : await importService.ImportFromArxivAsync(externalId, userId, cancellationToken);
+                        : selection.Source.Equals("openalex", StringComparison.OrdinalIgnoreCase)
+                            ? await importService.ImportFromOpenAlexAsync(externalId, userId, cancellationToken)
+                            : await importService.ImportFromArxivAsync(externalId, userId, cancellationToken);
 
                     if (result.AlreadyExists)
                     {
@@ -532,6 +536,8 @@ namespace PaperFlow.Web.Controllers
 
             saved.UnionWith(await savedStatusService.GetSavedCrossrefIdsAsync(
                 userId, crossrefIds, cancellationToken));
+            saved.UnionWith(await savedStatusService.GetSavedOpenAlexIdsAsync(
+                userId, model.Results, cancellationToken));
             model.SavedExternalIds = saved;
         }
 

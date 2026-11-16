@@ -16,15 +16,21 @@
         private readonly PowerFlowDbContext context;
         private readonly IArxivPaperLookupService arxivLookup;
         private readonly ICrossrefPaperLookupService crossrefLookup;
+        private readonly IOpenAlexWorkLookupService openAlexLookup;
+        private readonly IOpenAlexAbstractService openAlexAbstracts;
 
         public PaperImportService(
             PowerFlowDbContext context,
             IArxivPaperLookupService arxivLookup,
-            ICrossrefPaperLookupService crossrefLookup)
+            ICrossrefPaperLookupService crossrefLookup,
+            IOpenAlexWorkLookupService openAlexLookup,
+            IOpenAlexAbstractService openAlexAbstracts)
         {
             this.context = context;
             this.arxivLookup = arxivLookup;
             this.crossrefLookup = crossrefLookup;
+            this.openAlexLookup = openAlexLookup;
+            this.openAlexAbstracts = openAlexAbstracts;
         }
 
         public async Task<PaperImportResult> ImportFromArxivAsync(

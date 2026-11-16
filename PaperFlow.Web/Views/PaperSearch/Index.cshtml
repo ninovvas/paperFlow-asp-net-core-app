@@ -264,7 +264,8 @@
              !string.IsNullOrWhiteSpace(Model.SearchId) &&
              Model.Results.Any(p =>
                  (string.Equals(p.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase) ||
-                  string.Equals(p.SourceName, "crossref", StringComparison.OrdinalIgnoreCase)) &&
+                  string.Equals(p.SourceName, "crossref", StringComparison.OrdinalIgnoreCase) ||
+                  string.Equals(p.SourceName, "openalex", StringComparison.OrdinalIgnoreCase)) &&
                  !Model.SavedExternalIds.Contains(p.ExternalId)))
         {
             <form asp-controller="PaperSearch"
@@ -300,7 +301,7 @@
                     </div>
                 </div>
                 <div class="px-3 pb-3 text-muted small">
-                    Select unsaved arXiv and Crossref papers from these results.
+                    Select unsaved papers from arXiv, Crossref, or OpenAlex.
                     Select All applies to the displayed results only.
                 </div>
             </form>
@@ -315,7 +316,8 @@
                         bool bulkEligible = User.Identity?.IsAuthenticated == true
                             && !string.IsNullOrWhiteSpace(Model.SearchId)
                             && (string.Equals(paper.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase) ||
-                                string.Equals(paper.SourceName, "crossref", StringComparison.OrdinalIgnoreCase))
+                                string.Equals(paper.SourceName, "crossref", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(paper.SourceName, "openalex", StringComparison.OrdinalIgnoreCase))
                             && !string.IsNullOrWhiteSpace(paper.ExternalId)
                             && !Model.SavedExternalIds.Contains(paper.ExternalId);
                     }
@@ -387,11 +389,15 @@
                         <details class="pf-abstract mb-3">
                             <summary>Read abstract</summary>
                             <p class="mt-2 mb-0">@paper.Abstract</p>
+                            @if (paper.AbstractSource == "OpenAlex" && paper.SourceName == "Crossref")
+                            {
+                                <div class="small text-muted mt-2">Abstract metadata: OpenAlex</div>
+                            }
                         </details>
                     }
                     else
                     {
-                        <div class="pf-paper-meta mb-3 small">Abstract not provided by @paper.SourceName.</div>
+                        <div class="pf-paper-meta mb-3 small">Abstract unavailable from the available metadata sources.</div>
                     }
 
                     @if (paper.Categories.Any())
@@ -431,7 +437,8 @@
                             bool savedHere = Model.SavedExternalIds.Contains(paper.ExternalId);
                             bool importSupported =
                                 string.Equals(paper.SourceName, "arxiv", StringComparison.OrdinalIgnoreCase) ||
-                                string.Equals(paper.SourceName, "crossref", StringComparison.OrdinalIgnoreCase);
+                                string.Equals(paper.SourceName, "crossref", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(paper.SourceName, "openalex", StringComparison.OrdinalIgnoreCase);
 
                             @if (savedHere)
                             {

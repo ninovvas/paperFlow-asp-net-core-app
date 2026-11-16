@@ -10,7 +10,9 @@
                     ? "arXiv"
                     : source.Equals("crossref", StringComparison.OrdinalIgnoreCase)
                         ? "Crossref"
-                        : source;
+                        : source.Equals("openalex", StringComparison.OrdinalIgnoreCase)
+                            ? "OpenAlex"
+                            : source;
 
                 <div class="col-md-4">
                     <div class="form-check">
@@ -30,17 +32,18 @@
         <div class="small text-muted mt-3">
             Crossref search uses publication dates, while arXiv uses submission dates.
             arXiv category codes (such as cs.RO) do not apply to Crossref.
-            Crossref import will be added in the next step.
+            OpenAlex and Crossref use publication dates. arXiv categories are not shared across providers.
+            OpenAlex can supply abstracts that are missing from Crossref, when available.
         </div>
     </div>
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const checkboxes = document.querySelectorAll('input[name="SelectedSources"]');
-        document.getElementById("selectAllSources")?.addEventListener("click", function () {
+        document.getElementById("selectAllSources")?.addEventListener("click", function() {
             checkboxes.forEach(cb => cb.checked = true);
         });
-        document.getElementById("clearSources")?.addEventListener("click", function () {
+        document.getElementById("clearSources")?.addEventListener("click", function() {
             checkboxes.forEach(cb => cb.checked = false);
         });
     });

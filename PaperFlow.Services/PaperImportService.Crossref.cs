@@ -1,4 +1,5 @@
-﻿namespace PaperFlow.Services
+﻿
+namespace PaperFlow.Services
 {
     using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
@@ -29,10 +30,28 @@ public partial class PaperImportService
         if (savedId.HasValue)
             return PaperImportResult.Duplicate(savedId.Value);
 
-        // Fetch the authoritative DOI record before opening the transaction.
+        // Fetch metadata before opening the database transaction.
         var record = await crossrefLookup.GetByDoiAsync(normalizedDoi, cancellationToken);
         if (record == null)
             return new PaperImportResult { Message = "Publication not found on Crossref." };
+
+        // Missing Crossref abstracts may be available from OpenAlex.
+        if (string.IsNullOrWhiteSpace(record.Abstract))
+        {
+            try
+            {
+                record.Abstract = await openAlexAbstracts.GetAbstractByDoiAsync(
+                    normalizedDoi, cancellationToken);
+            }
+            catch (HttpRequestException)
+            {
+                // Abstract enrichment is optional; importing metadata must still work.
+            }
+            catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+            {
+                // OpenAlex timed out; keep the Crossref record.
+            }
+        }
 
         string title = record.Title.Trim();
         if (title.Length < DataConstants.Paper.TitleMinLength ||
@@ -152,5 +171,4 @@ public partial class PaperImportService
         string.IsNullOrWhiteSpace(value) ? null :
             value.Length > maxLength ? value[..maxLength] : value;
 }
-
 }
