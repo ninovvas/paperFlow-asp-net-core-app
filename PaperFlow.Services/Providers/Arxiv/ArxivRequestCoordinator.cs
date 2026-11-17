@@ -1,5 +1,4 @@
-﻿
-namespace PaperFlow.Services.Providers
+﻿namespace PaperFlow.Services.Providers.Arxiv
 {
     using System.Net;
     public sealed class ArxivRequestCoordinator

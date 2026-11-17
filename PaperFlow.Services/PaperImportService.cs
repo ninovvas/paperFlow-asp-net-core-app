@@ -10,7 +10,8 @@
     using PaperFlow.Data.Models;
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Models;
-    using PaperFlow.Services.Providers;
+    using PaperFlow.Services.Providers.Arxiv;
+
     public partial class PaperImportService : IPaperImportService
     {
         private readonly PowerFlowDbContext context;

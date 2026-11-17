@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Services.Providers
+﻿namespace PaperFlow.Services.Providers.Arxiv
 {
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Models;

@@ -5,6 +5,8 @@
 
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Providers;
+    using PaperFlow.Services.Providers.Arxiv;
+
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddPaperFlowServices(
