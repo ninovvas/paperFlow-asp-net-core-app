@@ -15,16 +15,11 @@
             services.AddTransient<ArxivRateLimitHandler>();
 
             // Research search providers
-            services.AddHttpClient<
-                IResearchPaperProvider,
-                ArxivSearchService>(client =>
-                {
-                    ConfigureArxivClient(client);
-                })
-            .AddHttpMessageHandler<ArxivRateLimitHandler>();
+            services.AddHttpClient<ArxivSearchService>(ConfigureArxivClient)
+                .AddHttpMessageHandler<ArxivRateLimitHandler>();
 
             // Crossref metadata search (independent of arXiv rate limiting)
-            services.AddHttpClient<IResearchPaperProvider, CrossrefSearchService>(client =>
+            services.AddHttpClient<CrossrefSearchService>(client =>
             {
                 client.BaseAddress = new Uri("https://api.crossref.org/");
                 client.Timeout = TimeSpan.FromSeconds(30);
@@ -42,7 +37,13 @@
 
             // OpenAlex search, DOI abstract lookup, and work import.
             services.AddMemoryCache();
-            services.AddHttpClient<IResearchPaperProvider, OpenAlexSearchService>(ConfigureOpenAlexClient);
+            services.AddHttpClient<OpenAlexSearchService>(ConfigureOpenAlexClient);
+
+            // Each provider has its own named HttpClient configuration.
+            // Register the shared interface separately for provider discovery.
+            services.AddTransient<IResearchPaperProvider>(sp => sp.GetRequiredService<ArxivSearchService>());
+            services.AddTransient<IResearchPaperProvider>(sp => sp.GetRequiredService<CrossrefSearchService>());
+            services.AddTransient<IResearchPaperProvider>(sp => sp.GetRequiredService<OpenAlexSearchService>());
             services.AddHttpClient<IOpenAlexWorkLookupService, OpenAlexWorkLookupService>(ConfigureOpenAlexClient);
             services.AddHttpClient<IOpenAlexAbstractService, OpenAlexAbstractService>(ConfigureOpenAlexClient);
 

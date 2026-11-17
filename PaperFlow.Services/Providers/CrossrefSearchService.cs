@@ -54,7 +54,8 @@
                     details = details[..1200];
 
                 throw new HttpRequestException(
-                    $"Crossref returned HTTP {(int)response.StatusCode}: {details}",
+                    $"CROSSREF_DIAGNOSTIC_V2: HTTP {(int)response.StatusCode} " +
+                    $"({response.ReasonPhrase}). API response: {details}",
                     null,
                     response.StatusCode);
             }
@@ -91,11 +92,11 @@
         private static string BuildRequestUri(PaperSearchCriteria criteria)
         {
             var parameters = new List<KeyValuePair<string, string>>
-        {
-            new("rows", criteria.MaxResults.ToString(CultureInfo.InvariantCulture)),
-            new("offset", criteria.Start.ToString(CultureInfo.InvariantCulture)),
-            new("select", "DOI,title,abstract,author,published,published-print,published-online,created,URL,link,subject,publisher,container-title,type,is-referenced-by-count"),
-        };
+            {
+                new("rows", criteria.MaxResults.ToString(CultureInfo.InvariantCulture)),
+                new("offset", criteria.Start.ToString(CultureInfo.InvariantCulture)),
+                new("select", "DOI,title,abstract,author,published,published-print,published-online,created,URL,link,subject,publisher,container-title,type,is-referenced-by-count"),
+            };
 
             if (!string.IsNullOrWhiteSpace(criteria.Keywords))
             {
