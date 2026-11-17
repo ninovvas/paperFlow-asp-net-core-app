@@ -47,7 +47,17 @@
             string requestUri = BuildRequestUri(criteria);
             using var response = await httpClient.GetAsync(
                 requestUri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                string details = await response.Content.ReadAsStringAsync(cancellationToken);
+                if (details.Length > 1200)
+                    details = details[..1200];
+
+                throw new HttpRequestException(
+                    $"Crossref returned HTTP {(int)response.StatusCode}: {details}",
+                    null,
+                    response.StatusCode);
+            }
 
             await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
             try
@@ -91,7 +101,7 @@
             {
                 string queryField = criteria.SearchField switch
                 {
-                    "ti" => "query.title",
+                    "ti" => "query.bibliographic",
                     "abs" => "query",
                     _ => "query.bibliographic"
                 };
