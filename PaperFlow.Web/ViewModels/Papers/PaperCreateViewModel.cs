@@ -2,7 +2,8 @@
 {
 
     using System.ComponentModel.DataAnnotations;
-    using PaperFlow.Common;
+    using PaperFlow.Common.Constants;
+
     public class PaperCreateViewModel
     {
 

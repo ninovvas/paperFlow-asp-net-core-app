@@ -4,9 +4,10 @@
     using Microsoft.EntityFrameworkCore;
 
     using PaperFlow.Data;
-    using PaperFlow.Common;
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Models;
+    using PaperFlow.Common.Constants;
+
     public sealed class PaperReadingService : IPaperReadingService
     {
         private readonly PowerFlowDbContext context;

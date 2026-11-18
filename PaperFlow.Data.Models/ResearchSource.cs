@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using static PaperFlow.Common.DataConstants.ResearchSource;
+    using static PaperFlow.Common.Constants.DataConstants.ResearchSource;
     public class ResearchSource
     {
         [Key]

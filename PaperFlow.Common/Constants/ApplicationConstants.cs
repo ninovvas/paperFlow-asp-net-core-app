@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Common
+﻿namespace PaperFlow.Common.Constants
 {
     public class ApplicationConstants
     {

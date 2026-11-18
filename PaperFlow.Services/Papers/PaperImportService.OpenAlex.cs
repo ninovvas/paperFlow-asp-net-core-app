@@ -2,7 +2,7 @@
 {
     using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
-    using PaperFlow.Common;
+    using PaperFlow.Common.Constants;
     using PaperFlow.Common.Enums;
     using PaperFlow.Data.Models;
     using PaperFlow.Services.Models;

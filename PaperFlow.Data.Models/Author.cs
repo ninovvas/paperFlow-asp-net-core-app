@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using static PaperFlow.Common.DataConstants.Author;
+    using static PaperFlow.Common.Constants.DataConstants.Author;
     public class Author
     {
         [Key]

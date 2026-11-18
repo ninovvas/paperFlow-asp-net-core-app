@@ -1,7 +1,8 @@
 ﻿namespace PaperFlow.Services.Papers
 {
     using Microsoft.EntityFrameworkCore;
-    using PaperFlow.Common;
+    using PaperFlow.Common.Constants;
+    using PaperFlow.Common.Helpers;
     using PaperFlow.Data;
     using PaperFlow.Data.Models;
     using PaperFlow.Services.Interfaces;

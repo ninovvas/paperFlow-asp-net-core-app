@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using PaperFlow.Common.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static PaperFlow.Common.DataConstants.Paper;
+using static PaperFlow.Common.Constants.DataConstants.Paper;
 
 namespace PaperFlow.Data.Models
 {

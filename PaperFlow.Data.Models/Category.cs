@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using static PaperFlow.Common.DataConstants.Category;
+    using static PaperFlow.Common.Constants.DataConstants.Category;
     public class Category
     {
         [Key]
