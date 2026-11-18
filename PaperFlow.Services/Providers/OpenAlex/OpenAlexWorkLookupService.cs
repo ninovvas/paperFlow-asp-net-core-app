@@ -1,12 +1,11 @@
-﻿namespace PaperFlow.Services.Providers
+﻿namespace PaperFlow.Services.Providers.OpenAlex
 {
     using System.Net;
     using System.Text.Json;
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Models;
 
-
-public sealed class OpenAlexWorkLookupService : IOpenAlexWorkLookupService
+    public sealed class OpenAlexWorkLookupService : IOpenAlexWorkLookupService
 {
     private readonly HttpClient httpClient;
     public OpenAlexWorkLookupService(HttpClient httpClient) => this.httpClient = httpClient;

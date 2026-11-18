@@ -4,8 +4,13 @@
     using Microsoft.Extensions.DependencyInjection;
 
     using PaperFlow.Services.Interfaces;
-    using PaperFlow.Services.Providers;
+    using PaperFlow.Services.Papers;
     using PaperFlow.Services.Providers.Arxiv;
+    using PaperFlow.Services.Providers.Crossref;
+    using PaperFlow.Services.Providers.OpenAlex;
+    using PaperFlow.Services.Reading;
+    using PaperFlow.Services.Search;
+    using PaperFlow.Services.Statistics;
 
     public static class ServiceCollectionExtensions
     {

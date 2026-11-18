@@ -1,6 +1,4 @@
-﻿
-
-namespace PaperFlow.Services.Providers
+﻿namespace PaperFlow.Services.Providers.OpenAlex
 {
     using System.Globalization;
     using System.Net;
@@ -8,8 +6,7 @@ namespace PaperFlow.Services.Providers
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Models;
 
-
-public sealed class OpenAlexSearchService : IResearchPaperProvider
+    public sealed class OpenAlexSearchService : IResearchPaperProvider
 {
     private readonly HttpClient httpClient;
     public string ProviderId => "openalex";

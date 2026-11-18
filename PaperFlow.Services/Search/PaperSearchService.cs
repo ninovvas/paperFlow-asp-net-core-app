@@ -1,10 +1,11 @@
-﻿namespace PaperFlow.Services
+﻿namespace PaperFlow.Services.Search
 {
 
     using Microsoft.Extensions.Logging;
 
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Models;
+
     public class PaperSearchService : IPaperSearchService
     {
         private readonly IReadOnlyDictionary<

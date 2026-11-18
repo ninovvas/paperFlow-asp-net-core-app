@@ -1,5 +1,4 @@
-﻿
-namespace PaperFlow.Services.Providers
+﻿namespace PaperFlow.Services.Providers.Crossref
 {
     using System.Text.RegularExpressions;
 

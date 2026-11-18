@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Services
+﻿namespace PaperFlow.Services.Search
 {
     using Microsoft.EntityFrameworkCore;
     using PaperFlow.Data;
@@ -18,7 +18,7 @@
         }
 
         public async Task<HashSet<string>> GetSavedOpenAlexIdsAsync(
-            string userId, IReadOnlyCollection<PaperFlow.Services.Models.PaperSearchResult> papers,
+            string userId, IReadOnlyCollection<Models.PaperSearchResult> papers,
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(userId))

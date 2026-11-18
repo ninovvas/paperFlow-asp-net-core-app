@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Services
+﻿namespace PaperFlow.Services.Reading
 {
 
     using Microsoft.EntityFrameworkCore;

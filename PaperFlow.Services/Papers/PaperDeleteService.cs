@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Services
+﻿namespace PaperFlow.Services.Papers
 {
 
     using Microsoft.EntityFrameworkCore;

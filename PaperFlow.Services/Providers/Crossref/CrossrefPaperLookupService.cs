@@ -1,14 +1,11 @@
-﻿
-
-namespace PaperFlow.Services.Providers
+﻿namespace PaperFlow.Services.Providers.Crossref
 {
     using System.Net;
     using System.Text.Json;
     using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Models;
 
-
-public sealed class CrossrefPaperLookupService : ICrossrefPaperLookupService
+    public sealed class CrossrefPaperLookupService : ICrossrefPaperLookupService
 {
     private readonly HttpClient httpClient;
     private static readonly SemaphoreSlim RequestGate = new(1, 1);

@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Services
+﻿namespace PaperFlow.Services.Statistics
 {
     using Microsoft.EntityFrameworkCore;
     using PaperFlow.Common.Enums;

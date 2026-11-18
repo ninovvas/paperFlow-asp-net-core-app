@@ -1,11 +1,11 @@
-﻿namespace PaperFlow.Services.Providers
+﻿namespace PaperFlow.Services.Providers.OpenAlex
 {
     using System.Globalization;
     using System.Text.Json;
     using PaperFlow.Services.Models;
+    using PaperFlow.Services.Providers.Crossref;
 
-
-internal static class OpenAlexMapper
+    internal static class OpenAlexMapper
 {
     public static PaperSearchResult? Parse(JsonElement work)
     {
