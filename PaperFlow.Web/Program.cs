@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using PaperFlow.Data;
 using PaperFlow.Data.Extensions;
 using PaperFlow.Services.Extensions;
+using PaperFlow.Web.Identity.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+await app.SeedIdentityAsync();
+
 
 // Error handling
 if (app.Environment.IsDevelopment())
