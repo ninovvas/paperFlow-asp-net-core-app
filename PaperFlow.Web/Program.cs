@@ -28,6 +28,7 @@ builder.Services
         options.Lockout.MaxFailedAccessAttempts = 5;
         options.Lockout.AllowedForNewUsers = true;
     })
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<PowerFlowDbContext>();
 
 // Application services
