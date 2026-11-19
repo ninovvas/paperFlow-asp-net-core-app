@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using PaperFlow.Common.Constants;
 
 namespace PaperFlow.Web.Areas.Identity.Pages.Account;
 
@@ -120,6 +121,29 @@ public class RegisterModel : PageModel
             if (result.Succeeded)
             {
                 _logger.LogInformation("User created a new account with password.");
+
+                // Public registration grants only the standard User role.
+                // The Administrator role is provisioned separately during startup.
+                IdentityResult roleResult = await _userManager.AddToRoleAsync(user, RoleConstants.User);
+                if (!roleResult.Succeeded)
+                {
+                    // Do not leave an unusable account that has no expected role.
+                    IdentityResult deleteResult = await _userManager.DeleteAsync(user);
+                    if (!deleteResult.Succeeded)
+                    {
+                        string errors = string.Join("; ", deleteResult.Errors.Select(error => error.Description));
+                        _logger.LogError("Failed to roll back registration after role assignment failed: {Errors}", errors);
+                        throw new InvalidOperationException("Registration could not be completed or rolled back.");
+                    }
+
+                    _logger.LogWarning("Registration was rolled back because assigning the User role failed.");
+                    foreach (IdentityError error in roleResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    return Page();
+                }
 
                 var userId = await _userManager.GetUserIdAsync(user);
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
