@@ -1,0 +1,118 @@
+﻿@model AdminDashboardDto
+@{
+    ViewData["Title"] = "Administration";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+        <div>
+            <span class="text-primary fw-semibold small text-uppercase">System administration</span>
+            <h2 class="fw-bold mt-1">Admin Dashboard</h2>
+            <p class="text-muted mb-0">Overview of users, saved papers and research sources across PaperFlow.</p>
+        </div>
+        <span class="badge bg-primary-subtle text-primary px-3 py-2">
+            <i class="ti ti-shield-lock me-1"></i> Administrator
+        </span>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted mb-2"><i class="ti ti-users me-1"></i> Registered users</div>
+                    <div class="display-6 fw-bold">@Model.TotalUsers</div>
+                    <div class="small text-muted">@Model.Administrators administrator(s)</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted mb-2"><i class="ti ti-books me-1"></i> Saved papers</div>
+                    <div class="display-6 fw-bold">@Model.TotalPapers</div>
+                    <div class="small text-muted">@Model.PapersAddedThisMonth added this month</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted mb-2"><i class="ti ti-plug me-1"></i> Research sources</div>
+                    <div class="display-6 fw-bold">@Model.TotalResearchSources</div>
+                    <div class="small text-muted">@Model.EnabledResearchSources enabled</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted mb-2"><i class="ti ti-user-question me-1"></i> Users without roles</div>
+                    <div class="display-6 fw-bold">@Model.UsersWithoutRoles</div>
+                    <div class="small text-muted">Legacy accounts to review in step 2E</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Research sources</h5>
+                    @if (Model.Sources.Count == 0)
+                    {
+                        <p class="text-muted mb-0">No research sources in the database yet.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead><tr><th scope="col">Source</th><th scope="col">Status</th><th scope="col" class="text-end">Saved papers</th></tr></thead>
+                                <tbody>
+                                    @foreach (var source in Model.Sources)
+                                    {
+                                        <tr>
+                                            <td class="fw-semibold">@source.Name</td>
+                                            <td>
+                                                @if (source.IsEnabled)
+                                                {
+                                                    <span class="badge bg-success-subtle text-success">Enabled</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary-subtle text-secondary">Disabled</span>
+                                                }
+                                            </td>
+                                            <td class="text-end">@source.PaperCount</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Identity roles</h5>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Administrators</span><strong>@Model.Administrators</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Users with User role</span><strong>@Model.UsersWithUserRole</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Users without any role</span><strong>@Model.UsersWithoutRoles</strong>
+                    </div>
+                    <hr />
+                    <p class="small text-muted mb-0">
+                        Role management and editing research sources will be added in steps 2E and 2F.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

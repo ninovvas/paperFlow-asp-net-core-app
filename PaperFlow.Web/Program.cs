@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using PaperFlow.Data;
 using PaperFlow.Data.Extensions;
 using PaperFlow.Services.Extensions;
+using PaperFlow.Services.Admin;
+using PaperFlow.Services.Interfaces;
 using PaperFlow.Web.Identity.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +36,7 @@ builder.Services
 
 // Application services
 builder.Services.AddPaperFlowServices();
+builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 builder.Services.AddMemoryCache();
 
 // MVC and Razor Pages
@@ -43,7 +46,6 @@ builder.Services.AddRazorPages();
 var app = builder.Build();
 
 await app.SeedIdentityAsync();
-
 
 // Error handling
 if (app.Environment.IsDevelopment())
@@ -67,6 +69,11 @@ app.UseAuthorization();
 
 // Endpoints
 app.MapStaticAssets();
+
+app.MapControllerRoute(
+    name: "admin-area",
+    pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}")
+    .WithStaticAssets();
 
 app.MapControllerRoute(
     name: "default",

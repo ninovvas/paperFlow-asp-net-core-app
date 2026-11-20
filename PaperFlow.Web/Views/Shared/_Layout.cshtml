@@ -102,13 +102,13 @@
 
                                 <!-- PaperFlow Global Library Search -->
                                 <li class="nav-item pf-global-search-item">
-                                    <form asp-controller="Papers"
+                                    <form asp-area="" asp-controller="Papers"
                                           asp-action="Index"
                                           method="get"
                                           role="search"
                                           class="pf-global-search"
                                           data-pf-library-search
-                                          data-endpoint="@Url.Action("Suggest", "LibrarySearch")">
+                                          data-endpoint="@Url.Action("Suggest", "LibrarySearch", new { area = "" })">
 
                                         <i class="ti ti-search"
                                            aria-hidden="true"></i>
@@ -178,7 +178,7 @@
 
                                         <div class="dropdown-divider"></div>
 
-                                        <a asp-controller="Account"
+                                        <a asp-area="" asp-controller="Account"
                                            asp-action="Profile"
                                            class="dropdown-item">
 
@@ -186,7 +186,7 @@
                                             My Profile
                                         </a>
 
-                                        <a asp-controller="Account"
+                                        <a asp-area="" asp-controller="Account"
                                            asp-action="ChangePassword"
                                            class="dropdown-item">
 
