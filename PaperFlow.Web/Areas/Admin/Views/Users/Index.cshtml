@@ -1,0 +1,157 @@
+﻿@model AdminUsersPageDto
+@using PaperFlow.Common.Constants
+@{
+    ViewData["Title"] = "User Management";
+    string currentId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+        <div>
+            <span class="text-primary fw-semibold small text-uppercase">System administration</span>
+            <h2 class="fw-bold mt-1">User Management</h2>
+            <p class="text-muted">Review registered accounts and assign User or Administrator roles.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-primary">
+            <i class="ti ti-arrow-left me-1"></i> Admin Dashboard
+        </a>
+    </div>
+
+    @if (TempData["AdminSuccess"] is string success)
+    {
+        <div class="alert alert-success" role="status">@success</div>
+    }
+    @if (TempData["AdminError"] is string error)
+    {
+        <div class="alert alert-danger" role="alert">@error</div>
+    }
+
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <form method="get" asp-area="Admin" asp-controller="Users" asp-action="Index"
+                      class="d-flex gap-2" role="search">
+                    <input name="search" type="search" value="@Model.Search" maxlength="100"
+                           class="form-control" placeholder="Search users by email" aria-label="Search users by email" />
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    @if (!string.IsNullOrWhiteSpace(Model.Search))
+                    {
+                        <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+                    }
+                </form>
+                <span class="text-muted small">@Model.TotalCount user(s)</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col" class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var person in Model.Users)
+                        {
+                            bool isCurrentAdmin = person.Id == currentId && person.IsAdministrator;
+                            <tr>
+                                <td class="fw-semibold text-break">
+                                    @person.Email
+                                    @if (isCurrentAdmin)
+                                    {
+                                        <span class="badge bg-primary-subtle text-primary ms-1">You</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (person.IsAdministrator)
+                                    {
+                                        <span class="badge bg-primary-subtle text-primary">Administrator</span>
+                                    }
+                                    else if (person.IsUser)
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary">User</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning-subtle text-warning">No role</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (person.IsAdministrator && !isCurrentAdmin)
+                                    {
+                                        <form asp-area="Admin" asp-controller="Users" asp-action="SetRole" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="userId" value="@person.Id" />
+                                            <input type="hidden" name="role" value="@RoleConstants.User" />
+                                            <input type="hidden" name="search" value="@Model.Search" />
+                                            <input type="hidden" name="page" value="@Model.Page" />
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary"
+                                                    onclick="return confirm('Change this administrator to a regular user?');">
+                                                Make User
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (!person.IsAdministrator)
+                                    {
+                                        @if (!person.IsUser)
+                                        {
+                                            <form asp-area="Admin" asp-controller="Users" asp-action="SetRole" method="post" class="d-inline me-1">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="userId" value="@person.Id" />
+                                                <input type="hidden" name="role" value="@RoleConstants.User" />
+                                                <input type="hidden" name="search" value="@Model.Search" />
+                                                <input type="hidden" name="page" value="@Model.Page" />
+                                                <button type="submit" class="btn btn-sm btn-outline-primary">Assign User</button>
+                                            </form>
+                                        }
+                                        <form asp-area="Admin" asp-controller="Users" asp-action="SetRole" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="userId" value="@person.Id" />
+                                            <input type="hidden" name="role" value="@RoleConstants.Administrator" />
+                                            <input type="hidden" name="search" value="@Model.Search" />
+                                            <input type="hidden" name="page" value="@Model.Page" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Grant this account Administrator access?');">
+                                                Make Administrator
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="small text-muted">Protected current account</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        @if (Model.Users.Count == 0)
+                        {
+                            <tr><td colspan="4" class="text-center text-muted py-4">No users found.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (Model.TotalPages > 1)
+            {
+                <nav aria-label="User pages" class="d-flex align-items-center justify-content-between mt-3">
+                    <span class="text-muted small">Page @Model.Page of @Model.TotalPages</span>
+                    <div class="d-flex gap-2">
+                        @if (Model.Page > 1)
+                        {
+                            <a class="btn btn-outline-primary btn-sm" asp-action="Index" asp-route-search="@Model.Search"
+                               asp-route-page="@(Model.Page - 1)">Previous</a>
+                        }
+                        @if (Model.Page < Model.TotalPages)
+                        {
+                            <a class="btn btn-outline-primary btn-sm" asp-action="Index" asp-route-search="@Model.Search"
+                               asp-route-page="@(Model.Page + 1)">Next</a>
+                        }
+                    </div>
+                </nav>
+            }
+        </div>
+    </div>
+    <p class="text-muted small mt-3">Administrator changes are restricted to this area and require a confirmed POST action.</p>
+</div>
+

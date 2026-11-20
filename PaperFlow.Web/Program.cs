@@ -37,7 +37,10 @@ builder.Services
 // Application services
 builder.Services.AddPaperFlowServices();
 builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
+builder.Services.AddScoped<IAdminUserService, AdminUserService>();
 builder.Services.AddMemoryCache();
+
+
 
 // MVC and Razor Pages
 builder.Services.AddControllersWithViews();
