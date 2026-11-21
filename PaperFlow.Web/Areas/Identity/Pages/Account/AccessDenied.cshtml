@@ -1,10 +1,37 @@
 @page
-@model AccessDeniedModel
+@model PaperFlow.Web.Areas.Identity.Pages.Account.AccessDeniedModel
 @{
-    ViewData["Title"] = "Access denied";
+    ViewData["Title"] = "Access Denied";
 }
 
-<header>
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
-</header>
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/paperflow-access-denied.css"
+          asp-append-version="true" />
+}
+
+<section class="pf-access-denied" aria-labelledby="access-denied-title">
+    <div class="pf-access-denied-icon" aria-hidden="true">
+        <i class="ti ti-shield-lock"></i>
+    </div>
+
+    <p class="pf-access-denied-eyebrow">ACCESS RESTRICTED</p>
+    <h1 class="pf-access-denied-code">403</h1>
+    <h2 id="access-denied-title" class="pf-access-denied-heading">Access denied</h2>
+    <p class="pf-access-denied-description">
+        You don't have permission to open this page.
+        If you believe this is a mistake, contact an administrator.
+    </p>
+
+    <div class="pf-access-denied-actions">
+        <a asp-area="" asp-controller="Home" asp-action="Dashboard" class="btn btn-primary">
+            <i class="ti ti-layout-dashboard me-1" aria-hidden="true"></i>
+            My Dashboard
+        </a>
+        <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+            <i class="ti ti-home me-1" aria-hidden="true"></i>
+            Home
+        </a>
+    </div>
+</section>
+

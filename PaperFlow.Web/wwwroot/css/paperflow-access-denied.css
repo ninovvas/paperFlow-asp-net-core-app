@@ -1,0 +1,89 @@
+﻿.pf-access-denied {
+    text-align: center;
+    padding: 4px 0 6px;
+    color: var(--pf-text, #26344c);
+}
+
+.pf-access-denied-icon {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 22px;
+    border-radius: 20px;
+    background: var(--pf-page, #f4f7fc);
+    color: var(--pf-primary, #5268f6);
+    font-size: 36px;
+}
+
+.pf-access-denied-eyebrow {
+    margin-bottom: 7px;
+    color: var(--pf-muted, #71819b);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .11em;
+}
+
+.pf-access-denied-code {
+    margin: 0 0 5px;
+    color: var(--pf-primary, #5268f6);
+    font-size: clamp(4.5rem, 13vw, 6.5rem);
+    font-weight: 800;
+    line-height: 1;
+}
+
+.pf-access-denied-heading {
+    margin: 0 0 12px;
+    color: var(--pf-text, #26344c);
+    font-size: clamp(1.45rem, 4vw, 1.8rem);
+    font-weight: 700;
+}
+
+.pf-access-denied-description {
+    margin: 0 auto 28px;
+    max-width: 370px;
+    color: var(--pf-muted, #71819b);
+    line-height: 1.65;
+}
+
+.pf-access-denied-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+    .pf-access-denied-actions .btn {
+        min-height: 43px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+html[data-pf-theme="dark"] .paperflow-auth-card .pf-access-denied-heading {
+    color: #f0f4ff !important;
+}
+
+html[data-pf-theme="dark"] .paperflow-auth-card .pf-access-denied-description,
+html[data-pf-theme="dark"] .paperflow-auth-card .pf-access-denied-eyebrow {
+    color: #b4c3dd !important;
+}
+
+html[data-pf-theme="dark"] .pf-access-denied-icon {
+    background: #172238;
+    color: #95a5ff;
+}
+
+html[data-pf-theme="dark"] .pf-access-denied-code {
+    color: #95a5ff;
+}
+
+@media (max-width: 460px) {
+    .pf-access-denied-actions {
+        flex-direction: column;
+    }
+
+        .pf-access-denied-actions .btn {
+            width: 100%;
+        }
+}

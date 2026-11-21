@@ -17,5 +17,8 @@ public class AccessDeniedModel : PageModel
     /// </summary>
     public void OnGet()
     {
+        // Authentication succeeded, but the user lacks the required role.
+        // Return 403 rather than an HTTP 200 containing an error message.
+        Response.StatusCode = StatusCodes.Status403Forbidden;
     }
 }
