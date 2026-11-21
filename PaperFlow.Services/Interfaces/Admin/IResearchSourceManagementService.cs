@@ -1,9 +1,6 @@
 ﻿namespace PaperFlow.Services.Interfaces.Admin
 {
-
-    using PaperFlow.Services.Models;
-
-
+    using PaperFlow.Services.Models.Admin;
 
     public interface IResearchSourceManagementService
     {

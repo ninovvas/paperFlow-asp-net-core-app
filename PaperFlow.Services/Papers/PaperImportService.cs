@@ -10,7 +10,8 @@
     using PaperFlow.Data.Models;
     using PaperFlow.Services.Interfaces.Papers;
     using PaperFlow.Services.Interfaces.Providers;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Papers;
+    using PaperFlow.Services.Models.Search;
     using PaperFlow.Services.Providers.Arxiv;
 
     public partial class PaperImportService : IPaperImportService

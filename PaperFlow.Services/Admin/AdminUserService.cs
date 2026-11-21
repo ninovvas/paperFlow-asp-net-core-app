@@ -6,7 +6,7 @@
     using PaperFlow.Common.Constants;
     using PaperFlow.Data;
     using PaperFlow.Services.Interfaces.Admin;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Admin;
 
 
 

@@ -6,7 +6,7 @@ namespace PaperFlow.Services
     using PaperFlow.Common.Constants;
     using PaperFlow.Common.Enums;
     using PaperFlow.Data.Models;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Papers;
     using PaperFlow.Services.Providers.Crossref;
 
     public partial class PaperImportService

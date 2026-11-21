@@ -4,7 +4,7 @@
     using System.Net;
     using System.Text.Json;
     using PaperFlow.Services.Interfaces.Providers;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Search;
 
     public sealed class OpenAlexSearchService : IResearchPaperProvider
 {

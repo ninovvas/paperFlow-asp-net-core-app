@@ -3,8 +3,8 @@
 
     using System.Globalization;
     using System.Text.RegularExpressions;
+    using PaperFlow.Services.Models.Search;
 
-    using PaperFlow.Services.Models;
     public static class ArxivQueryBuilder
     {
         private const string ApiUrl =

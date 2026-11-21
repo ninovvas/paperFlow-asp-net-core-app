@@ -8,6 +8,7 @@ namespace PaperFlow.Web.Controllers
     using Microsoft.Extensions.Caching.Memory;
     using PaperFlow.Services.Interfaces.Papers;
     using PaperFlow.Services.Interfaces.Search;
+    using PaperFlow.Services.Models.Search;
     using PaperFlow.Web.ViewModels.Papers;
 
     [Route("PaperSearch")]
@@ -240,7 +241,7 @@ namespace PaperFlow.Web.Controllers
             return Back();
         }
 
-        private static string PaperKey(PaperFlow.Services.Models.PaperSearchResult paper)
+        private static string PaperKey(PaperSearchResult paper)
         {
             if (!string.IsNullOrWhiteSpace(paper.Doi))
             {

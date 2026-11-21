@@ -6,7 +6,7 @@
     using System.Xml;
     using System.Xml.Linq;
     using PaperFlow.Services.Interfaces.Providers;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Search;
 
     public class ArxivPaperLookupService
         : IArxivPaperLookupService

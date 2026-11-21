@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Services.Models;
+﻿namespace PaperFlow.Services.Models.Admin;
 
 public sealed class AdminUsersPageDto
 {

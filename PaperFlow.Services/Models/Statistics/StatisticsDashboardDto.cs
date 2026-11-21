@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Services.Models
+﻿namespace PaperFlow.Services.Models.Statistics
 {
 
     public sealed record MetricValue(string Label, int Value);

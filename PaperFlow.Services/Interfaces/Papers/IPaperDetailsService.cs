@@ -1,6 +1,7 @@
 ﻿namespace PaperFlow.Services.Interfaces.Papers
 {
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Papers;
+
     public interface IPaperDetailsService
     {
         Task<PaperDetailsDto?> GetByIdAsync(

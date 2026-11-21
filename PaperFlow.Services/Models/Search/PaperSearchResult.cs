@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Services.Models
+﻿namespace PaperFlow.Services.Models.Search
 {
     using System;
     using System.Collections.Generic;

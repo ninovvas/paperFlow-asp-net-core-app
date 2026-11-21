@@ -5,7 +5,7 @@
     using PaperFlow.Services.Interfaces.Admin;
     using PaperFlow.Services.Interfaces.Providers;
     using PaperFlow.Services.Interfaces.Search;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Search;
 
     public class PaperSearchService : IPaperSearchService
     {

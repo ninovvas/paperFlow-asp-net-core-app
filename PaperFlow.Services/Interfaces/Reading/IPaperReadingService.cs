@@ -1,6 +1,6 @@
 ﻿namespace PaperFlow.Services.Interfaces.Reading
 {
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Reading;
 
     public interface IPaperReadingService
     {

@@ -6,8 +6,7 @@
     using Microsoft.AspNetCore.Mvc;
     using PaperFlow.Common.Constants;
     using PaperFlow.Services.Interfaces.Admin;
-    using PaperFlow.Services.Models;
-
+    using PaperFlow.Services.Models.Admin;
 
     [Area("Admin")]
     [Authorize(Roles = RoleConstants.Administrator)]

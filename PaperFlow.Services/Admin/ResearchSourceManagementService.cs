@@ -5,7 +5,7 @@
     using PaperFlow.Data;
     using PaperFlow.Data.Models;
     using PaperFlow.Services.Interfaces.Admin;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Admin;
 
     /// <summary>
     /// Manages search availability for the three configured research providers.

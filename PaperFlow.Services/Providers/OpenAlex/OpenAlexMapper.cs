@@ -2,7 +2,7 @@
 {
     using System.Globalization;
     using System.Text.Json;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Search;
     using PaperFlow.Services.Providers.Crossref;
 
     internal static class OpenAlexMapper

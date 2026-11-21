@@ -5,7 +5,7 @@
     using PaperFlow.Common.Constants;
     using PaperFlow.Data;
     using PaperFlow.Services.Interfaces.Admin;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Admin;
 
     /// <summary>System-wide metrics, never used for the personal user dashboard.</summary>
     public sealed class AdminDashboardService(PowerFlowDbContext context) : IAdminDashboardService

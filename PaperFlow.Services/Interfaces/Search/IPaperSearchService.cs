@@ -1,6 +1,7 @@
 ﻿namespace PaperFlow.Services.Interfaces.Search
 {
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Search;
+
     public interface IPaperSearchService
     {
 

@@ -1,4 +1,4 @@
-﻿using PaperFlow.Services.Models;
+﻿using PaperFlow.Services.Models.Search;
 
 namespace PaperFlow.Services.Interfaces.Providers;
 

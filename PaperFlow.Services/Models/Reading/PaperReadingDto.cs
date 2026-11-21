@@ -1,5 +1,4 @@
-﻿
-namespace PaperFlow.Services.Models
+﻿namespace PaperFlow.Services.Models.Reading
 {
     public sealed class PaperReadingDto
     {

@@ -5,8 +5,7 @@
     using System.Text.Json;
     using System.Text.RegularExpressions;
     using PaperFlow.Services.Interfaces.Providers;
-    using PaperFlow.Services.Models;
-
+    using PaperFlow.Services.Models.Search;
 
     public sealed class CrossrefSearchService : IResearchPaperProvider
     {

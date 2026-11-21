@@ -3,6 +3,7 @@
     using Microsoft.EntityFrameworkCore;
     using PaperFlow.Data;
     using PaperFlow.Services.Interfaces.Search;
+    using PaperFlow.Services.Models.Search;
 
     /// <summary>
     /// Checks whether arXiv search results were already imported by the current user.
@@ -18,7 +19,7 @@
         }
 
         public async Task<HashSet<string>> GetSavedOpenAlexIdsAsync(
-            string userId, IReadOnlyCollection<Models.PaperSearchResult> papers,
+            string userId, IReadOnlyCollection<PaperSearchResult> papers,
             CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(userId))

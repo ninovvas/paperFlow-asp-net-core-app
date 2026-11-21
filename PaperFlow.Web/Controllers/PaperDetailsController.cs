@@ -3,7 +3,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using PaperFlow.Services.Interfaces.Papers;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Papers;
     using System.Security.Claims;
 
     [Authorize]

@@ -1,6 +1,7 @@
 ﻿namespace PaperFlow.Services.Interfaces.Providers
 {
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Search;
+
     public interface IArxivPaperLookupService
     {
         Task<PaperSearchResult?> GetByIdAsync(

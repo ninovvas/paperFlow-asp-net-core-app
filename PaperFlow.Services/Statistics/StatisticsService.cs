@@ -4,7 +4,7 @@
     using PaperFlow.Common.Enums;
     using PaperFlow.Data;
     using PaperFlow.Services.Interfaces.Statistics;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Statistics;
     using System.Globalization;
 
     public sealed class StatisticsService(PowerFlowDbContext context) : IStatisticsService

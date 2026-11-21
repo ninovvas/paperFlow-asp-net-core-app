@@ -1,6 +1,6 @@
 ﻿
 
-namespace PaperFlow.Services.Models
+namespace PaperFlow.Services.Models.Papers
 {
     using System;
     using System.Collections.Generic;

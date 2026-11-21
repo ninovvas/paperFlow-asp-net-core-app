@@ -1,6 +1,7 @@
 ﻿namespace PaperFlow.Services.Interfaces.Papers
 {
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Papers;
+
     public interface IPaperEditService
     {
         Task<PaperEditDto?> GetAsync(int id, string userId, CancellationToken cancellationToken = default);

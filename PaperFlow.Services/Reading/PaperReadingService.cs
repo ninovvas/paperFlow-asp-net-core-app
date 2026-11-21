@@ -4,9 +4,9 @@
     using Microsoft.EntityFrameworkCore;
 
     using PaperFlow.Data;
-    using PaperFlow.Services.Models;
     using PaperFlow.Common.Constants;
     using PaperFlow.Services.Interfaces.Reading;
+    using PaperFlow.Services.Models.Reading;
 
     public sealed class PaperReadingService : IPaperReadingService
     {

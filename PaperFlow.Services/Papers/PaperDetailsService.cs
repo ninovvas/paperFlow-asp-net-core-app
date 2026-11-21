@@ -5,7 +5,8 @@
 
     using PaperFlow.Data;
     using PaperFlow.Services.Interfaces.Papers;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Papers;
+
     public sealed class PaperDetailsService
         : IPaperDetailsService
     {
