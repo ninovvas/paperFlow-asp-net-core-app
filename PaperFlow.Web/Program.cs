@@ -12,26 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationDbContext(builder.Configuration);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+
 // Identity
 builder.Services
-    .AddDefaultIdentity<IdentityUser>(options =>
-    {
-        options.User.RequireUniqueEmail = true;
-
-        options.Password.RequireLowercase = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireDigit = true;
-        options.Password.RequiredLength = 8;
-
-        options.SignIn.RequireConfirmedAccount = false;
-
-        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-        options.Lockout.MaxFailedAccessAttempts = 5;
-        options.Lockout.AllowedForNewUsers = true;
-    })
+    .AddDefaultIdentity<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<PowerFlowDbContext>();
+
+// Load Identity settings from appsettings.json
+builder.Services.Configure<IdentityOptions>(
+    builder.Configuration.GetSection("IdentitySettings"));
+
 
 // Application services
 builder.Services.AddPaperFlowServices();
