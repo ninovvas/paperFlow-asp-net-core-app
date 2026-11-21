@@ -2,7 +2,7 @@
 {
     using Microsoft.EntityFrameworkCore;
     using PaperFlow.Data;
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Search;
 
     /// <summary>
     /// Checks whether arXiv search results were already imported by the current user.

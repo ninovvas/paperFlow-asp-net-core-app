@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Services.Interfaces
+﻿namespace PaperFlow.Services.Interfaces.Providers
 {
     using PaperFlow.Services.Models;
     public interface IResearchPaperProvider

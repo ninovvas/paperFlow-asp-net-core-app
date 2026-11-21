@@ -6,7 +6,8 @@ namespace PaperFlow.Web.Controllers
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Caching.Memory;
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Papers;
+    using PaperFlow.Services.Interfaces.Search;
     using PaperFlow.Web.ViewModels.Papers;
 
     [Route("PaperSearch")]

@@ -4,7 +4,7 @@
     using Microsoft.EntityFrameworkCore;
 
     using PaperFlow.Data;
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Papers;
     using PaperFlow.Services.Models;
     public sealed class PaperDetailsService
         : IPaperDetailsService

@@ -1,5 +1,4 @@
-﻿
-namespace PaperFlow.Services.Models
+﻿namespace PaperFlow.Services.Models.Papers
 {
     public enum PaperEditStatus
     {

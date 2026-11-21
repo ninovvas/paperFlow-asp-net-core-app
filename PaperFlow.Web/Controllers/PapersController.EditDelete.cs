@@ -4,8 +4,7 @@
 
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Papers;
     using PaperFlow.Services.Models;
     using PaperFlow.Web.ViewModels.Papers;
 

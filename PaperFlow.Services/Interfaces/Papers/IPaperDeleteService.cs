@@ -1,5 +1,4 @@
-﻿
-namespace PaperFlow.Services.Interfaces
+﻿namespace PaperFlow.Services.Interfaces.Papers
 {
     public interface IPaperDeleteService
     {

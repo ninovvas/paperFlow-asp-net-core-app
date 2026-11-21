@@ -3,8 +3,8 @@ using PaperFlow.Data;
 using PaperFlow.Data.Extensions;
 using PaperFlow.Services.Extensions;
 using PaperFlow.Services.Admin;
-using PaperFlow.Services.Interfaces;
 using PaperFlow.Web.Identity.Seeding;
+using PaperFlow.Services.Interfaces.Admin;
 
 var builder = WebApplication.CreateBuilder(args);
 

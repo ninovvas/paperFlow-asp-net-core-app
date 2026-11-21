@@ -2,8 +2,11 @@
 {
 
     using Microsoft.Extensions.DependencyInjection;
-
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Papers;
+    using PaperFlow.Services.Interfaces.Providers;
+    using PaperFlow.Services.Interfaces.Reading;
+    using PaperFlow.Services.Interfaces.Search;
+    using PaperFlow.Services.Interfaces.Statistics;
     using PaperFlow.Services.Papers;
     using PaperFlow.Services.Providers.Arxiv;
     using PaperFlow.Services.Providers.Crossref;

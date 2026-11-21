@@ -1,6 +1,6 @@
 ﻿namespace PaperFlow.Services.Providers.Arxiv
 {
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Providers;
     using PaperFlow.Services.Models;
     using System;
     using System.Collections.Generic;

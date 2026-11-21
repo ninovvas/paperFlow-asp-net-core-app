@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Services.Interfaces
+﻿namespace PaperFlow.Services.Interfaces.Papers
 {
     using PaperFlow.Services.Models;
    

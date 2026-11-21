@@ -4,7 +4,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using PaperFlow.Common.Constants;
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Admin;
 
     [Area("Admin")]
     [Authorize(Roles = RoleConstants.Administrator)]

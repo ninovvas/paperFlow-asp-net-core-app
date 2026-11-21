@@ -2,8 +2,9 @@
 {
 
     using Microsoft.Extensions.Logging;
-
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Admin;
+    using PaperFlow.Services.Interfaces.Providers;
+    using PaperFlow.Services.Interfaces.Search;
     using PaperFlow.Services.Models;
 
     public class PaperSearchService : IPaperSearchService

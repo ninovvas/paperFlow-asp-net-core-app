@@ -1,7 +1,7 @@
 namespace PaperFlow.Web.ViewModels.Papers
 {
     using System.ComponentModel.DataAnnotations;
-    using PaperFlow.Services.Models;
+    using PaperFlow.Services.Models.Search;
 
     public class PaperSearchViewModel : IValidatableObject
     {

@@ -4,7 +4,7 @@
     using System.Net;
     using System.Text.Json;
     using System.Text.RegularExpressions;
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Providers;
     using PaperFlow.Services.Models;
 
 

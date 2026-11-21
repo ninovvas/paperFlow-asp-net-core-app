@@ -3,7 +3,7 @@
     using Microsoft.EntityFrameworkCore;
     using PaperFlow.Common.Enums;
     using PaperFlow.Data;
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Statistics;
     using PaperFlow.Services.Models;
     using System.Globalization;
 

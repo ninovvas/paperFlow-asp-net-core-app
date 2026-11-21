@@ -5,7 +5,7 @@
     using Microsoft.EntityFrameworkCore;
     using PaperFlow.Common.Constants;
     using PaperFlow.Data;
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Admin;
     using PaperFlow.Services.Models;
 
 

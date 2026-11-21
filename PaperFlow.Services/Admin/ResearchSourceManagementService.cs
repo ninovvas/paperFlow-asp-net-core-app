@@ -1,17 +1,17 @@
 ﻿namespace PaperFlow.Services.Admin
 {
 
-using Microsoft.EntityFrameworkCore;
-using PaperFlow.Data;
-using PaperFlow.Data.Models;
-using PaperFlow.Services.Interfaces;
-using PaperFlow.Services.Models;
+    using Microsoft.EntityFrameworkCore;
+    using PaperFlow.Data;
+    using PaperFlow.Data.Models;
+    using PaperFlow.Services.Interfaces.Admin;
+    using PaperFlow.Services.Models;
 
-/// <summary>
-/// Manages search availability for the three configured research providers.
-/// Existing saved papers are never changed when a provider is disabled.
-/// </summary>
-public sealed class ResearchSourceManagementService(PowerFlowDbContext context)
+    /// <summary>
+    /// Manages search availability for the three configured research providers.
+    /// Existing saved papers are never changed when a provider is disabled.
+    /// </summary>
+    public sealed class ResearchSourceManagementService(PowerFlowDbContext context)
     : IResearchSourceManagementService
 {
     private sealed record SourceDefinition(string Id, string Name, string Url);

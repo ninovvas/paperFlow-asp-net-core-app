@@ -2,7 +2,7 @@
 {
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Statistics;
     using System.Security.Claims;
 
     [Authorize]

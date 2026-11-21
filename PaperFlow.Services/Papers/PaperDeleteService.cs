@@ -4,7 +4,7 @@
     using Microsoft.EntityFrameworkCore;
 
     using PaperFlow.Data;
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Papers;
 
     public sealed class PaperDeleteService : IPaperDeleteService
     {

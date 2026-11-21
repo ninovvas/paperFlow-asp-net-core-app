@@ -5,8 +5,7 @@
     using System.Text.RegularExpressions;
     using System.Xml;
     using System.Xml.Linq;
-
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Providers;
     using PaperFlow.Services.Models;
 
     public class ArxivPaperLookupService

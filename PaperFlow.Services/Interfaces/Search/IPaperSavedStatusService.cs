@@ -1,4 +1,4 @@
-﻿namespace PaperFlow.Services.Interfaces
+﻿namespace PaperFlow.Services.Interfaces.Search
 {
     public interface IPaperSavedStatusService
     {
@@ -7,7 +7,7 @@
             IReadOnlyCollection<string> arxivIds,
             CancellationToken cancellationToken = default);
         Task<HashSet<string>> GetSavedOpenAlexIdsAsync(
-            string userId, IReadOnlyCollection<PaperFlow.Services.Models.PaperSearchResult> papers,
+            string userId, IReadOnlyCollection<Models.PaperSearchResult> papers,
             CancellationToken cancellationToken = default);
 
         Task<HashSet<string>> GetSavedCrossrefIdsAsync(

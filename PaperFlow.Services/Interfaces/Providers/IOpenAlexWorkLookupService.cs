@@ -1,8 +1,6 @@
-﻿
-namespace PaperFlow.Services.Interfaces
+﻿namespace PaperFlow.Services.Interfaces.Providers
 {
-    using PaperFlow.Services.Models;
-
+    using PaperFlow.Services.Models.Search;
 
     public interface IOpenAlexWorkLookupService
     {

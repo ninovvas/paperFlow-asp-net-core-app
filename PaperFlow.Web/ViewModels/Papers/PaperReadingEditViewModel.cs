@@ -2,8 +2,8 @@
 {
 
     using System.ComponentModel.DataAnnotations;
-    using PaperFlow.Services.Models;
     using PaperFlow.Common.Constants;
+    using PaperFlow.Services.Models.Reading;
 
     public sealed class PaperReadingEditViewModel : IValidatableObject
     {

@@ -4,7 +4,7 @@
     using System.Net;
     using System.Text.Json;
     using Microsoft.Extensions.Caching.Memory;
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Providers;
     using PaperFlow.Services.Providers.Crossref;
 
     public sealed class OpenAlexAbstractService : IOpenAlexAbstractService

@@ -3,7 +3,7 @@
     using System.Globalization;
     using System.Net;
     using System.Text.Json;
-    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Services.Interfaces.Providers;
     using PaperFlow.Services.Models;
 
     public sealed class OpenAlexSearchService : IResearchPaperProvider
