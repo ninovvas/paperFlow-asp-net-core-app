@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Identity;
 using PaperFlow.Data;
 using PaperFlow.Data.Extensions;
@@ -38,9 +37,8 @@ builder.Services
 builder.Services.AddPaperFlowServices();
 builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+builder.Services.AddScoped<IResearchSourceManagementService, ResearchSourceManagementService>();
 builder.Services.AddMemoryCache();
-
-
 
 // MVC and Razor Pages
 builder.Services.AddControllersWithViews();

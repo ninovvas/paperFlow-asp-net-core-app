@@ -48,7 +48,8 @@ namespace PaperFlow.Web.Controllers
             {
                 if (TryGetCachedSearch(searchId, out var cached))
                 {
-                    cached.AvailableSources = searchService.AvailableProviderIds.ToList();
+                    cached.AvailableSources = (await searchService.GetEnabledProviderIdsAsync(
+                        cancellationToken)).ToList();
                     await RefreshSavedStatusAsync(cached, cancellationToken);
                     return View(cached);
                 }
@@ -58,9 +59,19 @@ namespace PaperFlow.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            model.AvailableSources = searchService.AvailableProviderIds.ToList();
+            model.AvailableSources = (await searchService.GetEnabledProviderIdsAsync(
+                cancellationToken)).ToList();
             if (!execute)
+            {
+                // The default arXiv selection may have been disabled by an admin.
+                // Show an enabled provider by default without re-enabling any source.
+                model.SelectedSources = model.SelectedSources
+                    .Where(id => model.AvailableSources.Contains(id,
+                        StringComparer.OrdinalIgnoreCase)).ToList();
+                if (model.SelectedSources.Count == 0 && model.AvailableSources.Count > 0)
+                    model.SelectedSources.Add(model.AvailableSources[0]);
                 return View(model);
+            }
 
             model.SelectedSources = (model.SelectedSources ?? new List<string>())
                 .Where(s => !string.IsNullOrWhiteSpace(s))
@@ -180,7 +191,7 @@ namespace PaperFlow.Web.Controllers
                 model.Results = combined;
                 model.FailedSources = result.FailedSources;
 
-                
+
                 if (result.FailedSources.Count > 0)
                 {
                     model.HasMoreResults = false;

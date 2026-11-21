@@ -1,0 +1,80 @@
+﻿@model IReadOnlyList<PaperFlow.Services.Models.AdminResearchSourceDto>
+@{
+    ViewData["Title"] = "Research Sources Administration";
+}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+        <div>
+            <span class="text-primary fw-semibold small text-uppercase">System administration</span>
+            <h2 class="fw-bold mt-1">Research Sources</h2>
+            <p class="text-muted">Control which providers are available for new research searches.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-primary">
+            <i class="ti ti-arrow-left me-1"></i> Admin Dashboard
+        </a>
+    </div>
+    @if (TempData["AdminSuccess"] is string success)
+    {
+        <div class="alert alert-success" role="status">@success</div>
+    }
+    @if (TempData["AdminError"] is string error)
+    {
+        <div class="alert alert-danger" role="alert">@error</div>
+    }
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">Provider</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Saved papers</th>
+                            <th scope="col" class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var source in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="fw-semibold">@source.Name</span>
+                                    <div class="small text-muted">@source.WebsiteUrl</div>
+                                </td>
+                                <td>
+                                    @if (source.IsEnabled)
+                                    {
+                                        <span class="badge bg-success-subtle text-success">Enabled</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning-subtle text-warning">Disabled</span>
+                                    }
+                                </td>
+                                <td>@source.SavedPaperCount</td>
+                                <td class="text-end">
+                                    <form method="post" asp-area="Admin" asp-controller="ResearchSources" asp-action="SetEnabled">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="providerId" value="@source.ProviderId" />
+                                        <input type="hidden" name="enabled" value="@(!source.IsEnabled ? "true" : "false")" />
+                                        <button type="submit"
+                                                class="btn btn-sm @(source.IsEnabled ? "btn-outline-warning" : "btn-outline-success")"
+                                                onclick="return confirm('Change availability of @source.Name for new searches?');">
+                                            @(source.IsEnabled ? "Disable" : "Enable")
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-muted small mb-0">
+                Disabling a source prevents new searches through that provider.
+                Existing saved papers are preserved. Previously loaded search results remain visible.
+                Direct DOI/import endpoints are not disabled by this switch.
+            </p>
+        </div>
+    </div>
+</div>
+

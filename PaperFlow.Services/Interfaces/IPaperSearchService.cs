@@ -9,6 +9,8 @@ namespace PaperFlow.Services.Interfaces
 
         Task<MultiSourceSearchResult> SearchAsync(
             PaperSearchCriteria criteria, IReadOnlyCollection<string> selectedProviders, CancellationToken cancellationToken = default);
+
+        Task<IReadOnlyList<string>> GetEnabledProviderIdsAsync(CancellationToken cancellationToken = default);
     }
 }
 

@@ -13,6 +13,7 @@
 
         private readonly ILogger<PaperSearchService> logger;
         private readonly IOpenAlexAbstractService openAlexAbstracts;
+        private readonly IResearchSourceManagementService sourceManagement;
 
         public IReadOnlyList<string> AvailableProviderIds =>
             providers.Keys.OrderBy(x => x).ToList();
@@ -20,14 +21,23 @@
         public PaperSearchService(
             IEnumerable<IResearchPaperProvider> providers,
             ILogger<PaperSearchService> logger,
-            IOpenAlexAbstractService openAlexAbstracts)
+            IOpenAlexAbstractService openAlexAbstracts,
+            IResearchSourceManagementService sourceManagement)
         {
             this.logger = logger;
             this.openAlexAbstracts = openAlexAbstracts;
+            this.sourceManagement = sourceManagement;
 
             this.providers = providers.ToDictionary(
                 p => p.ProviderId,
                 StringComparer.OrdinalIgnoreCase);
+        }
+
+        public async Task<IReadOnlyList<string>> GetEnabledProviderIdsAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var enabled = await sourceManagement.GetEnabledProviderIdsAsync(cancellationToken);
+            return enabled.Where(providers.ContainsKey).OrderBy(x => x).ToArray();
         }
 
         public async Task<MultiSourceSearchResult> SearchAsync(
@@ -46,11 +56,15 @@
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            // "all" means every registered provider.
+            // Always read the current database status: cached or forged selections
+            // must not bypass disabled providers.
+            var enabledIds = await GetEnabledProviderIdsAsync(cancellationToken);
+
+            // "all" means every currently enabled provider.
             if (sourceIds.Any(id =>
                 id.Equals("all", StringComparison.OrdinalIgnoreCase)))
             {
-                sourceIds = AvailableProviderIds.ToList();
+                sourceIds = enabledIds.ToList();
             }
 
             if (sourceIds.Count == 0)
@@ -59,7 +73,8 @@
                     "Select at least one research source.");
             }
 
-            if (sourceIds.Any(id => !providers.ContainsKey(id)))
+            if (sourceIds.Any(id => !enabledIds.Contains(id,
+                StringComparer.OrdinalIgnoreCase)))
             {
                 throw new ArgumentException(
                     "One or more selected sources are unavailable.");
