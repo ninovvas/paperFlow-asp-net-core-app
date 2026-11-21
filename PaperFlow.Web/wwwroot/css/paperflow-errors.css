@@ -1,0 +1,73 @@
+﻿/* Error pages inherit PaperFlow's existing light/dark theme variables. */
+.pf-error-section {
+    min-height: min(76vh, 740px);
+    display: grid;
+    place-items: center;
+    padding: 48px 16px;
+}
+
+.pf-error-panel {
+    width: min(100%, 680px);
+    text-align: center;
+    background: var(--pf-surface, #fff);
+    color: var(--pf-text, #26344c);
+    border: 1px solid var(--pf-border, #e3eaf4);
+    border-radius: var(--pf-radius, 16px);
+    box-shadow: var(--pf-shadow, 0 8px 30px rgba(0, 0, 0, .06));
+    padding: clamp(28px, 5vw, 64px) clamp(20px, 5vw, 48px);
+}
+
+.pf-error-symbol {
+    width: 72px;
+    height: 72px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 20px;
+    border-radius: 20px;
+    color: var(--pf-primary, #5268f6);
+    background: var(--pf-page, #f4f7fc);
+    font-size: 36px;
+}
+
+.pf-error-eyebrow {
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .11em;
+    color: var(--pf-muted, #71819b);
+    margin: 0 0 8px;
+}
+
+.pf-error-number {
+    font-size: clamp(4rem, 12vw, 7rem);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--pf-primary, #5268f6);
+    margin: 0 0 10px;
+}
+
+.pf-error-title {
+    font-size: clamp(1.35rem, 3vw, 1.9rem);
+    font-weight: 700;
+    color: var(--pf-text, #26344c);
+    margin-bottom: 12px;
+}
+
+.pf-error-description {
+    max-width: 460px;
+    margin: 0 auto 28px;
+    color: var(--pf-muted, #71819b);
+    line-height: 1.65;
+}
+
+.pf-error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+@media (max-width: 480px) {
+    .pf-error-actions .btn {
+        width: 100%;
+    }
+}

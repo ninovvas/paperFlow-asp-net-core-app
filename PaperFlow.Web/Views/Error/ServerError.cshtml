@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Server Error";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/paperflow-errors.css" asp-append-version="true" />
+}
+
+<section class="pf-error-section" aria-labelledby="pf-error-heading">
+    <div class="pf-error-panel">
+        <div class="pf-error-symbol" aria-hidden="true"><i class="ti ti-alert-triangle"></i></div>
+        <p class="pf-error-eyebrow">SOMETHING WENT WRONG</p>
+        <h1 id="pf-error-heading" class="pf-error-number">500</h1>
+        <h2 class="pf-error-title">An unexpected error occurred</h2>
+        <p class="pf-error-description">We couldn't complete your request. Please try again later.</p>
+        <div class="pf-error-actions">
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                <i class="ti ti-home me-1" aria-hidden="true"></i> Go to Home
+            </a>
+            <a asp-area="" asp-controller="About" asp-action="Index" class="btn btn-outline-primary">
+                <i class="ti ti-info-circle me-1" aria-hidden="true"></i> About PaperFlow
+            </a>
+        </div>
+    </div>
+</section>

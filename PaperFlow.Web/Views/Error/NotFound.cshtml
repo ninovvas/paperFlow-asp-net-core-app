@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Page Not Found";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/paperflow-errors.css" asp-append-version="true" />
+}
+
+<section class="pf-error-section" aria-labelledby="pf-error-heading">
+    <div class="pf-error-panel">
+        <div class="pf-error-symbol" aria-hidden="true"><i class="ti ti-file-search"></i></div>
+        <p class="pf-error-eyebrow">PAGE NOT FOUND</p>
+        <h1 id="pf-error-heading" class="pf-error-number">404</h1>
+        <h2 class="pf-error-title">This page could not be found</h2>
+        <p class="pf-error-description">The address may be incorrect, or the page may have been moved.</p>
+        <div class="pf-error-actions">
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                <i class="ti ti-home me-1" aria-hidden="true"></i> Go to Home
+            </a>
+            <a asp-area="" asp-controller="PaperSearch" asp-action="Index" class="btn btn-outline-primary">
+                <i class="ti ti-search me-1" aria-hidden="true"></i> Search Papers
+            </a>
+        </div>
+    </div>
+</section>

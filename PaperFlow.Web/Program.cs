@@ -40,15 +40,21 @@ var app = builder.Build();
 await app.SeedIdentityAsync();
 
 // Error handling
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error/ServerError");
     app.UseHsts();
 }
+
+app.UseStatusCodePagesWithReExecute(
+    "/Error/StatusCode",
+    "?code={0}");
+
 
 // HTTP pipeline
 app.UseHttpsRedirection();
