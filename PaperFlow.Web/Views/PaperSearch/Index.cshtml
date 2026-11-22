@@ -450,7 +450,9 @@
                             {
                                 <form asp-controller="PaperSearch"
                                       asp-action="Save"
-                                      method="post">
+                                      method="post"
+                                      class="pf-ajax-save-form"
+                                      data-paper-key="@($"{paper.SourceName.ToLowerInvariant()}:{paper.ExternalId}")">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="searchId" value="@Model.SearchId" />
                                     <input type="hidden" name="sourceId" value="@paper.SourceName.ToLowerInvariant()" />
@@ -459,6 +461,7 @@
                                         <i class="ti ti-device-floppy me-1"></i>
                                         Save to My Library
                                     </button>
+                                    <span class="pf-save-feedback small ms-2" role="status" aria-live="polite"></span>
                                 </form>
                             }
                             else if (!importSupported)
@@ -558,6 +561,71 @@
                 loadingText.textContent = message;
                 loadingOverlay.hidden = false;
             };
+            // Single-paper import: intercept before the existing full-page loading handler.
+            // Keep the original form POST as a fallback when JavaScript is disabled.
+            document.addEventListener("submit", async (event) => {
+                const form = event.target;
+                if (!(form instanceof HTMLFormElement) ||
+                    !form.classList.contains("pf-ajax-save-form")) return;
+
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                const button = form.querySelector('button[type="submit"]');
+                const feedback = form.querySelector(".pf-save-feedback");
+                if (!button || button.disabled) return;
+
+                button.disabled = true;
+                const oldHtml = button.innerHTML;
+                button.textContent = "Saving...";
+                if (feedback) {
+                    feedback.textContent = "";
+                    feedback.classList.remove("text-danger");
+                }
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: "POST",
+                        body: new FormData(form),
+                        credentials: "same-origin",
+                        headers: {
+                            "X-Requested-With": "XMLHttpRequest",
+                            "Accept": "application/json"
+                        }
+                    });
+                    const type = response.headers.get("content-type") || "";
+                    if (!type.includes("application/json")) {
+                        throw new Error("Your session may have expired. Please sign in again.");
+                    }
+                    const result = await response.json();
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.message || "Unable to save this paper.");
+                    }
+
+                    const badge = document.createElement("span");
+                    badge.className = "badge pf-saved-badge";
+                    badge.setAttribute("role", "status");
+                    badge.textContent = "✓ Saved in My Library";
+                    badge.title = result.message || "Saved";
+                    const key = form.dataset.paperKey;
+                    form.replaceWith(badge);
+
+                    // Also update bulk-selection state for this paper.
+                    document.querySelectorAll(".bulk-paper-checkbox").forEach(box => {
+                        if (box.value !== key) return;
+                        box.checked = false;
+                        box.disabled = true;
+                        box.dispatchEvent(new Event("change", { bubbles: true }));
+                    });
+                } catch (error) {
+                    button.disabled = false;
+                    button.innerHTML = oldHtml;
+                    if (feedback) {
+                        feedback.textContent = error.message || "Save failed. Please retry.";
+                        feedback.classList.add("text-danger");
+                    }
+                }
+            }, true);
+
             document.querySelectorAll('form').forEach(form => {
                 if (form.id !== 'searchForm' &&
                     form.id !== 'bulkImportForm' &&
@@ -620,15 +688,17 @@
 
             if (all && clear && save && count && bulkForm) {
                 const update = () => {
-                    const selected = boxes.filter(box => box.checked).length;
+                    const available = boxes.filter(box => !box.disabled && box.isConnected);
+                    const selected = available.filter(box => box.checked).length;
                     count.textContent = selected + " selected";
                     save.disabled = selected === 0;
-                    all.checked = boxes.length > 0 && selected === boxes.length;
-                    all.indeterminate = selected > 0 && selected < boxes.length;
+                    all.checked = available.length > 0 && selected === available.length;
+                    all.indeterminate = selected > 0 && selected < available.length;
                 };
 
                 all.addEventListener("change", () => {
-                    boxes.forEach(box => box.checked = all.checked);
+                    boxes.filter(box => !box.disabled && box.isConnected)
+                        .forEach(box => box.checked = all.checked);
                     update();
                 });
                 clear.addEventListener("click", () => {

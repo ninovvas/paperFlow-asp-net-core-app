@@ -146,6 +146,7 @@ else
             <thead>
                 <tr>
                     <th><a asp-action="Index" asp-route-Search="@q.Search" asp-route-Status="@q.Status" asp-route-SourceId="@q.SourceId" asp-route-Sort="@(q.Sort == "title_asc" ? "title_desc" : "title_asc")">Paper <i class="ti ti-arrows-sort"></i></a></th>
+                    <th>Source</th>
                     <th class="paperflow-date"><a asp-action="Index" asp-route-Search="@q.Search" asp-route-Status="@q.Status" asp-route-SourceId="@q.SourceId" asp-route-Sort="@(q.Sort == "published_desc" ? "published_asc" : "published_desc")">Published <i class="ti ti-arrows-sort"></i></a></th>
                     <th><a asp-action="Index" asp-route-Search="@q.Search" asp-route-Status="@q.Status" asp-route-SourceId="@q.SourceId" asp-route-Sort="@(q.Sort == "status_asc" ? "status_desc" : "status_asc")">Status <i class="ti ti-arrows-sort"></i></a></th>
                     <th><a asp-action="Index" asp-route-Search="@q.Search" asp-route-Status="@q.Status" asp-route-SourceId="@q.SourceId" asp-route-Sort="@(q.Sort == "rating_desc" ? "rating_asc" : "rating_desc")">Rating <i class="ti ti-arrows-sort"></i></a></th>
@@ -164,6 +165,7 @@ else
                                 <div class="pf-search-snippet mt-1">@Highlight(snippet)</div>
                             }
                         </td>
+                        <td><span class="badge bg-primary-subtle text-primary">@(paper.ResearchSource?.Name ?? "Manual")</span></td>
                         <td class="paperflow-date">@(paper.PublicationDate?.ToString("yyyy-MM-dd") ?? "N/A")</td>
                         <td>
                             @{
@@ -237,22 +239,22 @@ else
 
 @section Scripts {
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const modal = document.getElementById("deletePaperModal");
             if (modal) {
-                modal.addEventListener("show.bs.modal", function (event) {
+                modal.addEventListener("show.bs.modal", function(event) {
                     const button = event.relatedTarget;
                     document.getElementById("deletePaperTitle").textContent = button.dataset.paperTitle;
                     document.getElementById("deletePaperForm").action = "@Url.Content("~/Papers/Delete/")" + encodeURIComponent(button.dataset.paperId);
                 });
             }
-            window.addEventListener("pageshow", function () {
+            window.addEventListener("pageshow", function() {
                 const btn = document.querySelector('#libraryFilters button[type="submit"]');
                 if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-filter me-1"></i>Apply'; }
             });
             const filterForm = document.getElementById("libraryFilters");
             if (filterForm) {
-                filterForm.addEventListener("submit", function () {
+                filterForm.addEventListener("submit", function() {
                     const submit = filterForm.querySelector('button[type="submit"]');
                     if (submit) { submit.disabled = true; submit.innerHTML = '<span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>Loading'; }
                 });

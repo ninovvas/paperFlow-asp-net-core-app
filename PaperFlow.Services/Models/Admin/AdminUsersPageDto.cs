@@ -17,6 +17,7 @@ public sealed class AdminUserRowDto
     public bool EmailConfirmed { get; init; }
     public bool IsAdministrator { get; init; }
     public bool IsUser { get; init; }
+    public int PaperCount { get; init; }
 }
 
 public enum AdminRoleChangeResult

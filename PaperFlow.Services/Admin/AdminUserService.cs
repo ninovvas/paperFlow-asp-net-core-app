@@ -5,15 +5,15 @@
     using Microsoft.EntityFrameworkCore;
     using PaperFlow.Common.Constants;
     using PaperFlow.Data;
+    using PaperFlow.Services.Interfaces;
     using PaperFlow.Services.Interfaces.Admin;
+    using PaperFlow.Services.Models;
     using PaperFlow.Services.Models.Admin;
-
-
 
     /// <summary>Reads registered users and manages only the two supported PaperFlow roles.</summary>
     public sealed class AdminUserService(
-    PowerFlowDbContext context,
-    UserManager<IdentityUser> userManager) : IAdminUserService
+        PowerFlowDbContext context,
+        UserManager<IdentityUser> userManager) : IAdminUserService
     {
         private const int PageSize = 20;
 
@@ -48,6 +48,7 @@
                     Id = user.Id,
                     Email = user.Email ?? user.UserName ?? "(unknown)",
                     EmailConfirmed = user.EmailConfirmed,
+                    PaperCount = context.Papers.Count(paper => paper.UserId == user.Id),
                     IsAdministrator = adminRoleId != null && context.UserRoles.Any(
                         member => member.UserId == user.Id && member.RoleId == adminRoleId),
                     IsUser = regularRoleId != null && context.UserRoles.Any(

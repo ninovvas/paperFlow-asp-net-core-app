@@ -1,15 +1,15 @@
 namespace PaperFlow.Web.Controllers
 {
-    using System.Net;
-    using System.Security.Claims;
-    using System.Xml;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Caching.Memory;
+    using PaperFlow.Services.Interfaces;
+    using PaperFlow.Web.ViewModels.Papers;
     using PaperFlow.Services.Interfaces.Papers;
     using PaperFlow.Services.Interfaces.Search;
-    using PaperFlow.Services.Models.Search;
-    using PaperFlow.Web.ViewModels.Papers;
+    using System.Net;
+    using System.Security.Claims;
+    using System.Xml;
 
     [Route("PaperSearch")]
     public class PaperSearchController : Controller
@@ -241,7 +241,7 @@ namespace PaperFlow.Web.Controllers
             return Back();
         }
 
-        private static string PaperKey(PaperSearchResult paper)
+        private static string PaperKey(PaperFlow.Services.Models.Search.PaperSearchResult paper)
         {
             if (!string.IsNullOrWhiteSpace(paper.Doi))
             {
@@ -267,10 +267,28 @@ namespace PaperFlow.Web.Controllers
             if (string.IsNullOrWhiteSpace(userId))
                 return Challenge();
 
-            IActionResult BackToSearch() =>
-                !string.IsNullOrWhiteSpace(searchId)
+            bool isAjax = string.Equals(
+                Request.Headers["X-Requested-With"].ToString(),
+                "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
+            bool wasSaved = false;
+            bool alreadySaved = false;
+
+            IActionResult BackToSearch()
+            {
+                if (isAjax)
+                {
+                    string error = TempData["ErrorMessage"] as string
+                        ?? TempData["InfoMessage"] as string
+                        ?? "The paper could not be saved.";
+                    TempData.Remove("ErrorMessage");
+                    TempData.Remove("InfoMessage");
+                    return BadRequest(new { success = false, message = error });
+                }
+
+                return !string.IsNullOrWhiteSpace(searchId)
                     ? RedirectToAction(nameof(Index), new { searchId })
                     : RedirectToAction(nameof(Index));
+            }
 
             if (string.IsNullOrWhiteSpace(searchId) ||
                 !TryGetCachedSearch(searchId, out var cached))
@@ -313,11 +331,14 @@ namespace PaperFlow.Web.Controllers
                     TempData["InfoMessage"] =
                         "This paper already exists in your library.";
                     cached.SavedExternalIds.Add(externalId);
+                    wasSaved = true;
+                    alreadySaved = true;
                 }
                 else if (result.Success)
                 {
                     TempData["SuccessMessage"] = "Paper successfully saved.";
                     cached.SavedExternalIds.Add(externalId);
+                    wasSaved = true;
                 }
                 else
                 {
@@ -351,6 +372,20 @@ namespace PaperFlow.Web.Controllers
                 logger.LogWarning(ex, "Import conflict");
                 TempData["ErrorMessage"] =
                     "Paper could not be saved. Please try again.";
+            }
+
+            if (isAjax && wasSaved)
+            {
+                TempData.Remove("SuccessMessage");
+                TempData.Remove("InfoMessage");
+                return Json(new
+                {
+                    success = true,
+                    alreadySaved,
+                    message = alreadySaved
+                        ? "This paper already exists in your library."
+                        : "Paper successfully saved."
+                });
             }
 
             return BackToSearch();

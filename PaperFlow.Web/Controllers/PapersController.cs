@@ -109,6 +109,7 @@
             query.Page = Math.Min(query.Page, totalPages);
 
             var papers = await filtered
+                .Include(p => p.ResearchSource)
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToListAsync(cancellationToken);
@@ -291,14 +292,12 @@
                 // Do not expose SQL Server details to the browser.
                 ModelState.AddModelError(
                     string.Empty,
-                    "Could not save the paper. Check whether " +
-                    "it or its metadata already exists.");
+                    "Could not save the paper. Check whether it or its metadata already exists.");
 
                 return View(model);
             }
 
-            TempData["SuccessMessage"] =
-                "Paper successfully added to your library.";
+            TempData["SuccessMessage"] = "Paper successfully added to your library.";
 
             return RedirectToAction(nameof(Index));
         }

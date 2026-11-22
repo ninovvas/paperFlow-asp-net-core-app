@@ -48,6 +48,7 @@
                         <tr>
                             <th scope="col">Email</th>
                             <th scope="col">Role</th>
+                            <th scope="col" class="text-center">Papers</th>
                             <th scope="col" class="text-end">Action</th>
                         </tr>
                     </thead>
@@ -77,6 +78,7 @@
                                         <span class="badge bg-warning-subtle text-warning">No role</span>
                                     }
                                 </td>
+                                <td class="text-center fw-semibold">@person.PaperCount</td>
                                 <td class="text-end">
                                     @if (person.IsAdministrator && !isCurrentAdmin)
                                     {
@@ -152,5 +154,5 @@
             }
         </div>
     </div>
+    <p class="text-muted small mt-3">Administrator changes are restricted to this area and require a confirmed POST action.</p>
 </div>
-
