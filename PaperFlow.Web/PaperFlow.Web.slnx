@@ -1,7 +1,8 @@
 <Solution>
-  <Project Path="../PaperFlow.Common/PaperFlow.Common.csproj" />
-  <Project Path="../PaperFlow.Data.Models/PaperFlow.Data.Models.csproj" />
-  <Project Path="../PaperFlow.Data/PaperFlow.Data.csproj" />
-  <Project Path="../PaperFlow.Services/PaperFlow.Services.csproj" />
-  <Project Path="PaperFlow.Web.csproj" />
+  <Project Path="../../../../../../../../MyTrunk/01_SoftUni/ASP.NET Fundamentals/Project/paperFlow-asp-net-core-app/PaperFlow.Common/PaperFlow.Common.csproj" />
+  <Project Path="../../../../../../../../MyTrunk/01_SoftUni/ASP.NET Fundamentals/Project/paperFlow-asp-net-core-app/PaperFlow.Data.Models/PaperFlow.Data.Models.csproj" />
+  <Project Path="../../../../../../../../MyTrunk/01_SoftUni/ASP.NET Fundamentals/Project/paperFlow-asp-net-core-app/PaperFlow.Data/PaperFlow.Data.csproj" />
+  <Project Path="../../../../../../../../MyTrunk/01_SoftUni/ASP.NET Fundamentals/Project/paperFlow-asp-net-core-app/PaperFlow.Services.Tests/PaperFlow.Services.Tests.csproj" Id="781d6af8-53ca-4943-babb-4f5bdce4825e" />
+  <Project Path="../../../../../../../../MyTrunk/01_SoftUni/ASP.NET Fundamentals/Project/paperFlow-asp-net-core-app/PaperFlow.Services/PaperFlow.Services.csproj" />
+  <Project Path="../../../../../../../../MyTrunk/01_SoftUni/ASP.NET Fundamentals/Project/paperFlow-asp-net-core-app/PaperFlow.Web/PaperFlow.Web.csproj" />
 </Solution>

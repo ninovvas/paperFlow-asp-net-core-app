@@ -10,10 +10,18 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.15" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
     <PackageReference Include="NUnit" Version="4.3.2" />
     <PackageReference Include="NUnit.Analyzers" Version="4.7.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PaperFlow.Common\PaperFlow.Common.csproj" />
+    <ProjectReference Include="..\PaperFlow.Data.Models\PaperFlow.Data.Models.csproj" />
+    <ProjectReference Include="..\PaperFlow.Data\PaperFlow.Data.csproj" />
+    <ProjectReference Include="..\PaperFlow.Services\PaperFlow.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
