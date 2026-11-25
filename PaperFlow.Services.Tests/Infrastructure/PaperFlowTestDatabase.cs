@@ -27,7 +27,7 @@ public sealed class PaperFlowTestDatabase : IAsyncDisposable
     public async Task SeedTwoUsersAsync()
     {
         Context.Users.AddRange(
-            new IdentityUser { Id = AliceId, UserName = "max@paperflow.test", Email = "max@paperflow.test" },
+            new IdentityUser { Id = AliceId, UserName = "alice@paperflow.test", Email = "alice@paperflow.test" },
             new IdentityUser { Id = BobId, UserName = "bob@paperflow.test", Email = "bob@paperflow.test" });
         await Context.SaveChangesAsync();
 
