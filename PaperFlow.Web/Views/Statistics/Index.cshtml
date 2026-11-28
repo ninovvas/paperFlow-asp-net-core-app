@@ -1,8 +1,14 @@
 ﻿@model PaperFlow.Services.Models.Statistics.StatisticsDashboardDto
 @using System.Text.Json
+@using System.Text.Encodings.Web
 @{
     ViewData["Title"] = "Research Statistics";
-    var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    var jsonOptions = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        // Preserve HTML-sensitive escaping even when JSON is embedded in a script.
+        Encoder = JavaScriptEncoder.Default
+    };
     var monthlyJson = JsonSerializer.Serialize(Model.Monthly, jsonOptions);
     var statusJson = JsonSerializer.Serialize(Model.ByStatus, jsonOptions);
     var sourceJson = JsonSerializer.Serialize(Model.BySource, jsonOptions);
@@ -89,7 +95,7 @@
             statuses: @Html.Raw(statusJson),
             sources: @Html.Raw(sourceJson),
             categories: @Html.Raw(categoryJson)
-                };
+                        };
     </script>
     <script src="~/js/paperflow-statistics.js" asp-append-version="true"></script>
 }

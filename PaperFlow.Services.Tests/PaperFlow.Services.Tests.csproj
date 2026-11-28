@@ -22,6 +22,7 @@
     <ProjectReference Include="..\PaperFlow.Data.Models\PaperFlow.Data.Models.csproj" />
     <ProjectReference Include="..\PaperFlow.Data\PaperFlow.Data.csproj" />
     <ProjectReference Include="..\PaperFlow.Services\PaperFlow.Services.csproj" />
+    <ProjectReference Include="..\PaperFlow.Web\PaperFlow.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -32,7 +32,12 @@ builder.Services.AddScoped<IResearchSourceManagementService, ResearchSourceManag
 builder.Services.AddMemoryCache();
 
 // MVC and Razor Pages
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    // Validates antiforgery tokens for unsafe HTTP methods (POST/PUT/PATCH/DELETE).
+    // GET, HEAD, OPTIONS and TRACE are not subjected to antiforgery validation.
+    options.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());
+});
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -57,6 +62,8 @@ app.UseStatusCodePagesWithReExecute(
 
 
 // HTTP pipeline
+// Applies restrictive browser security headers without breaking existing inline scripts.
+app.UseMiddleware<PaperFlow.Web.Middleware.SecurityHeadersMiddleware>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
